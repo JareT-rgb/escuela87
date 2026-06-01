@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -50,6 +50,10 @@
           <div class="absolute inset-0 bg-white/5 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
           <svg class="h-5 w-5 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
           <span class="font-semibold relative z-10 font-heading tracking-wide">Reportes</span>
+        </a>
+        <a class="flex items-center space-x-3 p-3.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 hover:translate-x-1 transition-all duration-300 group" href="grupos.html">
+          <svg class="h-5 w-5 group-hover:text-sepGold transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+          <span class="font-medium tracking-wide">Gestión de Grupos</span>
         </a>
         <a class="flex items-center space-x-3 p-3.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 hover:translate-x-1 transition-all duration-300 group" href="asistencias.html">
           <svg class="h-5 w-5 group-hover:text-sepGold transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
@@ -122,28 +126,65 @@
                 <select id="parcial-filter" class="hidden flex-1 sm:flex-none text-sm font-bold text-sepBurgundy bg-red-50 border-red-200 rounded-xl focus:ring-sepBurgundy focus:border-sepBurgundy py-2.5 px-4 shadow-sm transition-colors cursor-pointer">
                   <option value="">Todo el Ciclo</option>
                 </select>
-                <button onclick="window.print()" class="bg-white border-2 border-gray-200 text-gray-600 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-50 hover:text-gray-800 transition-all shadow-sm flex items-center justify-center group" title="Imprimir Repote">
-                  <svg class="w-4 h-4 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                </button>
               </div>
             </div>
             
             <div id="stats-container" class="space-y-6">
-              <p class="text-gray-400 font-bold text-center py-6">Cargando métricas de la base de datos...</p>
+              <p class="text-gray-400 font-bold text-center py-6">Cargando Métricas de la base de datos...</p>
             </div>
             
-            <!-- Quick Actions Grid -->
-            <div class="grid grid-cols-2 gap-4 mt-8 no-print pt-6 border-t border-gray-100">
-               <button onclick="window.print()" class="bg-white border-2 border-sepBurgundy/20 text-sepBurgundy px-4 py-3 rounded-xl text-sm font-bold shadow-sm hover:bg-sepBurgundy hover:text-white transition-all hover:shadow-md flex flex-col items-center justify-center gap-2 group">
-                 <svg class="w-6 h-6 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                 Exportar PDF Analítico
-               </button>
-               <button onclick="window.print()" class="bg-gray-50 border border-gray-200 text-gray-700 px-4 py-3 rounded-xl text-sm font-bold shadow-sm hover:bg-white hover:border-gray-300 hover:shadow-md transition-all flex flex-col items-center justify-center gap-2 group">
-                 <svg class="w-6 h-6 text-gray-400 group-hover:text-gray-700 transition-colors duration-300 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                 Imprimir Listas
-               </button>
-            </div>
-
+            <!-- Exportación de Listas de Asistencia -->
+            <div class="mt-8 no-print pt-6 border-t border-gray-100">
+               <h4 class="font-bold text-gray-800 mb-4">Exportar Listas de Asistencia</h4>
+               <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                 <div>
+                   <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Grado</label>
+                   <select id="export-grado" class="w-full text-sm font-bold text-gray-700 bg-gray-50 border-gray-200 rounded-xl focus:ring-sepBurgundy focus:border-sepBurgundy py-2.5 px-4 shadow-sm transition-colors cursor-pointer">
+                     <option value="1">1° Grado</option>
+                     <option value="2">2° Grado</option>
+                     <option value="3">3° Grado</option>
+                   </select>
+                 </div>
+                 <div>
+                   <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Grupo</label>
+                   <select id="export-grupo" class="w-full text-sm font-bold text-gray-700 bg-gray-50 border-gray-200 rounded-xl focus:ring-sepBurgundy focus:border-sepBurgundy py-2.5 px-4 shadow-sm transition-colors cursor-pointer">
+                     <option value="A">A</option>
+                     <option value="B">B</option>
+                     <option value="C">C</option>
+                     <option value="D">D</option>
+                     <option value="E">E</option>
+                     <option value="F">F</option>
+                   </select>
+                 </div>
+                 <div>
+                   <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Filtro de Tiempo</label>
+                   <div class="flex flex-col gap-2">
+                     <select id="export-periodo" class="w-full text-sm font-bold text-gray-700 bg-gray-50 border-gray-200 rounded-xl focus:ring-sepBurgundy focus:border-sepBurgundy py-2.5 px-4 shadow-sm transition-colors cursor-pointer">
+                       <option value="semana">Esta Semana</option>
+                       <option value="mes">Este Mes</option>
+                       <option value="mes_especifico">Mes Específico</option>
+                       <option value="fecha_especifica">Fecha Específica</option>
+                     </select>
+                     <input type="month" id="export-custom-month" class="hidden w-full text-sm font-bold text-gray-700 bg-gray-50 border-gray-200 rounded-xl focus:ring-sepBurgundy focus:border-sepBurgundy py-2.5 px-4 shadow-sm transition-colors cursor-pointer">
+                     <input type="date" id="export-custom-date" class="hidden w-full text-sm font-bold text-gray-700 bg-gray-50 border-gray-200 rounded-xl focus:ring-sepBurgundy focus:border-sepBurgundy py-2.5 px-4 shadow-sm transition-colors cursor-pointer">
+                   </div>
+                 </div>
+               </div>
+               <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                 <button id="btn-view-list" class="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-xl text-sm font-bold shadow-sm hover:bg-blue-600 hover:text-white transition-all hover:shadow-md flex flex-col items-center justify-center gap-2 group">
+                   <svg class="w-6 h-6 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                   Generar Vista
+                 </button>
+                 <button id="btn-export-csv" class="bg-white border-2 border-green-600/20 text-green-700 px-4 py-3 rounded-xl text-sm font-bold shadow-sm hover:bg-green-600 hover:text-white transition-all hover:shadow-md flex flex-col items-center justify-center gap-2 group">
+                   <svg class="w-6 h-6 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                   Descargar CSV
+                 </button>
+                 <button id="btn-export-excel" class="bg-gray-50 border border-gray-200 text-gray-700 px-4 py-3 rounded-xl text-sm font-bold shadow-sm hover:bg-white hover:border-gray-300 hover:shadow-md transition-all flex flex-col items-center justify-center gap-2 group">
+                   <svg class="w-6 h-6 text-green-600 group-hover:text-green-700 transition-colors duration-300 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                   Descargar Excel
+                 </button>
+               </div>
+             </div>
           </section>
 
           <!-- Announcements / Notices Module -->
@@ -151,7 +192,7 @@
             <div class="bg-white rounded-2xl shadow-soft border border-gray-100 flex flex-col overflow-hidden h-full">
               
               <div class="bg-sepBurgundy px-6 py-5 border-b border-sepGold/20 flex justify-between items-center relative z-10">
-                <div class="absolute inset-0 bg-white/5 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')] opacity-20"></div>
+                <div class="absolute inset-0 bg-white/5 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDíawL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')] opacity-20"></div>
                 <h3 class="font-extrabold text-white text-base md:text-lg font-heading tracking-wide flex items-center relative">
                   <svg class="w-5 h-5 mr-2 text-sepGold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
                   Gestor de Avisos Oficiales
@@ -170,7 +211,7 @@
                 <input id="new-announcement-input" type="text" placeholder="Título del nuevo aviso oficial..." class="w-full text-sm border-gray-200 rounded-xl focus:ring-sepBurgundy focus:border-sepBurgundy py-3.5 px-4 shadow-sm bg-gray-50 mb-4 transition-colors text-black placeholder-gray-400 font-bold p-3">
                 <button id="publish-announcement-btn" class="w-full bg-gradient-to-r from-sepGold to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-sepBurgundyDark px-6 py-3.5 rounded-xl text-sm font-black uppercase tracking-widest transition-all duration-300 shadow-md shadow-sepGold/30 hover:shadow-lg hover:-translate-y-0.5 flex items-center justify-center gap-2">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                  Publicar Aviso / Difusión
+                  Públicar Aviso / Difusión
                 </button>
               </div>
 
@@ -178,6 +219,21 @@
           </section>
 
         </div>
+
+        <!-- Full Width Vista Asistencias Table -->
+        <div id="vista-asistencias-container" class="mt-8 hidden animate-[fadeInUp_0.5s_ease-out_150ms_forwards] no-print">
+          <div class="bg-white rounded-2xl shadow-soft border border-gray-100 overflow-hidden">
+            <div class="bg-sepBurgundy px-6 py-4 border-b border-sepGold/20 flex justify-between items-center">
+              <h3 class="font-extrabold text-white text-base font-heading tracking-wide">
+                Lista de Asistencia Generada
+              </h3>
+            </div>
+            <div class="p-4 overflow-x-auto w-full">
+              <div id="vista-asistencias"></div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </main>
   </div>
@@ -192,7 +248,7 @@
 
   <script src="../../assets/js/main.js"></script>
   <script type="module">
-    import { getStats, getAnnouncements, createAnnouncement, deleteAnnouncement, getConfigPeriodos, getParciales, getAsistenciasPorParcial } from '../../assets/js/api-client.js';
+    import { getStats, getAnnouncements, createAnnouncement, deleteAnnouncement, getConfigPeriodos, getParciales, getAsistenciasPorParcial, getExportAsistencias } from '../../assets/js/api-client.js';
 
     // === LÓGICA DE ESTADÍSTICAS ===
     const gradeSelect = document.getElementById('grade-filter');
@@ -227,7 +283,7 @@
         // Stats globales
         const stats = await getStats(grado);
         if(!stats) {
-          statsContainer.innerHTML = '<p class="text-red-500 font-bold p-4">Error cargando métricas.</p>';
+          statsContainer.innerHTML = '<p class="text-red-500 font-bold p-4">Error cargando Métricas.</p>';
           return;
         }
         renderCards(stats.total_alumnos, stats.asistencia_promedio, stats.alumnos_riesgo, stats.porcentaje_riesgo, grado, 'Basado en periodo último mes');
@@ -295,6 +351,220 @@
     };
     initSelects();
 
+    // === LÓGICA DE EXPORTACIÓN ===
+    const btnCsv = document.getElementById('btn-export-csv');
+    const btnExcel = document.getElementById('btn-export-excel');
+    
+    document.getElementById('export-periodo').addEventListener('change', (e) => {
+      document.getElementById('export-custom-month').classList.toggle('hidden', e.target.value !== 'mes_especifico');
+      document.getElementById('export-custom-date').classList.toggle('hidden', e.target.value !== 'fecha_especifica');
+    });
+    
+    const getCustomVal = () => {
+      const p = document.getElementById('export-periodo').value;
+      if (p === 'mes_especifico') return document.getElementById('export-custom-month').value;
+      if (p === 'fecha_especifica') return document.getElementById('export-custom-date').value;
+      return null;
+    };
+    
+    const generatedatesForPeriod = (periodo, customVal) => {
+      let dates = [];
+      let now = new Date();
+      now.setHours(now.getHours() - 6);
+      if (periodo === 'semana') {
+        let day = now.getDay();
+        let startDiff = now.getDate() - day + (day === 0 ? -6 : 1);
+        let startDate = new Date(now.getFullYear(), now.getMonth(), startDiff);
+        for (let i = 0; i < 5; i++) {
+          let d = new Date(startDate);
+          d.setDate(startDate.getDate() + i);
+          dates.push(d.toISOString().split('T')[0]);
+        }
+      } else if (periodo === 'mes' || periodo === 'mes_especifico') {
+        let year = now.getFullYear();
+        let month = now.getMonth();
+        if (periodo === 'mes_especifico' && customVal) {
+          const [y, m] = customVal.split('-');
+          year = parseInt(y, 10);
+          month = parseInt(m, 10) - 1;
+        }
+        let daysInMonth = new Date(year, month + 1, 0).getDate();
+        for (let i = 1; i <= daysInMonth; i++) {
+          let d = new Date(year, month, i);
+          let dayOfWeek = d.getDay();
+          if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+            const mStr = String(month + 1).padStart(2, '0');
+            const dStr = String(i).padStart(2, '0');
+            dates.push(`${year}-${mStr}-${dStr}`);
+          }
+        }
+      } else if (periodo === 'fecha_especifica' && customVal) {
+        const [y, m, d] = customVal.split('-');
+        const dayOfWeek = new Date(y, parseInt(m, 10) - 1, d).getDay();
+        if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+          dates.push(customVal);
+        }
+      }
+      return dates;
+    };
+    
+    const doExport = async (format) => {
+       const btn = format === 'csv' ? btnCsv : btnExcel;
+       const originalText = btn.innerHTML;
+       btn.innerHTML = 'Generando...';
+       btn.disabled = true;
+       
+       try {
+         const grado = document.getElementById('export-grado').value;
+         const grupo = document.getElementById('export-grupo').value;
+         const periodo = document.getElementById('export-periodo').value;
+         const customVal = getCustomVal();
+         const data = await getExportAsistencias(grado, grupo, periodo, customVal);
+         
+         const dates = generatedatesForPeriod(periodo, customVal);
+         
+         let csvContent = 'NO.,NOMBRE Y APELLIDO,';
+         dates.forEach(d => csvContent += `${d.split('-')[2]},`);
+         csvContent += '\n';
+         
+         let htmlContent = '<meta charset="UTF-8"><table border="1"><tr><th>NO.</th><th>NOMBRE Y APELLIDO</th>';
+         dates.forEach(d => htmlContent += `<th>${d.split('-')[2]}</th>`);
+         htmlContent += '</tr>';
+         
+         data.forEach((a, index) => {
+            csvContent += `${index + 1},"${a.nombre}",`;
+            htmlContent += `<tr><td>${index + 1}</td><td>${a.nombre}</td>`;
+            
+            const statusMap = {};
+            if (a.asistencias) {
+              a.asistencias.forEach(as => {
+                 statusMap[as.date] = as.status;
+              });
+            }
+            
+            dates.forEach(d => {
+               const st = statusMap[d] ? statusMap[d].toLowerCase() : '';
+               let icon = '';
+               if (st === 'a tiempo') icon = '✓';
+               else if (st === 'falta') icon = '✗';
+               else if (st === 'retardo') icon = 'R';
+               else if (st === 'justificado') icon = 'J';
+               else icon = '-';
+               
+               csvContent += `${icon},`;
+               htmlContent += `<td>${icon}</td>`;
+            });
+            
+            csvContent += '\n';
+            htmlContent += '</tr>';
+         });
+         htmlContent += '</table>';
+         
+         const blob = format === 'csv' 
+           ? new Blob(["\uFEFF"+csvContent], { type: 'text/csv;charset=utf-8;' }) 
+           : new Blob([htmlContent], { type: 'application/vnd.ms-excel' });
+         
+         const url = URL.createObjectURL(blob);
+         const link = document.createElement("a");
+         link.href = url;
+         link.download = `Asistencias_${grado}Grado_${periodo}.${format === 'csv' ? 'csv' : 'xls'}`;
+         document.body.appendChild(link);
+         link.click();
+         document.body.removeChild(link);
+       } catch(e) {
+         console.error(e);
+         alert('Error al generar la exportación.');
+       }
+       
+       btn.innerHTML = originalText;
+       btn.disabled = false;
+    };
+    
+    if (btnCsv) btnCsv.addEventListener('click', () => doExport('csv'));
+    if (btnExcel) btnExcel.addEventListener('click', () => doExport('excel'));
+
+    const btnViewList = document.getElementById('btn-view-list');
+    const vistaContainer = document.getElementById('vista-asistencias');
+    if (btnViewList) {
+      btnViewList.addEventListener('click', async () => {
+         const originalText = btnViewList.innerHTML;
+         btnViewList.innerHTML = 'Cargando...';
+         btnViewList.disabled = true;
+         
+         try {
+           const grado = document.getElementById('export-grado').value;
+           const grupo = document.getElementById('export-grupo').value;
+           const periodo = document.getElementById('export-periodo').value;
+           const customVal = getCustomVal();
+           const data = await getExportAsistencias(grado, grupo, periodo, customVal);
+           
+           const dates = generatedatesForPeriod(periodo, customVal);
+           
+           if (data.length === 0 || dates.length === 0) {
+             vistaContainer.innerHTML = '<p class="text-center text-gray-500 font-bold p-4">No se encontraron asistencias en este periodo.</p>';
+           } else {
+             let htmlContent = `
+               <table class="w-full text-left text-sm text-gray-600 border-collapse border border-gray-300">
+                 <thead class="bg-gray-100 border-b border-gray-300">
+                   <tr>
+                     <th class="py-2 px-3 border border-gray-300 font-bold text-gray-700 w-10 text-center">NO.</th>
+                     <th class="py-2 px-3 border border-gray-300 font-bold text-gray-700 min-w-[200px]">NOMBRE Y APELLIDO</th>
+             `;
+             
+             dates.forEach(d => {
+                const dayNum = d.split('-')[2];
+                htmlContent += `<th class="py-2 px-2 border border-gray-300 font-bold text-gray-700 text-center w-8" title="${d}">${dayNum}</th>`;
+             });
+             
+             htmlContent += `
+                   </tr>
+                 </thead>
+                 <tbody class="bg-white">
+             `;
+             
+             data.forEach((a, index) => {
+                htmlContent += `
+                  <tr class="hover:bg-gray-50">
+                    <td class="py-2 px-3 border border-gray-300 text-center">${index + 1}</td>
+                    <td class="py-2 px-3 border border-gray-300 font-medium text-gray-800">${a.nombre}</td>
+                `;
+                
+                const statusMap = {};
+                if (a.asistencias) {
+                  a.asistencias.forEach(as => {
+                     statusMap[as.date] = as.status;
+                  });
+                }
+                
+                dates.forEach(d => {
+                   const st = statusMap[d] ? statusMap[d].toLowerCase() : '';
+                   let icon = '';
+                   if (st === 'a tiempo') icon = '<span class="text-green-600 font-bold text-base">✓</span>';
+                   else if (st === 'falta') icon = '<span class="text-red-600 font-bold text-base">✗</span>';
+                   else if (st === 'retardo') icon = '<span class="text-yellow-600 font-bold text-base">R</span>';
+                   else if (st === 'justificado') icon = '<span class="text-blue-600 font-bold text-base">J</span>';
+                   else icon = '<span class="text-gray-300">-</span>';
+                   
+                   htmlContent += `<td class="py-2 px-2 border border-gray-300 text-center">${icon}</td>`;
+                });
+                
+                htmlContent += `</tr>`;
+             });
+             
+             htmlContent += '</tbody></table>';
+             vistaContainer.innerHTML = htmlContent;
+           }
+           document.getElementById('vista-asistencias-container').classList.remove('hidden');
+         } catch(e) {
+           console.error(e);
+           alert('Error al generar la vista.');
+         }
+         
+         btnViewList.innerHTML = originalText;
+         btnViewList.disabled = false;
+      });
+    }
+
     // === LÓGICA DE AVISOS ===
     const annContainer = document.getElementById('announcements-container');
     const loadAnnouncements = async () => {
@@ -339,10 +609,10 @@
        const val = input.value.trim();
        if(!val) return alert('Ingresa un título.');
        
-       document.getElementById('publish-announcement-btn').textContent = "PUBLICANDO...";
+       document.getElementById('publish-announcement-btn').textContent = "PúblicaNDO...";
        await createAnnouncement(val);
        input.value = "";
-       document.getElementById('publish-announcement-btn').innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg> Publicar Aviso / Difusión`;
+       document.getElementById('publish-announcement-btn').innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg> Públicar Aviso / Difusión`;
        loadAnnouncements();
     });
 
@@ -350,3 +620,9 @@
   </script>
 </body>
 </html>
+
+
+
+
+
+

@@ -1,12 +1,15 @@
-const url = 'https://krgyqrebnfwzplpayitx.supabase.co/rest/v1/alumnos?select=*&or=(matricula.eq.ROVE080828HNLBZDA4,curp.eq.ROVE080828HNLBZDA4)';
-const key = 'sb_publishable_Z1CnbY2zxmyjom4dO9YCZw_-t0fLlIM';
+﻿const { createClient } = require('@supabase/supabase-js');
+const supabase = createClient('https://krgyqrebnfwzplpayitx.supabase.co', 'sb_publishable_Z1CnbY2zxmyjom4dO9YCZw_-t0fLlIM');
 
-fetch(url, {
-  headers: {
-    'apikey': key,
-    'Authorization': 'Bearer ' + key
-  }
-})
-.then(r => r.json())
-.then(d => console.log(JSON.stringify(d, null, 2)))
-.catch(console.error);
+async function test() {
+  const { data, error } = await supabase.from('config_periodos').insert({
+    activo: true, 
+    tipo_ciclo: 'bimestre', 
+    fecha_inicio_ciclo: '2026-08-20', 
+    duracion_ciclo_semanas: 40, 
+    num_parciales_por_periodo: 2, 
+    duracion_parcial_semanas: 4
+  }).select();
+  console.log('Config Insert:', error || data);
+}
+test();

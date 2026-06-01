@@ -1,5 +1,44 @@
 // Shared Logic for SEP Dashboard
 
+// Global Toast Notification System
+window.showToast = function(message, type = 'success') {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        document.body.appendChild(container);
+    }
+    
+    const toast = document.createElement('div');
+    toast.className = `toast-message toast-${type}`;
+    
+    let iconSvg = '';
+    if (type === 'success') {
+        iconSvg = `<svg class="w-5 h-5 toast-icon p-1 rounded-full" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+    } else if (type === 'error') {
+        iconSvg = `<svg class="w-5 h-5 toast-icon p-1 rounded-full" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+    } else {
+        iconSvg = `<svg class="w-5 h-5 toast-icon p-1 rounded-full" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
+    }
+    
+    toast.innerHTML = `
+        ${iconSvg}
+        <span class="text-sm font-bold text-gray-800">${message}</span>
+    `;
+    
+    container.appendChild(toast);
+    
+    // Animate in
+    setTimeout(() => toast.classList.add('show'), 10);
+    
+    // Animate out and remove
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 400);
+    }, 3000);
+};
+
+
 document.addEventListener("DOMContentLoaded", () => {
     console.log("SEP Dashboard Logic Initialized");
     
@@ -43,7 +82,39 @@ document.addEventListener("DOMContentLoaded", () => {
        }
     });
 
-    // 2. Dynamic Premium Chart Rendering
+    // 4.3: Swipe gestures for mobile sidebar
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let isSwiping = false;
+
+    document.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      isSwiping = true;
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+      if (!isSwiping || !sidebar) return;
+      isSwiping = false;
+      const touchEndX = e.changedTouches[0].clientX;
+      const touchEndY = e.changedTouches[0].clientY;
+      const diffX = touchEndX - touchStartX;
+      const diffY = Math.abs(touchEndY - touchStartY);
+      
+      // Only trigger if horizontal swipe is dominant and > 60px
+      if (Math.abs(diffX) > 60 && diffX > diffY) {
+        const sidebarOpen = !sidebar.classList.contains('-translate-x-full');
+        if (diffX > 0 && !sidebarOpen && touchStartX < 40) {
+          // Swipe right from left edge → open
+          toggleSidebar();
+        } else if (diffX < 0 && sidebarOpen) {
+          // Swipe left → close
+          toggleSidebar();
+        }
+      }
+    }, { passive: true });
+
+    // 2. Dynamic Premium Chart Rendering (3.2: real chart with Supabase data)
     const canvas = document.getElementById('attendanceChart');
     if (canvas) {
       console.log("Attendance Chart Canvas detected, rendering...");
@@ -54,18 +125,142 @@ document.addEventListener("DOMContentLoaded", () => {
         renderChart();
       };
 
+      let chartData = null;
+
+      // Load real data from the last 7 days
+      async function loadChartData() {
+        try {
+          const { supabase } = await import('./api-client.js');
+          const days = [];
+          for (let i = 6; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            // Skip weekends
+            if (d.getDay() === 0 || d.getDay() === 6) continue;
+            days.push(d.toISOString().split('T')[0]);
+          }
+
+          const { data } = await supabase
+            .from('asistencias')
+            .select('date, status')
+            .in('date', days);
+
+          const grouped = {};
+          days.forEach(d => grouped[d] = { presentes: 0, retardos: 0, faltas: 0 });
+          if (data) {
+            data.forEach(r => {
+              if (!grouped[r.date]) return;
+              if (r.status === 'A tiempo') grouped[r.date].presentes++;
+              else if (r.status === 'Retardo') grouped[r.date].retardos++;
+              else if (r.status === 'Falta') grouped[r.date].faltas++;
+            });
+          }
+
+          chartData = days.map(d => ({
+            label: new Date(d + 'T12:00:00').toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric' }),
+            ...grouped[d]
+          }));
+          renderChart();
+        } catch (e) {
+          console.warn('Error loading chart data:', e);
+        }
+      }
+
       const renderChart = () => {
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        ctx.font = "bold 14px sans-serif";
-        ctx.fillStyle = "#cbd5e1";
-        ctx.textAlign = "center";
-        ctx.fillText("Sin datos suficientes en DB para graficar tendencia", canvas.width/2, canvas.height/2);
+
+        if (!chartData || chartData.length === 0) {
+          ctx.font = "bold 14px sans-serif";
+          ctx.fillStyle = "#cbd5e1";
+          ctx.textAlign = "center";
+          ctx.fillText("Cargando datos de asistencia...", canvas.width / 2, canvas.height / 2);
+          return;
+        }
+
+        const padding = { top: 20, right: 20, bottom: 50, left: 50 };
+        const chartW = canvas.width - padding.left - padding.right;
+        const chartH = canvas.height - padding.top - padding.bottom;
+        const barGroupW = chartW / chartData.length;
+        const barW = Math.min(barGroupW * 0.25, 20);
+        const maxVal = Math.max(...chartData.map(d => Math.max(d.presentes + d.retardos + d.faltas, 1)));
+
+        // Grid lines
+        ctx.strokeStyle = '#f1f5f9';
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= 4; i++) {
+          const y = padding.top + (chartH * i / 4);
+          ctx.beginPath();
+          ctx.moveTo(padding.left, y);
+          ctx.lineTo(canvas.width - padding.right, y);
+          ctx.stroke();
+          // Y-axis labels
+          ctx.fillStyle = '#94a3b8';
+          ctx.font = '11px sans-serif';
+          ctx.textAlign = 'right';
+          ctx.fillText(Math.round(maxVal * (4 - i) / 4), padding.left - 8, y + 4);
+        }
+
+        // Bars
+        chartData.forEach((d, i) => {
+          const x = padding.left + i * barGroupW + barGroupW / 2;
+          
+          // Presentes (green)
+          const hP = (d.presentes / maxVal) * chartH;
+          const grad1 = ctx.createLinearGradient(0, padding.top + chartH - hP, 0, padding.top + chartH);
+          grad1.addColorStop(0, '#34d399');
+          grad1.addColorStop(1, '#10b981');
+          ctx.fillStyle = grad1;
+          ctx.beginPath();
+          ctx.roundRect(x - barW * 1.5 - 1, padding.top + chartH - hP, barW, hP, [3, 3, 0, 0]);
+          ctx.fill();
+
+          // Retardos (yellow)
+          const hR = (d.retardos / maxVal) * chartH;
+          const grad2 = ctx.createLinearGradient(0, padding.top + chartH - hR, 0, padding.top + chartH);
+          grad2.addColorStop(0, '#fbbf24');
+          grad2.addColorStop(1, '#f59e0b');
+          ctx.fillStyle = grad2;
+          ctx.beginPath();
+          ctx.roundRect(x - barW / 2, padding.top + chartH - hR, barW, hR, [3, 3, 0, 0]);
+          ctx.fill();
+
+          // Faltas (red)
+          const hF = (d.faltas / maxVal) * chartH;
+          const grad3 = ctx.createLinearGradient(0, padding.top + chartH - hF, 0, padding.top + chartH);
+          grad3.addColorStop(0, '#f87171');
+          grad3.addColorStop(1, '#ef4444');
+          ctx.fillStyle = grad3;
+          ctx.beginPath();
+          ctx.roundRect(x + barW / 2 + 1, padding.top + chartH - hF, barW, hF, [3, 3, 0, 0]);
+          ctx.fill();
+
+          // X-axis labels
+          ctx.fillStyle = '#64748b';
+          ctx.font = 'bold 11px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(d.label, x, padding.top + chartH + 20);
+        });
+
+        // Legend
+        const legendY = canvas.height - 12;
+        const legendX = canvas.width / 2 - 100;
+        [['#10b981', 'Presentes'], ['#f59e0b', 'Retardos'], ['#ef4444', 'Faltas']].forEach(([c, t], i) => {
+          const lx = legendX + i * 80;
+          ctx.fillStyle = c;
+          ctx.beginPath();
+          ctx.roundRect(lx, legendY - 5, 10, 10, 2);
+          ctx.fill();
+          ctx.fillStyle = '#64748b';
+          ctx.font = '10px sans-serif';
+          ctx.textAlign = 'left';
+          ctx.fillText(t, lx + 14, legendY + 4);
+        });
       };
 
       window.addEventListener('resize', resizeCanvas);
       setTimeout(resizeCanvas, 100);
+      loadChartData();
     }
     
     // 3. Login Forms Logic
@@ -243,8 +438,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const success = await deleteAlumno(id);
             if (success) {
                 window.loadStudentsList();
+                if(window.showToast) window.showToast("Alumno eliminado.", "success");
             } else {
-                alert("Error eliminando alumno de la base.");
+                if(window.showToast) window.showToast("Error eliminando alumno de la base.", "error");
             }
         } catch(e) {
             console.error(e);

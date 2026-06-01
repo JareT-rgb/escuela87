@@ -159,12 +159,17 @@
           <div class="bg-white rounded-2xl shadow-soft border border-gray-100 p-6 md:p-8 animate-fade-in-up">
             <div class="flex justify-between items-center mb-6">
               <h3 class="font-extrabold text-gray-800 text-lg font-heading tracking-tight">Parciales Generados</h3>
-              <button id="btn-add-parcial" class="text-sm text-sepBurgundy font-bold hover:underline">
-                + Agregar Parcial Manualmente
-              </button>
+              <div class="flex gap-4">
+                <button id="btn-clear-parciales" class="text-sm text-red-500 font-bold hover:underline">
+                  Limpiar Todos
+                </button>
+                <button id="btn-add-parcial" class="text-sm text-sepBurgundy font-bold hover:underline">
+                  + Agregar Parcial Manualmente
+                </button>
+              </div>
             </div>
             
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto mb-4">
               <table class="w-full text-left text-sm whitespace-nowrap">
                 <thead class="text-gray-400 font-bold text-xs uppercase tracking-wider bg-gray-50 border-y border-gray-100">
                   <tr>
@@ -179,6 +184,11 @@
                   <tr><td colspan="5" class="text-center py-4">Cargando...</td></tr>
                 </tbody>
               </table>
+            </div>
+            <div class="flex justify-end">
+              <button id="btn-save-parciales" class="bg-sepGold hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded-xl transition duration-200">
+                Guardar Cambios
+              </button>
             </div>
           </div>
         </div>
@@ -222,8 +232,125 @@
     import { 
       getConfigPeriodos, saveConfigPeriodos, generarParciales, 
       getParciales, deleteParcial, createParcial,
-      getDiasInhabiles, createDiaInhabil, deleteDiaInhabil
+      getDiasInhabiles, createDiaInhabil, deleteDiaInhabil,
+      deleteAllParciales, updateParciales
     } from '../../assets/js/api-client.js';
+
+    function showToast(message, type = 'success') {
+      const toast = document.createElement('div');
+      toast.className = 'fixed bottom-4 right-4 px-6 py-3 rounded-xl shadow-2xl font-bold text-sm transform transition-all duration-300 translate-y-full opacity-0 z-50 ' + (type === 'error' ? 'bg-red-500 text-white' : 'bg-green-500 text-white');
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.classList.remove('translate-y-full', 'opacity-0'), 10);
+      setTimeout(() => {
+        toast.classList.add('translate-y-full', 'opacity-0');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    function showConfirmModal(message) {
+      return new Promise((resolve) => {
+        const overlay = document.createElement('div');
+        overlay.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4 opacity-0 transition-opacity duration-300';
+        
+        const modal = document.createElement('div');
+        modal.className = 'bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm transform scale-95 transition-transform duration-300';
+        
+        modal.innerHTML = `
+          <h3 class="text-xl font-bold text-sepBurgundy mb-4">Confirmar Acción</h3>
+          <p class="text-gray-600 mb-6 font-medium">${message}</p>
+          <div class="flex justify-end gap-3">
+            <button id="btn-cancelar-modal" class="px-4 py-2 rounded-xl text-gray-600 font-bold hover:bg-gray-100 transition-colors">Cancelar</button>
+            <button id="btn-confirmar-modal" class="px-4 py-2 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition-colors shadow-lg shadow-red-500/30">Confirmar</button>
+          </div>
+        `;
+        
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+        
+        requestAnimationFrame(() => {
+          overlay.classList.remove('opacity-0');
+          modal.classList.remove('scale-95');
+        });
+
+        const close = (result) => {
+          overlay.classList.add('opacity-0');
+          modal.classList.add('scale-95');
+          setTimeout(() => {
+            overlay.remove();
+            resolve(result);
+          }, 300);
+        };
+
+        modal.querySelector('#btn-cancelar-modal').addEventListener('click', () => close(false));
+        modal.querySelector('#btn-confirmar-modal').addEventListener('click', () => close(true));
+      });
+    }
+
+    function showAddParcialModal() {
+      return new Promise((resolve) => {
+        const overlay = document.createElement('div');
+        overlay.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4 opacity-0 transition-opacity duration-300';
+        
+        const modal = document.createElement('div');
+        modal.className = 'bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md transform scale-95 transition-transform duration-300';
+        
+        modal.innerHTML = `
+          <h3 class="text-xl font-bold text-sepBurgundy mb-4">Agregar Parcial Manualmente</h3>
+          <div class="space-y-4 mb-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Nombre del Parcial</label>
+              <input type="text" id="modal-parcial-nombre" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-sepBurgundy focus:border-sepBurgundy" placeholder="Ej. 1er Bimestre - Parcial 1">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Fecha de Inicio</label>
+              <input type="date" id="modal-parcial-inicio" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-sepBurgundy focus:border-sepBurgundy">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Fecha de Fin</label>
+              <input type="date" id="modal-parcial-fin" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-sepBurgundy focus:border-sepBurgundy">
+            </div>
+          </div>
+          <div class="flex justify-end gap-3">
+            <button id="btn-cancelar-add" class="px-4 py-2 rounded-xl text-gray-600 font-bold hover:bg-gray-100 transition-colors">Cancelar</button>
+            <button id="btn-confirmar-add" class="px-4 py-2 bg-sepBurgundy text-white font-bold rounded-xl hover:bg-opacity-90 transition-colors shadow-lg shadow-sepBurgundy/30">Guardar Parcial</button>
+          </div>
+        `;
+        
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+        
+        requestAnimationFrame(() => {
+          overlay.classList.remove('opacity-0');
+          modal.classList.remove('scale-95');
+        });
+
+        const close = (result) => {
+          overlay.classList.add('opacity-0');
+          modal.classList.add('scale-95');
+          setTimeout(() => {
+            overlay.remove();
+            resolve(result);
+          }, 300);
+        };
+
+        modal.querySelector('#btn-cancelar-add').addEventListener('click', () => close(null));
+        modal.querySelector('#btn-confirmar-add').addEventListener('click', () => {
+          const nombre = modal.querySelector('#modal-parcial-nombre').value.trim();
+          const inicio = modal.querySelector('#modal-parcial-inicio').value;
+          const fin = modal.querySelector('#modal-parcial-fin').value;
+          if (!nombre || !inicio || !fin) {
+            showToast('Por favor completa todos los campos', 'error');
+            return;
+          }
+          if (inicio > fin) {
+            showToast('La fecha de inicio no puede ser mayor a la fecha de fin', 'error');
+            return;
+          }
+          close({ nombre, fechaInicio: inicio, fechaFin: fin });
+        });
+      });
+    }
 
     // Tabs logic
     const tabs = ['config', 'parciales', 'inhabiles'];
@@ -283,19 +410,19 @@
         duracion_parcial_semanas: parseInt(document.getElementById('duracion-parcial').value)
       };
       
-      if (!cfg.fecha_inicio_ciclo) return alert('Debes seleccionar una fecha de inicio.');
+      if (!cfg.fecha_inicio_ciclo && cfg.activo) return showToast('Debes seleccionar una fecha de inicio.', 'error');
       
       btnSaveConfig.textContent = 'Guardando...';
       const res = await saveConfigPeriodos(cfg);
       if (res.success) {
-        await generarParciales(cfg);
+        if (cfg.activo) await generarParciales(cfg);
         msgConfig.textContent = 'Configuración guardada y parciales generados.';
-        msgConfig.className = 'text-sm font-bold text-center text-green-600 block';
+        msgConfig.className = 'text-sm font-bold text-center text-green-600 block mt-2';
         btnSaveConfig.classList.remove('animate-pulse', 'ring-4', 'ring-sepGold');
         loadParciales();
       } else {
         msgConfig.textContent = 'Error al guardar.';
-        msgConfig.className = 'text-sm font-bold text-center text-red-600 block';
+        msgConfig.className = 'text-sm font-bold text-center text-red-600 block mt-2';
       }
       setTimeout(function() { msgConfig.classList.add('hidden'); }, 3000);
       btnSaveConfig.textContent = 'Guardar y Generar Parciales';
@@ -305,7 +432,7 @@
     async function loadParciales() {
       const tbody = document.getElementById('parciales-tbody');
       const parciales = await getParciales();
-      if (parciales.length === 0) {
+      if (!parciales || parciales.length === 0) {
         tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-gray-500">No hay parciales generados.</td></tr>';
         return;
       }
@@ -315,10 +442,10 @@
         if (today >= p.fecha_inicio && today <= p.fecha_fin) estado = '<span class="text-green-600 font-bold">En Curso</span>';
         if (today > p.fecha_fin) estado = '<span class="text-sepBurgundy font-bold">Terminado</span>';
         
-        return '<tr class="hover:bg-gray-50">' +
-            '<td class="px-4 py-3 font-semibold text-gray-800">' + p.nombre + '</td>' +
-            '<td class="px-4 py-3">' + p.fecha_inicio + '</td>' +
-            '<td class="px-4 py-3">' + p.fecha_fin + '</td>' +
+        return '<tr class="hover:bg-gray-50" data-id="' + p.id + '">' +
+            '<td class="px-4 py-3"><input type="text" class="border-gray-300 rounded px-2 py-1 w-full text-sm edit-nombre" value="' + p.nombre + '"></td>' +
+            '<td class="px-4 py-3"><input type="date" class="border-gray-300 rounded px-2 py-1 text-sm edit-inicio" value="' + p.fecha_inicio + '"></td>' +
+            '<td class="px-4 py-3"><input type="date" class="border-gray-300 rounded px-2 py-1 text-sm edit-fin" value="' + p.fecha_fin + '"></td>' +
             '<td class="px-4 py-3">' + estado + '</td>' +
             '<td class="px-4 py-3 text-right">' +
               '<button class="delete-parcial-btn text-red-500 hover:text-red-700 hover:underline" data-id="' + p.id + '">Eliminar</button>' +
@@ -328,13 +455,60 @@
       
       document.querySelectorAll('.delete-parcial-btn').forEach(function(btn) {
         btn.addEventListener('click', async function(e) {
-          if (confirm('¿Eliminar parcial?')) {
+          if (await showConfirmModal('¿Estás seguro de eliminar este parcial?')) {
             await deleteParcial(e.target.dataset.id);
             loadParciales();
           }
         });
       });
     }
+
+    document.getElementById('btn-clear-parciales')?.addEventListener('click', async function() {
+      if (await showConfirmModal('¿Estás seguro de eliminar TODOS los parciales? Esta acción no se puede deshacer.')) {
+        await deleteAllParciales();
+        showToast("Todos los parciales eliminados");
+        loadParciales();
+      }
+    });
+
+    document.getElementById('btn-save-parciales')?.addEventListener('click', async function() {
+      const btn = this;
+      const originalText = btn.textContent;
+      btn.textContent = 'Guardando...';
+      
+      const rows = document.querySelectorAll('#parciales-tbody tr[data-id]');
+      const updates = [];
+      let hasError = false;
+      
+      rows.forEach(r => {
+        const id = r.dataset.id;
+        const nombre = r.querySelector('.edit-nombre').value;
+        const inicio = r.querySelector('.edit-inicio').value;
+        const fin = r.querySelector('.edit-fin').value;
+        if(inicio > fin) {
+          hasError = true;
+          r.classList.add('bg-red-100');
+        } else {
+          r.classList.remove('bg-red-100');
+        }
+        updates.push({ id, nombre, fecha_inicio: inicio, fecha_fin: fin });
+      });
+
+      if(hasError) {
+        showToast("Error: Hay fechas de inicio mayores a fechas de fin.", "error");
+        btn.textContent = originalText;
+        return;
+      }
+
+      const res = await updateParciales(updates);
+      if(res.success) {
+        showToast("Parciales actualizados correctamente");
+        loadParciales();
+      } else {
+        showToast("Error al actualizar parciales", "error");
+      }
+      btn.textContent = originalText;
+    });
 
     // Inhabiles logic
     async function loadInhabiles() {
@@ -356,7 +530,7 @@
 
       document.querySelectorAll('.delete-inhabil-btn').forEach(function(btn) {
         btn.addEventListener('click', async function(e) {
-          if (confirm('¿Eliminar día inhábil?')) {
+          if (await showConfirmModal('¿Estás seguro de eliminar este día inhábil?')) {
             await deleteDiaInhabil(e.target.dataset.id);
             loadInhabiles();
           }
@@ -367,7 +541,7 @@
     document.getElementById('btn-add-inhabil').addEventListener('click', async function() {
       const fecha = document.getElementById('inhabil-fecha').value;
       const razon = document.getElementById('inhabil-razon').value;
-      if (!fecha) return alert('Selecciona una fecha');
+      if (!fecha) return showToast('Selecciona una fecha', 'error');
       await createDiaInhabil(fecha, razon);
       document.getElementById('inhabil-fecha').value = '';
       document.getElementById('inhabil-razon').value = '';
@@ -375,23 +549,20 @@
     });
 
     document.getElementById('btn-add-parcial').addEventListener('click', async function() {
-      const nombre = prompt("Nombre del parcial (ej. 1er Bimestre - Parcial 1):");
-      if (!nombre) return;
-      const fechaInicio = prompt("Fecha de inicio (YYYY-MM-DD):");
-      if (!fechaInicio) return;
-      const fechaFin = prompt("Fecha de fin (YYYY-MM-DD):");
-      if (!fechaFin) return;
+      const data = await showAddParcialModal();
+      if (!data) return;
       
       const res = await createParcial({
-        nombre: nombre,
-        fecha_inicio: fechaInicio,
-        fecha_fin: fechaFin,
+        nombre: data.nombre,
+        fecha_inicio: data.fechaInicio,
+        fecha_fin: data.fechaFin,
         activo: true
       });
       if (res.success) {
+        showToast("Parcial agregado correctamente");
         loadParciales();
       } else {
-        alert("Error al crear parcial: " + (res.error || "Desconocido"));
+        showToast("Error al crear parcial: " + (res.error || "Desconocido"), 'error');
       }
     });
 

@@ -12,6 +12,11 @@
   <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
 <body class="bg-sepBeige font-sans text-gray-800 antialiased selection:bg-sepGold selection:text-sepBurgundyDark bg-fixed" >
+
+  <!-- Decorative Background Shapes -->
+  <div class="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-[#691C32]/5 blur-3xl pointer-events-none z-0"></div>
+  <div class="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-[#BC955C]/10 blur-3xl pointer-events-none z-0"></div>
+
   <div class="flex h-screen overflow-hidden relative">
     
     <div id="sidebar-overlay" class="fixed inset-0 bg-sepBurgundyDark/40 backdrop-blur-sm z-30 hidden md:hidden transition-opacity duration-300"></div>
@@ -47,7 +52,7 @@
         <div class="flex items-center space-x-3 group cursor-pointer" onclick="window.location.href='dashboard.html'">
           <div class="w-10 h-10 rounded-full bg-gradient-to-br from-sepGold to-yellow-600 flex items-center justify-center text-white font-bold shadow-md group-hover:shadow-glow transition-all duration-300">P</div>
           <div class="overflow-hidden">
-            <p id="sidebar-name" class="text-sm font-bold truncate text-white group-hover:text-sepGold transition-colors font-heading tracking-wide">Cargando...</p>
+            <p id="sidebar-name" class="text-sm font-bold truncate text-white group-hover:text-sepGold transition-colors font-heading tracking-wide" class="skeleton text-transparent">Cargando...</p>
             <p id="sidebar-role" class="text-xs text-white/50 font-medium">Prefecto</p>
           </div>
         </div>
@@ -74,7 +79,7 @@
       </header>
 
       <div class="p-6 md:p-10 max-w-4xl mx-auto w-full">
-        <section class="bg-white rounded-3xl p-8 border border-gray-100 shadow-soft">
+        <section class="glass-panel rounded-3xl p-8 border border-gray-100 shadow-soft">
            <div class="flex items-center mb-8 border-b border-gray-100 pb-6">
              <div class="w-12 h-12 bg-red-100 text-red-600 rounded-xl flex items-center justify-center mr-4">
                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
@@ -116,7 +121,71 @@
            </form>
         </section>
       </div>
-    </main>
+    
+      <section class="max-w-7xl mx-auto w-full p-6 md:p-10 pt-0">
+        <div class="bg-white rounded-2xl shadow-soft border border-gray-100 p-6 md:p-8 animate-fade-in-up">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 border-b border-gray-100 pb-4">
+            <div>
+              <h3 class="font-extrabold text-gray-800 text-lg md:text-xl font-heading tracking-tight">Exportación de Listas de Asistencia</h3>
+              <p class="text-sm text-gray-500 font-medium mt-1">Generar sábanas de asistencia por semana o mes.</p>
+            </div>
+          </div>
+          
+          <div class="flex flex-col md:flex-row gap-4 mb-6">
+             <div class="flex-1">
+               <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Periodo</label>
+               <select id="report-period" class="w-full border-gray-200 bg-gray-50 rounded-xl text-sm font-semibold text-gray-700 focus:ring-sepBurgundy px-4 py-3">
+                 <option value="semana">Semana Actual</option>
+                 <option value="mes">Mes Actual</option>
+               </select>
+             </div>
+             <div class="flex-1">
+               <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Grado</label>
+               <select id="report-grado" class="w-full border-gray-200 bg-gray-50 rounded-xl text-sm font-semibold text-gray-700 px-4 py-3">
+                 <option value="1">1° Grado</option>
+                 <option value="2">2° Grado</option>
+                 <option value="3">3° Grado</option>
+                 <option value="4">4° Grado</option>
+                 <option value="5">5° Grado</option>
+                 <option value="6">6° Grado</option>
+               </select>
+             </div>
+             <div class="flex-1">
+               <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Grupo</label>
+               <select id="report-grupo" class="w-full border-gray-200 bg-gray-50 rounded-xl text-sm font-semibold text-gray-700 px-4 py-3">
+                 <option value="A">A</option>
+                 <option value="B">B</option>
+                 <option value="C">C</option>
+                 <option value="D">D</option>
+               </select>
+             </div>
+             <div class="flex items-end">
+               <button id="btn-generar-sabana" class="w-full md:w-auto bg-sepBurgundy hover:bg-sepBurgundyDark text-white px-6 py-3 rounded-xl text-sm font-bold transition-all shadow-md">Generar Vista</button>
+             </div>
+          </div>
+          
+          <div class="overflow-x-auto border border-gray-100 rounded-xl mb-6">
+            <table class="w-full text-left text-sm whitespace-nowrap min-w-[600px]">
+              <thead id="sabana-thead" class="text-gray-400 font-bold text-xs uppercase tracking-wider bg-gray-50 border-b border-gray-100">
+                <tr><th class="px-4 py-3">Alumno</th><th class="px-4 py-3">Días...</th></tr>
+              </thead>
+              <tbody id="sabana-tbody" class="divide-y divide-gray-50">
+                <tr><td colspan="2" class="text-center py-8 text-gray-400 font-medium">Seleccione los filtros para generar la tabla.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="flex gap-4 justify-end">
+             <button id="btn-exportar-csv" class="hidden bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-sm transition-all flex items-center gap-2">
+               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+               Exportar Excel (CSV)
+             </button>
+             
+          </div>
+        </div>
+      </section>
+      </main>
+    
   </div>
 
   <script src="../../assets/js/main.js"></script>
@@ -129,5 +198,125 @@
       }
     });
   </script>
-</body>
+
+    <script>
+      let currentSabanaData = null;
+      let currentFechas = [];
+      
+      document.getElementById('btn-generar-sabana')?.addEventListener('click', async () => {
+         const btn = document.getElementById('btn-generar-sabana');
+         btn.textContent = "Generando...";
+         
+         const periodo = document.getElementById('report-period').value;
+         const grado = document.getElementById('report-grado').value;
+         const grupo = document.getElementById('report-grupo').value;
+         
+         let startDate = new Date();
+         let endDate = new Date();
+         
+         if (periodo === 'semana') {
+            // Lunes de la semana actual a Viernes
+            const day = startDate.getDay() || 7; 
+            if(day !== 1) startDate.setHours(-24 * (day - 1));
+            endDate = new Date(startDate);
+            endDate.setHours(24 * 4); // Viernes
+         } else {
+            // Primer y ultimo dia del mes
+            startDate = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+            endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0);
+         }
+         
+         const sStr = startDate.toISOString().split('T')[0];
+         const eStr = endDate.toISOString().split('T')[0];
+         
+         // Generate array of dates
+         currentFechas = [];
+         let curr = new Date(startDate);
+         while (curr <= endDate) {
+            const d = curr.getDay();
+            if(d !== 0 && d !== 6) { // Solo Lunes-Viernes
+                currentFechas.push(curr.toISOString().split('T')[0]);
+            }
+            curr.setDate(curr.getDate() + 1);
+         }
+         
+         const tbody = document.getElementById('sabana-tbody');
+         const thead = document.getElementById('sabana-thead');
+         tbody.innerHTML = '<tr><td colspan="10" class="text-center py-8 text-gray-400">Descargando registros...</td></tr>';
+         
+         try {
+             const { getAttendanceByDateRange } = await import('../../assets/js/api-client.js');
+             const { students, asistencias } = await getAttendanceByDateRange(sStr, eStr, grado, grupo);
+             
+             if (!students || students.length === 0) {
+                 tbody.innerHTML = '<tr><td colspan="10" class="text-center py-8 text-red-400">No hay alumnos en este grupo.</td></tr>';
+                 btn.textContent = "Generar Vista";
+                 return;
+             }
+             
+             // Map attendance
+             const asisMap = {};
+             asistencias.forEach(a => {
+                if(!asisMap[a.student_id]) asisMap[a.student_id] = {};
+                asisMap[a.student_id][a.date] = a;
+             });
+             
+             // Thead
+             thead.innerHTML = '<tr><th class="px-4 py-3">Nombre</th>' + 
+               currentFechas.map(f => `<th class="px-2 py-3 text-center">${f.substring(8,10)}/${f.substring(5,7)}</th>`).join('') +
+               '</tr>';
+               
+             // Tbody
+             tbody.innerHTML = students.map(s => {
+                let row = `<tr class="hover:bg-gray-50 border-b"><td class="px-4 py-3 font-semibold text-xs truncate max-w-[200px]">${s.nombre_completo}</td>`;
+                currentFechas.forEach(f => {
+                   const record = asisMap[s.id] && asisMap[s.id][f];
+                   let stat = record ? record.status : 'Falta';
+                   let icon = '';
+                   if(stat === 'A tiempo') icon = '<span class="text-green-500 font-bold">✔</span>';
+                   else if(stat === 'Retardo') icon = '<span class="text-yellow-500 font-bold">R</span>';
+                   else icon = '<span class="text-red-500 font-bold">✖</span>';
+                   
+                   row += `<td class="px-2 py-3 text-center">${icon}</td>`;
+                });
+                row += '</tr>';
+                return row;
+             }).join('');
+             
+             currentSabanaData = { students, asisMap, currentFechas, grado, grupo, periodo };
+             
+             document.getElementById('btn-exportar-csv').classList.remove('hidden');
+             
+             
+         } catch(e) {
+             tbody.innerHTML = '<tr><td colspan="10" class="text-center py-8 text-red-400">Error al cargar.</td></tr>';
+         }
+         btn.textContent = "Generar Vista";
+      });
+      
+      document.getElementById('btn-exportar-csv')?.addEventListener('click', () => {
+         if(!currentSabanaData) return;
+         let csv = 'Nombre,';
+         csv += currentSabanaData.currentFechas.join(',') + '\n';
+         
+         currentSabanaData.students.forEach(s => {
+            let row = `"${s.nombre_completo}",`;
+            currentSabanaData.currentFechas.forEach(f => {
+               const record = currentSabanaData.asisMap[s.id] && currentSabanaData.asisMap[s.id][f];
+               row += (record ? record.status : 'Falta') + ',';
+            });
+            csv += row + '\n';
+         });
+         
+         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+         const url = URL.createObjectURL(blob);
+         const a = document.createElement('a');
+         a.href = url;
+         a.download = `Asistencias_${currentSabanaData.grado}_${currentSabanaData.grupo}_${currentSabanaData.periodo}.csv`;
+         a.click();
+      });
+      
+      
+    </script>
+    </body>
 </html>

@@ -12,6 +12,11 @@
   <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
 <body class="bg-sepBeige font-sans text-gray-800 antialiased selection:bg-sepGold selection:text-sepBurgundyDark bg-fixed" >
+
+  <!-- Decorative Background Shapes -->
+  <div class="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-[#691C32]/5 blur-3xl pointer-events-none z-0"></div>
+  <div class="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-[#BC955C]/10 blur-3xl pointer-events-none z-0"></div>
+
   <div class="flex h-screen overflow-hidden relative">
     
     <div id="sidebar-overlay" class="fixed inset-0 bg-sepBurgundyDark/40 backdrop-blur-sm z-30 hidden md:hidden transition-opacity duration-300"></div>
@@ -52,7 +57,7 @@
         <div class="flex items-center space-x-3 group cursor-pointer" onclick="window.location.href='dashboard.html'">
           <div class="w-10 h-10 rounded-full bg-gradient-to-br from-sepGold to-yellow-600 flex items-center justify-center text-white font-bold shadow-md group-hover:shadow-glow transition-all duration-300">T</div>
           <div class="overflow-hidden">
-            <p id="sidebar-name" class="text-sm font-bold truncate text-white group-hover:text-sepGold transition-colors font-heading tracking-wide">Cargando...</p>
+            <p id="sidebar-name" class="text-sm font-bold truncate text-white group-hover:text-sepGold transition-colors font-heading tracking-wide" class="skeleton text-transparent">Cargando...</p>
             <p id="sidebar-role" class="text-xs text-white/50 font-medium">Tutor Asignado</p>
           </div>
         </div>
@@ -74,7 +79,7 @@
 
       <div class="p-6 md:p-10 space-y-8 max-w-7xl mx-auto w-full">
         <!-- Student Directory Table -->
-        <section class="bg-white rounded-3xl shadow-soft border border-gray-100 overflow-hidden flex flex-col">
+        <section class="glass-panel rounded-3xl shadow-soft border border-gray-100 overflow-hidden flex flex-col">
            <div class="bg-sepGreen px-6 py-5 border-b border-sepGreenDark/20 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
               <h3 class="font-extrabold text-white tracking-wide text-base md:text-lg font-heading flex items-center">
                 <svg class="w-5 h-5 mr-2 text-sepGold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>

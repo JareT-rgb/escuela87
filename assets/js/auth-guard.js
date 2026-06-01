@@ -23,7 +23,7 @@ export function checkAuth(requiredRoles = []) {
         
         // Si hay roles requeridos y el tipo no está, denegar
         if (requiredRoles.length > 0 && !requiredRoles.includes(session.tipo)) {
-            alert('Acceso denegado: No tienes permisos para esta área.');
+            if(window.showToast) { window.showToast('Acceso denegado: No tienes permisos para esta área.', 'error'); } else { alert('Acceso denegado: No tienes permisos para esta área.'); }
             window.location.replace(loginUrl);
             return null;
         }

@@ -51,6 +51,10 @@
           <svg class="h-5 w-5 group-hover:text-sepGold transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
           <span class="font-medium tracking-wide">Reportes</span>
         </a>
+        <a class="flex items-center space-x-3 p-3.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 hover:translate-x-1 transition-all duration-300 group" href="grupos.html">
+          <svg class="h-5 w-5 group-hover:text-sepGold transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+          <span class="font-medium tracking-wide">Gestión de Grupos</span>
+        </a>
         <a class="flex items-center space-x-3 p-3.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 hover:translate-x-1 transition-all duration-300 group" href="asistencias.html">
           <svg class="h-5 w-5 group-hover:text-sepGold transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
           <span class="font-medium tracking-wide">Asistencia y Acceso</span>
@@ -59,6 +63,15 @@
           <div class="absolute inset-0 bg-white/5 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
           <svg class="h-5 w-5 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
           <span class="font-semibold relative z-10 font-heading tracking-wide">Búsqueda Alumnos</span>
+        </a>
+        <a class="flex items-center space-x-3 p-3.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 hover:translate-x-1 transition-all duration-300 group"
+          href="periodos.html">
+          <svg class="h-5 w-5 group-hover:text-sepGold transition-colors" fill="none" stroke="currentColor"
+            viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+          <span class="font-medium tracking-wide">Periodos Académicos</span>
         </a>
       </nav>
 
@@ -111,10 +124,7 @@
             <button class="bg-gradient-to-r from-sepBurgundy to-sepBurgundyLight text-white px-8 py-3 rounded-xl text-sm font-bold shadow-md shadow-sepBurgundy/20 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
               Buscar
             </button>
-            <button id="btn-nuevo-alumno" class="bg-gradient-to-r from-sepGold to-yellow-600 text-white px-8 py-3 rounded-xl text-sm font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center whitespace-nowrap">
-              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-              Nuevo Alumno
-            </button>
+            
           </div>
           
           <div class="mt-6 flex flex-wrap gap-2 items-center">
@@ -139,52 +149,6 @@
     </main>
   </div>
 
-  <!-- MODAL NUEVO ALUMNO -->
-  <div id="new-student-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden transform transition-all animate-fade-in-up">
-      <div class="bg-gradient-to-r from-sepGreenDark to-sepGreen px-6 py-5 flex justify-between items-center relative">
-        <h3 class="text-lg font-bold text-white relative z-10 flex items-center font-heading">
-          <svg class="w-5 h-5 mr-2 text-sepGold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
-          Registrar Nuevo Alumno
-        </h3>
-        <button id="close-new-student-btn" class="text-white/50 hover:text-white transition-colors relative z-10">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
-      </div>
-      <div class="p-6 md:p-8 space-y-4">
-        <div>
-           <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Nombre Completo</label>
-           <input type="text" id="new-nombre" class="w-full text-sm border-gray-200 rounded-xl focus:ring-sepGreen focus:border-sepGreen py-3 px-4 shadow-sm bg-white" placeholder="Ej. Pérez García, Juan">
-        </div>
-        <div>
-           <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Matrícula o CURP</label>
-           <input type="text" id="new-matricula" class="w-full text-sm border-gray-200 rounded-xl focus:ring-sepGreen focus:border-sepGreen py-3 px-4 shadow-sm bg-white" placeholder="Ej. MAT-12345">
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Grado</label>
-            <select id="new-grado" class="w-full text-sm border-gray-200 rounded-xl focus:ring-sepGreen focus:border-sepGreen py-3 px-4 shadow-sm bg-white font-bold text-gray-700">
-              <option value="1°">1°</option>
-              <option value="2°">2°</option>
-              <option value="3°">3°</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Grupo</label>
-            <input type="text" id="new-grupo" class="w-full text-sm border-gray-200 rounded-xl focus:ring-sepGreen focus:border-sepGreen py-3 px-4 shadow-sm bg-white" placeholder="Ej. A">
-          </div>
-        </div>
-      </div>
-      
-      <div class="bg-gray-50 px-6 py-5 border-t border-gray-100 flex justify-end gap-3">
-         <button id="cancel-new-student-btn" class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-200 transition-colors">Cancelar</button>
-         <button id="save-new-student-btn" class="bg-sepGreenDark hover:bg-sepGreen text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-2">
-            Guardar y Generar QR
-         </button>
-      </div>
-    </div>
-  </div>
-
   <!-- MODAL MOSTRAR QR -->
   <div id="qr-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden transform transition-all animate-fade-in-up text-center relative p-8">
@@ -196,7 +160,7 @@
       
       <div id="qrcode-container" class="mx-auto flex justify-center bg-white p-4 rounded-xl border-2 border-gray-100 inline-block shadow-sm"></div>
       
-      <p class="text-xs text-gray-400 mt-6 max-w-xs mx-auto">Este código es único e irrepetible. Por favor imprímelo o guárdalo en tu dispositivo para registrar asistencias.</p>
+      <p class="text-xs text-gray-400 mt-6 max-w-xs mx-auto">Este código es único e irrepetible. Por favor imprímelo o guárDalo en tu dispositivo para registrar asistencias.</p>
       
       <button id="download-qr-btn" class="mt-6 w-full bg-sepGold hover:bg-yellow-600 text-white font-bold py-3 px-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
@@ -209,7 +173,7 @@
   <div id="report-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden transform transition-all animate-fade-in-up">
       <div class="bg-gradient-to-r from-sepBurgundy to-sepBurgundyLight px-6 py-5 flex justify-between items-center relative">
-        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')] opacity-30"></div>
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDíawL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')] opacity-30"></div>
         <h3 class="text-lg font-bold text-white relative z-10 flex items-center font-heading">
           <svg class="w-5 h-5 mr-2 text-sepGold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
           Nuevo Reporte Disciplinario
@@ -238,7 +202,7 @@
           </div>
           
           <div>
-            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Descripción Detallada / Motivo</label>
+            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Descripción DetallaDía / Motivo</label>
             <textarea id="modal-report-desc" rows="4" class="w-full text-sm border-gray-200 rounded-xl focus:ring-sepBurgundy focus:border-sepBurgundy py-3 px-4 shadow-sm bg-white resize-none" placeholder="Especifique con detalle lo sucedido o el motivo del citatorio..."></textarea>
           </div>
 
@@ -285,12 +249,20 @@
           <h3 class="font-extrabold text-gray-800 text-lg leading-tight mb-2">${s.nombre_completo}</h3>
           <p class="text-sm text-gray-500 flex justify-between"><span class="font-bold">Grado/Grupo:</span> <span class="bg-gray-100 px-2 rounded">${s.grado || '?'} ${s.grupo || ''}</span></p>
           <p class="text-sm text-gray-500 mt-1 flex justify-between"><span class="font-bold">Matrícula:</span> <span>${s.matricula || '---'}</span></p>
-          <button
-            class="mt-5 w-full border border-red-200 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white font-bold py-2 rounded-xl text-xs uppercase tracking-widest transition-colors open-report-modal"
-            data-id="${s.id}"
-            data-name="${s.nombre_completo}">
-            Levantar Reporte
-          </button>
+          <div class="mt-5 flex gap-2">
+            <button
+              class="flex-1 border border-sepGold bg-yellow-50 text-yellow-700 hover:bg-sepGold hover:text-white font-bold py-2 rounded-xl text-[10px] sm:text-xs uppercase tracking-widest transition-colors open-qr-modal"
+              data-name="${s.nombre_completo}"
+              data-qr="${s.codigo_acceso || ''}">
+              Ver QR
+            </button>
+            <button
+              class="flex-1 border border-red-200 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white font-bold py-2 rounded-xl text-[10px] sm:text-xs uppercase tracking-widest transition-colors open-report-modal"
+              data-id="${s.id}"
+              data-name="${s.nombre_completo}">
+              Reporte
+            </button>
+          </div>
         </div>
       `).join('');
     }
@@ -311,11 +283,216 @@
     const modal = document.getElementById('report-modal');
 
     container.addEventListener('click', e => {
-      const btn = e.target.closest('.open-report-modal');
-      if (!btn) return;
-      document.getElementById('modal-student-id').value = btn.dataset.id;
-      document.getElementById('modal-student-name').textContent = btn.dataset.name;
-      modal.classList.remove('hidden');
+      const btnReport = e.target.closest('.open-report-modal');
+      if (btnReport) {
+        document.getElementById('modal-student-id').value = btnReport.dataset.id;
+        document.getElementById('modal-student-name').textContent = btnReport.dataset.name;
+        modal.classList.remove('hidden');
+        return;
+      }
+      
+      const btnQr = e.target.closest('.open-qr-modal');
+      if (btnQr) {
+        const qrCode = btnQr.dataset.qr;
+        if (!qrCode) { alert('Este alumno no tiene código QR registrado.'); return; }
+        showQRModal(btnQr.dataset.name, qrCode);
+        return;
+      }
+    });
+
+    const closeModal = () => {
+      modal.classList.add('hidden');
+      document.getElementById('modal-report-desc').value = '';
+      document.getElementById('modal-report-author').value = '';
+    };
+
+    document.getElementById('close-modal-btn').addEventListener('click', closeModal);
+    document.getElementById('cancel-report-btn').addEventListener('click', closeModal);
+    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); }); // click outside
+
+    document.getElementById('save-report-btn').addEventListener('click', async () => {
+      const studentId = document.getElementById('modal-student-id').value;
+      const tipo      = document.getElementById('modal-report-type').value;
+      const desc      = document.getElementById('modal-report-desc').value.trim();
+      const autor     = document.getElementById('modal-report-author').value.trim() || 'Prefectura/Dirección';
+            </div>
+            <button class="bg-gradient-to-r from-sepBurgundy to-sepBurgundyLight text-white px-8 py-3 rounded-xl text-sm font-bold shadow-md shadow-sepBurgundy/20 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+              Buscar
+            </button>
+            
+          </div>
+          
+          <div class="mt-6 flex flex-wrap gap-2 items-center">
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider mr-2">Filtros rápidos:</span>
+            <span class="px-3 py-1.5 bg-gray-100/80 text-gray-600 rounded-lg text-xs font-semibold cursor-pointer hover:bg-gray-200 hover:text-gray-800 transition-colors">1° Grado</span>
+            <span class="px-3 py-1.5 bg-gray-100/80 text-gray-600 rounded-lg text-xs font-semibold cursor-pointer hover:bg-gray-200 hover:text-gray-800 transition-colors">2° Grado</span>
+            <span class="px-3 py-1.5 bg-gray-100/80 text-gray-600 rounded-lg text-xs font-semibold cursor-pointer hover:bg-gray-200 hover:text-gray-800 transition-colors">3° Grado</span>
+            <span class="px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-xs font-bold border border-red-100 cursor-pointer hover:bg-red-100 transition-colors shadow-sm">Con Riesgo Académico</span>
+            <span class="px-3 py-1.5 bg-yellow-50 text-yellow-700 rounded-lg text-xs font-bold border border-yellow-200 cursor-pointer hover:bg-yellow-100 transition-colors shadow-sm">Reportes Disciplinarios</span>
+          </div>
+        </section>
+
+        <!-- Contenedor Principal de Resultados -->
+        <div id="search-results-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-up mt-8">
+          <!-- Empieza limpio como solicitó el usuario -->
+          <div class="col-span-full py-12 flex flex-col items-center justify-center text-gray-400 opacity-60">
+            <svg class="w-20 h-20 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <p class="text-lg font-bold">Ingresa los datos para buscar o selecciona un filtro superior.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL MOSTRAR QR -->
+  <div id="qr-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden transform transition-all animate-fade-in-up text-center relative p-8">
+      <button id="close-qr-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 transition-colors">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+      <h3 class="text-xl font-bold text-gray-800 mb-2 font-heading">Código de Acceso</h3>
+      <p id="qr-student-name" class="text-sm font-medium text-gray-500 mb-6 uppercase tracking-wider">---</p>
+      
+      <div id="qrcode-container" class="mx-auto flex justify-center bg-white p-4 rounded-xl border-2 border-gray-100 inline-block shadow-sm"></div>
+      
+      <p class="text-xs text-gray-400 mt-6 max-w-xs mx-auto">Este código es único e irrepetible. Por favor imprímelo o guárDalo en tu dispositivo para registrar asistencias.</p>
+      
+      <button id="download-qr-btn" class="mt-6 w-full bg-sepGold hover:bg-yellow-600 text-white font-bold py-3 px-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+        Descargar Imagen QR
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL DE REPORTES Y CITATORIOS -->
+  <div id="report-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden transform transition-all animate-fade-in-up">
+      <div class="bg-gradient-to-r from-sepBurgundy to-sepBurgundyLight px-6 py-5 flex justify-between items-center relative">
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDíawL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')] opacity-30"></div>
+        <h3 class="text-lg font-bold text-white relative z-10 flex items-center font-heading">
+          <svg class="w-5 h-5 mr-2 text-sepGold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+          Nuevo Reporte Disciplinario
+        </h3>
+        <button id="close-modal-btn" class="text-white/50 hover:text-white transition-colors relative z-10">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <div class="p-6 md:p-8">
+        <div class="mb-5 bg-gray-50 border border-gray-100 p-4 rounded-xl flex items-center justify-between">
+           <span class="text-xs font-bold text-gray-400 uppercase">Alumno Involucrado:</span>
+           <span id="modal-student-name" class="font-bold text-gray-800 font-heading">---</span>
+        </div>
+        
+        <div class="space-y-5">
+          <input type="hidden" id="modal-student-id">
+          
+          <div>
+            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Clasificación del Reporte</label>
+            <select id="modal-report-type" class="w-full text-sm border-gray-200 rounded-xl focus:ring-sepBurgundy focus:border-sepBurgundy py-3 px-4 shadow-sm bg-white font-bold text-gray-700">
+              <option value="Citatorio a Tutor">Citatorio a Tutor</option>
+              <option value="Indisciplina en Aula">Indisciplina en Aula</option>
+              <option value="Faltas y Retardos Reiterados">Faltas Reiteradas / Rezago</option>
+              <option value="Agresión o Problemas Conductuales">Problemas Conductuales Mayores</option>
+            </select>
+          </div>
+          
+          <div>
+            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Descripción DetallaDía / Motivo</label>
+            <textarea id="modal-report-desc" rows="4" class="w-full text-sm border-gray-200 rounded-xl focus:ring-sepBurgundy focus:border-sepBurgundy py-3 px-4 shadow-sm bg-white resize-none" placeholder="Especifique con detalle lo sucedido o el motivo del citatorio..."></textarea>
+          </div>
+
+          <div>
+             <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Firma del Formato (Su Nombre/Cargo)</label>
+             <input type="text" id="modal-report-author" class="w-full text-sm border-gray-200 rounded-xl focus:ring-sepBurgundy focus:border-sepBurgundy py-3 px-4 shadow-sm bg-white" placeholder="Ej. Prof. García (Matemáticas)">
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-gray-50 px-6 py-5 border-t border-gray-100 flex justify-end gap-3">
+         <button id="cancel-report-btn" class="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-200 transition-colors">Cancelar</button>
+         <button id="save-report-btn" class="bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-2">
+            Generar Expediente
+         </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/js/main.js"></script>
+  <script type="module">
+    import { searchStudents, createReporteDisciplina, supabase } from '../../assets/js/api-client.js';
+
+    const container = document.getElementById('search-results-container');
+    const searchInput = document.querySelector('input[placeholder*="Ingresa nombre"]');
+    const searchBtn = document.querySelector('button.bg-gradient-to-r');
+
+    // ── Render results from API ──────────────────────────────────────────────
+    async function renderResults(q = '', grado = '') {
+      container.innerHTML = `<div class="col-span-full py-12 text-center text-gray-400 font-bold">Buscando en la base de datos...</div>`;
+      const results = await searchStudents(q, grado, '');
+
+      if (results.length === 0) {
+        container.innerHTML = `<div class="col-span-full py-12 text-center text-gray-400">
+          <svg class="w-16 h-16 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <p class="font-bold">No se encontraron resultados.</p>
+        </div>`;
+        return;
+      }
+
+      container.innerHTML = results.map(s => `
+        <div class="bg-white rounded-2xl shadow-soft border border-gray-100 p-6 flex flex-col hover:border-sepBurgundy/30 transition-colors">
+          <div class="w-12 h-12 bg-sepBurgundy/10 text-sepBurgundy rounded-full flex items-center justify-center font-bold text-xl mb-4 font-heading">${s.nombre_completo.substring(0,2).toUpperCase()}</div>
+          <h3 class="font-extrabold text-gray-800 text-lg leading-tight mb-2">${s.nombre_completo}</h3>
+          <p class="text-sm text-gray-500 flex justify-between"><span class="font-bold">Grado/Grupo:</span> <span class="bg-gray-100 px-2 rounded">${s.grado || '?'} ${s.grupo || ''}</span></p>
+          <p class="text-sm text-gray-500 mt-1 flex justify-between"><span class="font-bold">Matrícula:</span> <span>${s.matricula || '---'}</span></p>
+          <div class="mt-5 flex gap-2">
+            <button
+              class="flex-1 border border-sepGold bg-yellow-50 text-yellow-700 hover:bg-sepGold hover:text-white font-bold py-2 rounded-xl text-[10px] sm:text-xs uppercase tracking-widest transition-colors open-qr-modal"
+              data-name="${s.nombre_completo}"
+              data-qr="${s.codigo_acceso || ''}">
+              Ver QR
+            </button>
+            <button
+              class="flex-1 border border-red-200 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white font-bold py-2 rounded-xl text-[10px] sm:text-xs uppercase tracking-widest transition-colors open-report-modal"
+              data-id="${s.id}"
+              data-name="${s.nombre_completo}">
+              Reporte
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ── Search button events ─────────────────────────────────────────────────
+    if (searchBtn) searchBtn.addEventListener('click', () => renderResults(searchInput.value.trim(), ''));
+    if (searchInput) searchInput.addEventListener('keypress', e => { if (e.key === 'Enter') renderResults(searchInput.value.trim(), ''); });
+
+    // ── QUICK FILTER BUTTONS ─────────────────────────────────────────────────
+    document.querySelectorAll('.mt-6 span.cursor-pointer').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const txt = btn.textContent.trim();
+        if (txt.includes('Grado')) renderResults('', txt.split('°')[0].trim());
+      });
+    });
+
+    // ── MODAL: event delegation on container (works even after innerHTML refresh)
+    const modal = document.getElementById('report-modal');
+
+    container.addEventListener('click', e => {
+      const btnReport = e.target.closest('.open-report-modal');
+      if (btnReport) {
+        document.getElementById('modal-student-id').value = btnReport.dataset.id;
+        document.getElementById('modal-student-name').textContent = btnReport.dataset.name;
+        modal.classList.remove('hidden');
+        return;
+      }
+      
+      const btnQr = e.target.closest('.open-qr-modal');
+      if (btnQr) {
+        const qrCode = btnQr.dataset.qr;
+        if (!qrCode) { alert('Este alumno no tiene código QR registrado.'); return; }
+        showQRModal(btnQr.dataset.name, qrCode);
+        return;
+      }
     });
 
     const closeModal = () => {
@@ -356,65 +533,8 @@
       }
     });
 
-    // ── NUEVO ALUMNO LOGIC ───────────────────────────────────────────────────
-    const newStudentModal = document.getElementById('new-student-modal');
-    const qrModal = document.getElementById('qr-modal');
-
-    const closeNewStudentModal = () => {
-      newStudentModal.classList.add('hidden');
-      document.getElementById('new-nombre').value = '';
-      document.getElementById('new-matricula').value = '';
-      document.getElementById('new-grupo').value = '';
-    };
-
-    document.getElementById('btn-nuevo-alumno').addEventListener('click', () => {
-      newStudentModal.classList.remove('hidden');
-    });
-    document.getElementById('close-new-student-btn').addEventListener('click', closeNewStudentModal);
-    document.getElementById('cancel-new-student-btn').addEventListener('click', closeNewStudentModal);
-
-    document.getElementById('save-new-student-btn').addEventListener('click', async () => {
-      const nombre = document.getElementById('new-nombre').value.trim();
-      const matricula = document.getElementById('new-matricula').value.trim();
-      const grado = document.getElementById('new-grado').value;
-      const grupo = document.getElementById('new-grupo').value.trim();
-      
-      if (!nombre) { alert('El nombre es obligatorio'); return; }
-
-      const btn = document.getElementById('save-new-student-btn');
-      btn.textContent = 'Guardando...';
-      btn.disabled = true;
-
-      try {
-        const codigo_acceso = crypto.randomUUID();
-        const { data, error } = await supabase.from('alumnos').insert({
-          nombre_completo: nombre,
-          matricula: matricula || null,
-          grado: grado || '',
-          grupo: grupo || '',
-          codigo_acceso: codigo_acceso
-        }).select().single();
-        
-        if (error) throw error;
-        
-        if (data) {
-          closeNewStudentModal();
-          showQRModal(data.nombre_completo, data.codigo_acceso);
-          if(searchInput.value) renderResults(searchInput.value, ''); // refresh if searching
-        }
-      } catch (err) {
-        if(err.code === "23505") {
-            alert("Error: Ya existe un alumno con esa matrícula.");
-        } else {
-            alert('Error de conexión: ' + err.message);
-        }
-      } finally {
-        btn.innerHTML = 'Guardar y Generar QR';
-        btn.disabled = false;
-      }
-    });
-
     // ── QR MODAL LOGIC ───────────────────────────────────────────────────────
+    const qrModal = document.getElementById('qr-modal');
     let qrcode = null;
     const closeQrModal = () => qrModal.classList.add('hidden');
     document.getElementById('close-qr-btn').addEventListener('click', closeQrModal);
@@ -443,12 +563,13 @@
         const a = document.createElement('a');
         a.href = url;
         const studentName = document.getElementById('qr-student-name').textContent;
-        a.download = `QR_${studentName.replace(/\\s+/g, '_')}.png`;
+        a.download = `QR_${studentName.replace(/\s+/g, '_')}.png`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
       }
     });
+    renderResults();
   </script>
 </body>
 </html>

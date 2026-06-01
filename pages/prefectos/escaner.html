@@ -14,6 +14,11 @@
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 </head>
 <body class="bg-sepBeige font-sans text-gray-800 antialiased selection:bg-sepGold selection:text-sepBurgundyDark bg-fixed" >
+
+  <!-- Decorative Background Shapes -->
+  <div class="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-[#691C32]/5 blur-3xl pointer-events-none z-0"></div>
+  <div class="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-[#BC955C]/10 blur-3xl pointer-events-none z-0"></div>
+
   <div class="flex h-screen overflow-hidden relative">
     
     <div id="sidebar-overlay" class="fixed inset-0 bg-sepBurgundyDark/40 backdrop-blur-sm z-30 hidden md:hidden transition-opacity duration-300"></div>
@@ -49,7 +54,7 @@
         <div class="flex items-center space-x-3 group cursor-pointer" onclick="window.location.href='dashboard.html'">
           <div class="w-10 h-10 rounded-full bg-gradient-to-br from-sepGold to-yellow-600 flex items-center justify-center text-white font-bold shadow-md group-hover:shadow-glow transition-all duration-300">P</div>
           <div class="overflow-hidden">
-            <p id="sidebar-name" class="text-sm font-bold truncate text-white group-hover:text-sepGold transition-colors font-heading tracking-wide">Cargando...</p>
+            <p id="sidebar-name" class="text-sm font-bold truncate text-white group-hover:text-sepGold transition-colors font-heading tracking-wide" class="skeleton text-transparent">Cargando...</p>
             <p id="sidebar-role" class="text-xs text-white/50 font-medium">Prefecto</p>
           </div>
         </div>
@@ -78,7 +83,7 @@
       <div class="p-6 md:p-10 max-w-7xl mx-auto w-full flex flex-col lg:flex-row gap-8">
         
         <!-- Scanner Panel -->
-        <section class="flex-1 bg-white rounded-3xl shadow-soft border border-gray-100 p-8 flex flex-col items-center justify-center text-center relative overflow-hidden min-h-[500px]">
+        <section class="flex-1 glass-panel rounded-3xl shadow-soft border border-gray-100 p-8 flex flex-col items-center justify-center text-center relative overflow-hidden min-h-[500px]">
            <h3 class="text-gray-800 font-bold text-xl mb-4 font-heading tracking-wide">Cámara de Escaneo</h3>
            <p class="text-gray-500 text-sm mb-6 max-w-sm mx-auto">Coloca el código QR del alumno frente a la cámara para registrar su asistencia automáticamente.</p>
            
@@ -152,11 +157,11 @@
         if (data.success) {
           addLogEntry(data.student.nombre_completo, data.status, data.entry_time);
         } else {
-          alert('Error: ' + data.error);
+          showToast('Error: ' + data.error, "error");
         }
       } catch (err) {
         console.error('Error de escaneo:', err);
-        alert('Error de conexión con el servidor.');
+        showToast('Error de conexión con el servidor.', "error");
       } finally {
         setTimeout(() => {
           isProcessing = false;
@@ -227,7 +232,7 @@
           isCameraActive = true;
         } catch (err) {
           console.error('Error al iniciar cámara:', err);
-          alert('Error al iniciar la cámara: ' + (err.message || err));
+          showToast('Error al iniciar la cámara: ' + (err.message || err, "error"));
           toggleCameraBtn.textContent = 'Activar Cámara';
           toggleCameraBtn.disabled = false;
           if (html5QrCode) {

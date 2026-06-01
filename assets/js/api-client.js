@@ -117,7 +117,7 @@ export async function deleteAnnouncement(id) {
 export async function getStats(grado = 'Todos los Grados') {
   try {
     let q = supabase.from('alumnos').select('*', { count: 'exact', head: true });
-    if (grado && grado !== 'Todos los Grados') q = q.ilike('grado', `${grado[0]}°%`);
+    if (grado && grado !== 'Todos los Grados') q = q.ilike('grado', `${grado[0]}%`);
     const { count: totalAlumnos } = await q;
 
     const since = new Date();
@@ -201,13 +201,20 @@ export async function deleteAlumno(id) {
 }
 
 // ─── 10. REGISTRAR ASISTENCIA ─────────────────────────────────────────────────
-export async function registrarAsistencia(studentId, status) {
+export async function registrarAsistencia(studentId, status, targetDate = null) {
   try {
-    const today = new Date().toISOString().split('T')[0];
+    const dateToUse = targetDate || new Date().toISOString().split('T')[0];
     const now   = new Date().toTimeString().split(' ')[0];
 
+    // Verificar fines de semana (sábado y domingo) usando la fecha objetivo
+    const dateObj = new Date(dateToUse + 'T12:00:00'); // mediodía para evitar desfase de timezone
+    const dayOfWeek = dateObj.getDay();
+    if (dayOfWeek === 0 || dayOfWeek === 6) {
+      return { success: false, error: 'fin_de_semana', message: 'No se puede registrar asistencia en fin de semana (Sábado/Domingo)' };
+    }
+
     // Verificar si el día es inhábil
-    const inhabil = await esDiaInhabil(today);
+    const inhabil = await esDiaInhabil(dateToUse);
     if (inhabil) return { success: false, error: 'dia_inhabil', message: inhabil.razon || 'Día inhábil' };
 
     // Obtener parcial activo para asociarlo
@@ -216,14 +223,14 @@ export async function registrarAsistencia(studentId, status) {
 
     const { data: existing } = await supabase
       .from('asistencias').select('id')
-      .eq('student_id', studentId).eq('date', today).maybeSingle();
+      .eq('student_id', studentId).eq('date', dateToUse).maybeSingle();
     if (existing) {
       await supabase.from('asistencias')
         .update({ status, entry_time: now, parcial_id: parcialId })
-        .eq('student_id', studentId).eq('date', today);
+        .eq('student_id', studentId).eq('date', dateToUse);
     } else {
       await supabase.from('asistencias')
-        .insert({ student_id: studentId, date: today, entry_time: now, status, parcial_id: parcialId });
+        .insert({ student_id: studentId, date: dateToUse, entry_time: now, status, parcial_id: parcialId });
     }
     return { success: true, parcial: parcialActivo };
   } catch (e) { console.error('registrarAsistencia:', e); return { success: false, error: e.message }; }
@@ -369,6 +376,10 @@ export async function esDiaInhabil(fecha) {
   } catch (e) { return null; }
 }
 
+export async function esDíaInhábil(fecha) {
+  return await esDiaInhabil(fecha);
+}
+
 export async function createDiaInhabil(fecha, razon = '') {
   try {
     const { data, error } = await supabase
@@ -416,7 +427,7 @@ export async function getAsistenciasPorParcial(parcialId, grado = '', grupo = ''
 }
 
 // ─── 11. LISTA DE ASISTENCIAS HOY ────────────────────────────────────────────
-export async function getAsistenciasHoy(grado = '', grupo = '') {
+export async function getAsistenciasHoy(grado = '', grupo = '', targetDate = null) {
   try {
     let q = supabase
       .from('alumnos')
@@ -426,9 +437,9 @@ export async function getAsistenciasHoy(grado = '', grupo = '') {
     if (grupo) q = q.eq('grupo', grupo);
     const { data, error } = await q;
     if (error) throw error;
-    const today = new Date().toISOString().split('T')[0];
+    const dateToCheck = targetDate || new Date().toISOString().split('T')[0];
     return (data || []).map(a => {
-      const hoy = a.asistencias?.find(x => x.date === today);
+      const hoy = a.asistencias?.find(x => x.date === dateToCheck);
       return {
         id: a.id,
         nombre_completo: a.nombre_completo,
@@ -549,3 +560,249 @@ export async function getMisAsistencias(alumnoId) {
   } catch (e) { console.error('getMisAsistencias:', e); return []; }
 }
 
+// ==========================================
+// Módulo de Gestión de Grupos (Restaurado)
+// ==========================================
+
+export async function getGrupos() {
+  try {
+    const { data, error } = await supabase.from('grupos').select('*').order('grado').order('grupo');
+    if (error) throw error;
+    return data || [];
+  } catch (e) {
+    console.error('Error en getGrupos:', e);
+    return [];
+  }
+}
+
+export async function createGrupo(grupoData) {
+  try {
+    const { data, error } = await supabase.from('grupos').insert([grupoData]).select().single();
+    if (error) throw error;
+    return { success: true, data };
+  } catch (e) {
+    console.error('Error en createGrupo:', e);
+    return { success: false, error: e.message };
+  }
+}
+
+export async function deleteGrupo(id) {
+  try {
+    await supabase.from('alumnos').update({ grupo_id: null, grado: null, grupo: null }).eq('grupo_id', id);
+    const { error } = await supabase.from('grupos').delete().eq('id', id);
+    if (error) throw error;
+    return { success: true };
+  } catch (e) {
+    console.error('Error en deleteGrupo:', e);
+    return { success: false, error: e.message };
+  }
+}
+
+export async function getAlumnosSinGrupo() {
+  try {
+    const { data, error } = await supabase.from('alumnos').select('*').is('grupo_id', null).order('nombre_completo');
+    if (error) throw error;
+    return data || [];
+  } catch (e) {
+    console.error('Error en getAlumnosSinGrupo:', e);
+    return [];
+  }
+}
+
+export async function getAlumnosPorGrupo(grupoId) {
+  try {
+    const { data, error } = await supabase.from('alumnos').select('*').eq('grupo_id', grupoId).order('nombre_completo');
+    if (error) throw error;
+    return data || [];
+  } catch (e) {
+    console.error('Error en getAlumnosPorGrupo:', e);
+    return [];
+  }
+}
+
+export async function asignarAlumnosAGrupo(grupoId, alumnoIds, gradoStr, grupoStr) {
+  try {
+    const { error } = await supabase.from('alumnos')
+      .update({ grupo_id: grupoId, grado: gradoStr, grupo: grupoStr })
+      .in('id', alumnoIds);
+    if (error) throw error;
+    return { success: true };
+  } catch (e) {
+    console.error('Error en asignarAlumnosAGrupo:', e);
+    return { success: false, error: e.message };
+  }
+}
+
+export async function removerAlumnosDeGrupo(alumnoIds) {
+  try {
+    const { error } = await supabase.from('alumnos')
+      .update({ grupo_id: null, grado: '0', grupo: 'Sin Asignar' })
+      .in('id', alumnoIds);
+    if (error) throw error;
+    return true;
+  } catch (e) {
+    console.error('removerAlumnosDeGrupo:', e);
+    return false;
+  }
+}
+
+export async function promoverCicloMasivo() {
+  try {
+    const { data: grupos, error: gError } = await supabase.from('grupos').select('*');
+    if (gError) throw gError;
+
+    for (const g of grupos) {
+      let nuevoGrado = g.grado;
+      if (g.grado.includes('1')) nuevoGrado = g.grado.replace('1', '2');
+      else if (g.grado.includes('2')) nuevoGrado = g.grado.replace('2', '3');
+      else if (g.grado.includes('3')) nuevoGrado = 'Egresado';
+
+      await supabase.from('grupos').update({ grado: nuevoGrado }).eq('id', g.id);
+
+      if (nuevoGrado === 'Egresado') {
+        await supabase.from('alumnos').update({ grado: 'Egresado' }).eq('grupo_id', g.id);
+      } else {
+        await supabase.from('alumnos').update({ grado: nuevoGrado }).eq('grupo_id', g.id);
+      }
+    }
+    return true;
+  } catch (e) {
+    console.error('promoverCicloMasivo:', e);
+    throw e;
+  }
+}
+
+// ─── 21. ALTA INDIVIDUAL Y MASIVA DE ALUMNOS ─────────────────────────────────
+export async function insertAlumno(alumno) {
+  try {
+    const { data, error } = await supabase
+      .from('alumnos')
+      .insert([{
+        nombre_completo: alumno.nombre_completo,
+        matricula: alumno.matricula || null,
+        curp: alumno.curp || null,
+        grado: alumno.grado || '0',
+        grupo: alumno.grupo || '0'
+      }])
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  } catch (e) {
+    console.error('insertAlumno:', e);
+    throw e;
+  }
+}
+
+export async function insertAlumnosMasivo(alumnos) {
+  try {
+    const { data, error } = await supabase
+      .from('alumnos')
+      .insert(alumnos.map(a => ({
+        nombre_completo: a.nombre_completo,
+        matricula: a.matricula || null,
+        curp: a.curp || null,
+        grado: a.grado || '0',
+        grupo: a.grupo || '0'
+      })))
+      .select();
+    if (error) throw error;
+    return data;
+  } catch (e) {
+    console.error('insertAlumnosMasivo:', e);
+    throw e;
+  }
+}
+
+export async function getExportAsistencias(grado = '', grupo = '', periodo = '', customVal = null) {
+  try {
+    let q = supabase
+      .from('alumnos')
+      .select('id, nombre_completo, grado, grupo, asistencias(date, status)')
+      .order('nombre_completo');
+    
+    if (grado) {
+       const rawGrado = grado.replace('°', '').trim();
+       q = q.ilike('grado', `%${rawGrado}%`);
+    }
+    if (grupo) q = q.ilike('grupo', `%${grupo}%`);
+    
+    const { data, error } = await q;
+    if (error) throw error;
+    
+    return (data || []).map(a => ({
+      nombre: a.nombre_completo,
+      asistencias: a.asistencias || []
+    }));
+  } catch (e) {
+    console.error('getExportAsistencias:', e);
+    return [];
+  }
+}
+
+// ─── 22. ASISTENCIA ÚLTIMOS 5 DÍAS (para gráfica dashboard) ──────────────────
+export async function getAsistenciaUltimos5Dias() {
+  try {
+    const hoy = new Date(Date.now() - new Date().getTimezoneOffset() * 60000);
+    const dias = [];
+    let d = new Date(hoy);
+    while (dias.length < 5) {
+      d.setDate(d.getDate() - (dias.length === 0 ? 0 : 1));
+      if (d.getDay() !== 0 && d.getDay() !== 6) {
+        dias.push(d.toISOString().split('T')[0]);
+      }
+      if (dias.length === 0) d.setDate(d.getDate() - 1);
+    }
+    dias.reverse();
+
+    const desde = dias[0];
+    const { data, error } = await supabase
+      .from('asistencias')
+      .select('date, status')
+      .gte('date', desde);
+    if (error) throw error;
+
+    return dias.map(fecha => {
+      const del_dia = (data || []).filter(r => r.date === fecha);
+      const presentes = del_dia.filter(r => r.status === 'A tiempo' || r.status === 'Retardo').length;
+      const faltas = del_dia.filter(r => r.status === 'Falta').length;
+      const total = del_dia.length;
+      return {
+        fecha,
+        label: new Date(fecha + 'T12:00:00').toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric' }),
+        presentes,
+        faltas,
+        total,
+        porcentaje: total > 0 ? Math.round((presentes / total) * 100) : 0
+      };
+    });
+  } catch (e) { console.error('getAsistenciaUltimos5Dias:', e); return []; }
+}
+
+// ─── 23. ALUMNOS CON MÁS FALTAS (para tabla de riesgo) ──────────────────────
+export async function getAlumnosConMasFaltas(limit = 5) {
+  try {
+    const since = new Date();
+    since.setDate(since.getDate() - 30);
+    const sinceStr = since.toISOString().split('T')[0];
+
+    const { data, error } = await supabase
+      .from('alumnos')
+      .select('id, nombre_completo, grado, grupo, asistencias(status, date)')
+      .order('nombre_completo');
+    if (error) throw error;
+
+    const ranked = (data || []).map(a => {
+      const recientes = (a.asistencias || []).filter(x => x.date >= sinceStr);
+      const faltas = recientes.filter(x => x.status === 'Falta').length;
+      const total = recientes.length;
+      const porcentaje = total > 0 ? Math.round(((total - faltas) / total) * 100) : 100;
+      return { id: a.id, nombre: a.nombre_completo, grado: a.grado, grupo: a.grupo, faltas, total, porcentaje };
+    }).filter(a => a.faltas > 0)
+      .sort((a, b) => b.faltas - a.faltas)
+      .slice(0, limit);
+
+    return ranked;
+  } catch (e) { console.error('getAlumnosConMasFaltas:', e); return []; }
+}
+

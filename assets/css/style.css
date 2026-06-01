@@ -15,9 +15,37 @@
   -webkit-backdrop-filter: blur(12px);
 }
 
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Animations */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 .stagger-1 { animation-delay: 100ms; }
 .stagger-2 { animation-delay: 200ms; }
 .stagger-3 { animation-delay: 300ms; }
+
+/* Skeleton Loader */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .4; }
+}
+.skeleton {
+  background-color: #E2E8F0;
+  border-radius: 0.5rem;
+  animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
 
 /* Custom Scanner Styles for Asistencias */
 .scanner-line {
@@ -40,6 +68,40 @@
   100% { top: 100%; opacity: 0; }
 }
 
+/* Toast Notification Styles */
+#toast-container {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  pointer-events: none;
+}
+.toast-message {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  transform: translateX(120%);
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: auto;
+}
+.toast-message.show {
+  transform: translateX(0);
+  opacity: 1;
+}
+.toast-success .toast-icon { color: #059669; background: #D1FAE5; }
+.toast-error .toast-icon { color: #DC2626; background: #FEE2E2; }
+.toast-warning .toast-icon { color: #D97706; background: #FEF3C7; }
+
 /* Custom QR Placeholder for Busqueda */
 .qr-placeholder {
   background-image: linear-gradient(45deg, rgba(0,0,0,0.8) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.8) 75%, rgba(0,0,0,0.8)), 
@@ -48,16 +110,15 @@
   background-position: 0 0, 5px 5px;
 }
 
-/* Print Styles for Reportes */
+/* Shimmer animation */
+@keyframes shimmer {
+  0% { transform: skewX(-20deg) translateX(-150%); }
+  100% { transform: skewX(-20deg) translateX(250%); }
+}
+
 @media print {
   body * { visibility: hidden; }
   #printable-section, #printable-section * { visibility: visible; }
   #printable-section { position: relative; left: 0; top: 0; width: 100%; }
   .no-print { display: none !important; }
-}
-
-/* Shimmer animation */
-@keyframes shimmer {
-  0% { transform: skewX(-20deg) translateX(-150%); }
-  100% { transform: skewX(-20deg) translateX(250%); }
 }

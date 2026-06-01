@@ -12,6 +12,11 @@
   <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
 <body class="bg-sepBeige font-sans text-gray-800 antialiased selection:bg-sepGold selection:text-sepBurgundyDark bg-fixed" >
+
+  <!-- Decorative Background Shapes -->
+  <div class="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-[#691C32]/5 blur-3xl pointer-events-none z-0"></div>
+  <div class="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-[#BC955C]/10 blur-3xl pointer-events-none z-0"></div>
+
   <div class="flex h-screen overflow-hidden relative">
     
     <!-- Mobile Sidebar Overlay -->
@@ -48,7 +53,7 @@
         <div class="flex items-center space-x-3 group cursor-pointer" onclick="window.location.href='dashboard.html'">
           <div id="sidebar-avatar" class="w-10 h-10 rounded-full bg-gradient-to-br from-sepGold to-yellow-600 flex items-center justify-center text-sepBurgundy font-bold shadow-md group-hover:shadow-glow transition-all duration-300"></div>
           <div class="overflow-hidden">
-            <p id="sidebar-name" class="text-sm font-bold truncate text-white group-hover:text-sepGold transition-colors font-heading tracking-wide">Cargando...</p>
+            <p id="sidebar-name" class="text-sm font-bold truncate text-white group-hover:text-sepGold transition-colors font-heading tracking-wide" class="skeleton text-transparent">Cargando...</p>
             <p id="sidebar-grade" class="text-xs text-white/50 font-medium">Ciclo 2025-2026</p>
           </div>
         </div>
@@ -75,7 +80,7 @@
       </header>
 
       <div class="p-6 md:p-10 max-w-7xl mx-auto w-full h-full">
-        <div class="bg-white rounded-3xl shadow-soft border border-gray-100 overflow-hidden flex flex-col border-emerald-500/20">
+        <div class="glass-panel rounded-3xl shadow-soft border border-gray-100 overflow-hidden flex flex-col border-emerald-500/20">
            <div class="bg-sepGreen px-6 py-5 border-b border-emerald-500/20 flex justify-between items-center">
               <h3 class="font-extrabold text-white tracking-wide text-base md:text-lg font-heading flex items-center">
                 <svg class="w-5 h-5 mr-2 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>

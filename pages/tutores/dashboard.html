@@ -12,6 +12,11 @@
   <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
 <body class="bg-sepBeige font-sans text-gray-800 antialiased selection:bg-sepGold selection:text-sepBurgundyDark bg-fixed" >
+
+  <!-- Decorative Background Shapes -->
+  <div class="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-[#691C32]/5 blur-3xl pointer-events-none z-0"></div>
+  <div class="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-[#BC955C]/10 blur-3xl pointer-events-none z-0"></div>
+
   <div class="flex h-screen overflow-hidden relative">
     
     <div id="sidebar-overlay" class="fixed inset-0 bg-sepBurgundyDark/40 backdrop-blur-sm z-30 hidden md:hidden transition-opacity duration-300"></div>
@@ -52,7 +57,7 @@
         <div class="flex items-center space-x-3 group cursor-pointer">
           <div class="w-10 h-10 rounded-full bg-gradient-to-br from-sepGold to-yellow-600 flex items-center justify-center text-white font-bold shadow-md group-hover:shadow-glow transition-all duration-300">T</div>
           <div class="overflow-hidden">
-            <p id="sidebar-name" class="text-sm font-bold truncate text-white group-hover:text-sepGold transition-colors font-heading tracking-wide">Cargando...</p>
+            <p id="sidebar-name" class="text-sm font-bold truncate text-white group-hover:text-sepGold transition-colors font-heading tracking-wide" class="skeleton text-transparent">Cargando...</p>
             <p id="sidebar-role" class="text-xs text-white/50 font-medium">Tutor Asignado</p>
           </div>
         </div>
@@ -60,13 +65,13 @@
     </aside>
 
     <main class="flex-1 flex flex-col overflow-y-auto w-full scroll-smooth">
-      <header class="glass-header shadow-sm h-20 flex items-center justify-between px-6 md:px-10 flex-shrink-0 sticky top-0 z-20">
+      <header class="glass-header shadow-sm h-14 md:h-20 flex items-center justify-between px-4 md:px-10 flex-shrink-0 sticky top-0 z-20">
         <div class="flex items-center">
           <button id="mobile-menu-btn" class="md:hidden mr-4 text-sepBurgundy bg-sepBurgundy/5 p-2 rounded-xl hover:bg-sepBurgundy/10 hover:shadow-inner transition-all">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
           </button>
           <div>
-            <h2 class="text-xl md:text-3xl font-extrabold text-sepGreenDark truncate font-heading tracking-tight drop-shadow-sm">Panel de Control de Tutoría</h2>
+            <h2 class="text-lg md:text-3xl font-extrabold text-sepGreenDark truncate font-heading tracking-tight drop-shadow-sm">Panel de Tutoría</h2>
             <p class="text-xs text-gray-400 font-medium hidden md:block">Seguimiento Grupal Semanal</p>
           </div>
         </div>
@@ -86,20 +91,20 @@
                 <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Asistencia Global del Grupo</span>
                 <div class="p-2 bg-emerald-50 rounded-lg text-emerald-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
              </div>
-             <span class="text-4xl font-black text-gray-800">92%</span>
+             <span id="tutor-stat-asistencia" class="text-4xl font-black text-gray-800">--</span>
            </article>
            <article class="bg-white p-6 rounded-2xl shadow-soft border border-gray-100 group">
              <div class="flex justify-between items-start mb-4">
                 <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Focos Rojos (Faltas recurrentes)</span>
                 <div class="p-2 bg-red-50 rounded-lg text-red-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg></div>
              </div>
-             <div class="flex items-baseline space-x-2"><span class="text-4xl font-black text-gray-800">3</span><span class="text-sm font-medium text-gray-400">alumnos</span></div>
+             <div class="flex items-baseline space-x-2"><span id="tutor-stat-faltas" class="text-4xl font-black text-gray-800">--</span><span class="text-sm font-medium text-gray-400">faltas hoy</span></div>
              <p class="text-xs text-red-500 mt-2 font-semibold bg-red-50 px-2 py-1 inline-block rounded">Atención Requerida</p>
            </article>
         </section>
 
         <!-- Attendance Table -->
-        <section class="bg-white rounded-3xl shadow-soft border border-gray-100 overflow-hidden flex flex-col">
+        <section class="glass-panel rounded-3xl shadow-soft border border-gray-100 overflow-hidden flex flex-col">
            <div class="bg-sepGreen px-6 py-5 border-b border-sepGreenDark/20 flex justify-between items-center">
               <h3 class="font-extrabold text-white tracking-wide text-base md:text-lg font-heading flex items-center">
                 <svg class="w-5 h-5 mr-2 text-sepGold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
@@ -117,25 +122,8 @@
                    <th class="px-6 py-5">Estado</th>
                  </tr>
                </thead>
-               <tbody class="divide-y divide-gray-50">
-                  <tr class="hover:bg-sepBeigeDark/30 transition-colors">
-                    <td class="px-6 py-4 font-bold text-gray-500">1</td>
-                    <td class="px-6 py-4 font-bold text-gray-800">Almeida López, Daniela</td>
-                    <td class="px-6 py-4 text-gray-600 font-medium">06:58 AM</td>
-                    <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-3 py-1.5 rounded text-xs font-bold">Presente</span></td>
-                  </tr>
-                  <tr class="hover:bg-sepBeigeDark/30 transition-colors">
-                    <td class="px-6 py-4 font-bold text-gray-500">2</td>
-                    <td class="px-6 py-4 font-bold text-gray-800">Bautista Gómez, Roberto</td>
-                    <td class="px-6 py-4 text-gray-600 font-medium">07:15 AM</td>
-                    <td class="px-6 py-4"><span class="bg-yellow-100 text-yellow-700 px-3 py-1.5 rounded text-xs font-bold">Retardo</span></td>
-                  </tr>
-                  <tr class="hover:bg-sepBeigeDark/30 transition-colors">
-                    <td class="px-6 py-4 font-bold text-gray-500">3</td>
-                    <td class="px-6 py-4 font-bold text-gray-800">Castro Salinas, Mónica</td>
-                    <td class="px-6 py-4 text-gray-600 font-medium">-</td>
-                    <td class="px-6 py-4"><span class="bg-red-100 text-red-700 px-3 py-1.5 rounded text-xs font-bold">Falta</span></td>
-                  </tr>
+               <tbody id="tutor-attendance-tbody" class="divide-y divide-gray-50">
+                  <tr><td colspan="4" class="text-center py-8 text-gray-400 font-medium animate-pulse">Cargando asistencias del día...</td></tr>
                </tbody>
              </table>
            </div>
@@ -147,10 +135,52 @@
   <script src="../../assets/js/main.js"></script>
   <script type="module">
     import { checkAuth } from '../../assets/js/auth-guard.js';
-    document.addEventListener('DOMContentLoaded', () => {
+    import { getAsistenciasHoy, getEstadisticasGlobales } from '../../assets/js/api-client.js';
+
+    document.addEventListener('DOMContentLoaded', async () => {
       const session = checkAuth(['tutor']);
-      if(session) {
-        document.getElementById('sidebar-name').textContent = session.nombre || 'Tutor';
+      if (!session) return;
+      document.getElementById('sidebar-name').textContent = session.nombre || 'Tutor';
+
+      // Load real stats
+      try {
+        const stats = await getEstadisticasGlobales();
+        if (stats) {
+          document.getElementById('tutor-stat-asistencia').textContent = stats.asistencia_promedio + '%';
+          document.getElementById('tutor-stat-faltas').textContent = stats.faltas_hoy;
+        }
+      } catch(e) { console.error('Stats error:', e); }
+
+      // Load attendance table
+      try {
+        const data = await getAsistenciasHoy();
+        const tbody = document.getElementById('tutor-attendance-tbody');
+        if (!data || data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="4" class="text-center py-8 text-gray-400 font-medium">Sin registros de asistencia para hoy.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = data.map((a, i) => {
+          let timeStr = '—';
+          if (a.entry_time) {
+            const [h, m] = a.entry_time.split(':');
+            const ampm = Number(h) >= 12 ? 'PM' : 'AM';
+            const h12 = (Number(h) % 12) || 12;
+            timeStr = `${h12.toString().padStart(2,'0')}:${m} ${ampm}`;
+          }
+          let badge = '<span class="bg-gray-100 text-gray-500 px-3 py-1.5 rounded text-xs font-bold">Sin registro</span>';
+          if (a.asistencia_hoy === 'A tiempo') badge = '<span class="bg-green-100 text-green-700 px-3 py-1.5 rounded text-xs font-bold">Presente</span>';
+          else if (a.asistencia_hoy === 'Retardo') badge = '<span class="bg-yellow-100 text-yellow-700 px-3 py-1.5 rounded text-xs font-bold">Retardo</span>';
+          else if (a.asistencia_hoy === 'Falta') badge = '<span class="bg-red-100 text-red-700 px-3 py-1.5 rounded text-xs font-bold">Falta</span>';
+          return `
+            <tr class="hover:bg-sepBeigeDark/30 transition-colors">
+              <td class="px-6 py-4 font-bold text-gray-500">${i + 1}</td>
+              <td class="px-6 py-4 font-bold text-gray-800">${a.nombre_completo}</td>
+              <td class="px-6 py-4 text-gray-600 font-medium">${a.asistencia_hoy ? timeStr : '—'}</td>
+              <td class="px-6 py-4">${badge}</td>
+            </tr>`;
+        }).join('');
+      } catch(e) {
+        document.getElementById('tutor-attendance-tbody').innerHTML = '<tr><td colspan="4" class="text-center py-8 text-red-400 font-bold">Error al cargar datos.</td></tr>';
       }
     });
   </script>

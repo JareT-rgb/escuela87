@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="utf-8" />
@@ -12,6 +12,11 @@
   <link rel="stylesheet" href="../../assets/css/style.css">
 </head>
 <body class="bg-sepBeige font-sans text-gray-800 antialiased selection:bg-sepGold selection:text-sepBurgundyDark bg-fixed" >
+
+  <!-- Decorative Background Shapes -->
+  <div class="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-[#691C32]/5 blur-3xl pointer-events-none z-0"></div>
+  <div class="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-[#BC955C]/10 blur-3xl pointer-events-none z-0"></div>
+
   <div class="flex h-screen overflow-hidden relative">
     
     <div id="sidebar-overlay" class="fixed inset-0 bg-sepBurgundyDark/40 backdrop-blur-sm z-30 hidden md:hidden transition-opacity duration-300"></div>
@@ -36,7 +41,15 @@
         </a>
         <a class="flex items-center space-x-3 p-3.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 hover:translate-x-1 transition-all duration-300 group" href="escaner.html">
           <svg class="h-5 w-5 group-hover:text-sepGold transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
-          <span class="font-medium tracking-wide">Escáner QR Asistencia</span>
+          <span class="font-medium tracking-wide">Escáner QR</span>
+        </a>
+        <a class="flex items-center space-x-3 p-3.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 hover:translate-x-1 transition-all duration-300 group" href="asistencias.html">
+          <svg class="h-5 w-5 group-hover:text-sepGold transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+          <span class="font-medium tracking-wide">Asistencias</span>
+        </a>
+        <a class="flex items-center space-x-3 p-3.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 hover:translate-x-1 transition-all duration-300 group" href="busqueda.html">
+          <svg class="h-5 w-5 group-hover:text-sepGold transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          <span class="font-medium tracking-wide">Búsqueda Alumnos</span>
         </a>
         <a class="flex items-center space-x-3 p-3.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 hover:translate-x-1 transition-all duration-300 group" href="reportes.html">
           <svg class="h-5 w-5 group-hover:text-sepGold transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
@@ -48,7 +61,7 @@
         <div class="flex items-center space-x-3 group cursor-pointer">
           <div class="w-10 h-10 rounded-full bg-gradient-to-br from-sepGold to-yellow-600 flex items-center justify-center text-white font-bold shadow-md group-hover:shadow-glow transition-all duration-300">P</div>
           <div class="overflow-hidden">
-            <p id="sidebar-name" class="text-sm font-bold truncate text-white group-hover:text-sepGold transition-colors font-heading tracking-wide">Cargando...</p>
+            <p id="sidebar-name" class="text-sm font-bold truncate text-white group-hover:text-sepGold transition-colors font-heading tracking-wide" class="skeleton text-transparent">Cargando...</p>
             <p id="sidebar-role" class="text-xs text-white/50 font-medium">Prefecto</p>
           </div>
         </div>
@@ -56,13 +69,13 @@
     </aside>
 
     <main class="flex-1 flex flex-col overflow-y-auto w-full scroll-smooth">
-      <header class="glass-header shadow-sm h-20 flex items-center justify-between px-6 md:px-10 flex-shrink-0 sticky top-0 z-20">
+      <header class="glass-header shadow-sm h-14 md:h-20 flex items-center justify-between px-4 md:px-10 flex-shrink-0 sticky top-0 z-20">
         <div class="flex items-center">
           <button id="mobile-menu-btn" class="md:hidden mr-4 text-sepBurgundy bg-sepBurgundy/5 p-2 rounded-xl hover:bg-sepBurgundy/10 hover:shadow-inner transition-all">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
           </button>
           <div>
-            <h2 class="text-xl md:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r text-sepGreenDark truncate font-heading tracking-tight drop-shadow-sm">Panel Modular de Prefectura</h2>
+            <h2 class="text-lg md:text-3xl font-extrabold text-sepGreenDark truncate font-heading tracking-tight drop-shadow-sm">Panel de Prefectura</h2>
             <p class="text-xs text-gray-400 font-medium hidden md:block">Gestión de Asistencias y Disciplina Escolar</p>
           </div>
         </div>
@@ -75,40 +88,55 @@
       </header>
 
       <div class="p-6 md:p-10 space-y-8 max-w-7xl mx-auto w-full">
-        <!-- Dashboard Stats -->
+        <!-- Dashboard Stats (Dynamic) -->
         <section class="grid grid-cols-1 sm:grid-cols-3 gap-6 animate-fade-in-up">
            <article class="bg-white p-6 rounded-2xl shadow-soft border border-gray-100 group">
              <div class="flex justify-between items-start mb-4">
-                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Retardos Registrados Hoy</span>
-                <div class="p-2 bg-yellow-50 rounded-lg text-yellow-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Presentes Hoy</span>
+                <div class="p-2 bg-green-50 rounded-lg text-green-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
              </div>
-             <span class="text-4xl font-black text-gray-800">14</span>
+             <span id="stat-presentes" class="text-4xl font-black text-gray-800">--</span>
            </article>
            <article class="bg-white p-6 rounded-2xl shadow-soft border border-gray-100 group">
              <div class="flex justify-between items-start mb-4">
-                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Fallas y Reportes</span>
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Faltas y Reportes</span>
                 <div class="p-2 bg-sepBurgundy/10 rounded-lg text-sepBurgundy"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg></div>
              </div>
-             <span class="text-4xl font-black text-gray-800">6</span>
+             <span id="stat-faltas" class="text-4xl font-black text-gray-800">--</span>
            </article>
            <article class="bg-white p-6 rounded-2xl shadow-soft border border-gray-100 group">
              <div class="flex justify-between items-start mb-4">
-                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Registros QR Hoy</span>
-                <div class="p-2 bg-sepGold/10 rounded-lg text-sepGold"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg></div>
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Alumnos</span>
+                <div class="p-2 bg-sepGold/10 rounded-lg text-sepGold"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg></div>
              </div>
-             <span class="text-4xl font-black text-gray-800">320</span>
+             <span id="stat-alumnos" class="text-4xl font-black text-gray-800">--</span>
            </article>
         </section>
 
         <!-- Actions -->
         <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
-           <div class="bg-white rounded-3xl p-8 border border-gray-100 shadow-soft text-center flex flex-col items-center justify-center min-h-[250px] hover:border-sepGold transition-colors">
+           <div class="glass-panel rounded-3xl p-8 border border-gray-100 shadow-soft text-center flex flex-col items-center justify-center min-h-[250px] hover:border-sepGold transition-colors">
               <div class="w-16 h-16 bg-sepGold/10 text-sepGold rounded-full flex items-center justify-center mb-4"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></div>
               <h3 class="font-bold text-lg mb-2">Escáner de Asistencia QR</h3>
               <p class="text-sm text-gray-500 mb-6 w-3/4">Usa la cámara de tu dispositivo para registrar la entrada y salida de los alumnos de manera instantánea.</p>
               <button onclick="window.location.href='escaner.html'" class="bg-sepBurgundy hover:bg-sepBurgundyDark text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-transform hover:-translate-y-1 tracking-wide">Abrir Escáner</button>
            </div>
-           <div class="bg-white rounded-3xl p-8 border border-gray-100 shadow-soft text-center flex flex-col items-center justify-center min-h-[250px] hover:border-sepBurgundy transition-colors">
+           <div class="glass-panel rounded-3xl p-8 border border-gray-100 shadow-soft text-center flex flex-col items-center justify-center min-h-[250px] hover:border-sepBurgundy transition-colors">
+              <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-4"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg></div>
+              <h3 class="font-bold text-lg mb-2">Justificar Faltas</h3>
+              <p class="text-sm text-gray-500 mb-6 w-3/4">Consulta las asistencias del día y justifica las faltas de los alumnos con motivo documentado.</p>
+              <button onclick="window.location.href='asistencias.html'" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-transform hover:-translate-y-1 tracking-wide">Ver Asistencias</button>
+           </div>
+        </section>
+
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+           <div class="glass-panel rounded-3xl p-8 border border-gray-100 shadow-soft text-center flex flex-col items-center justify-center min-h-[200px] hover:border-sepGreenDark transition-colors">
+              <div class="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mb-4"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></div>
+              <h3 class="font-bold text-lg mb-2">Búsqueda de Alumnos</h3>
+              <p class="text-sm text-gray-500 mb-6 w-3/4">Localiza rápidamente a cualquier alumno por nombre, matrícula o CURP.</p>
+              <button onclick="window.location.href='busqueda.html'" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-transform hover:-translate-y-1 tracking-wide">Buscar Alumno</button>
+           </div>
+           <div class="glass-panel rounded-3xl p-8 border border-gray-100 shadow-soft text-center flex flex-col items-center justify-center min-h-[200px] hover:border-sepBurgundy transition-colors">
               <div class="w-16 h-16 bg-sepBurgundy/10 text-sepBurgundy rounded-full flex items-center justify-center mb-4"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg></div>
               <h3 class="font-bold text-lg mb-2">Nuevo Reporte de Conducta</h3>
               <p class="text-sm text-gray-500 mb-6 w-3/4">Genera un reporte disciplinario y notifícalo inmediatamente al tutor asignado.</p>
@@ -122,11 +150,23 @@
   <script src="../../assets/js/main.js"></script>
   <script type="module">
     import { checkAuth } from '../../assets/js/auth-guard.js';
-    document.addEventListener('DOMContentLoaded', () => {
+    import { getEstadisticasGlobales } from '../../assets/js/api-client.js';
+
+    document.addEventListener('DOMContentLoaded', async () => {
       const session = checkAuth(['prefecto']);
       if(session) {
         document.getElementById('sidebar-name').textContent = session.nombre || 'Prefecto';
       }
+
+      // Load real stats
+      try {
+        const stats = await getEstadisticasGlobales();
+        if (stats) {
+          document.getElementById('stat-presentes').textContent = stats.presentes_hoy;
+          document.getElementById('stat-faltas').textContent = stats.faltas_hoy;
+          document.getElementById('stat-alumnos').textContent = stats.total_alumnos;
+        }
+      } catch(e) { console.error('Error loading stats:', e); }
     });
   </script>
 </body>

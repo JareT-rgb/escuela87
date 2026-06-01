@@ -23,6 +23,11 @@
 </head>
 
 <body class="bg-sepBeige font-sans text-gray-800 antialiased selection:bg-sepGold selection:text-sepBurgundyDark bg-fixed" >
+
+  <!-- Decorative Background Shapes -->
+  <div class="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-[#691C32]/5 blur-3xl pointer-events-none z-0"></div>
+  <div class="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-[#BC955C]/10 blur-3xl pointer-events-none z-0"></div>
+
   <div class="flex h-screen overflow-hidden relative">
     
     <!-- Mobile Sidebar Overlay -->
@@ -57,6 +62,10 @@
           <svg class="h-5 w-5 group-hover:text-sepGold transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
           <span class="font-medium tracking-wide">Mis Reportes</span>
         </a>
+        <a class="flex items-center space-x-3 p-3.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 hover:translate-x-1 transition-all duration-300 group" href="calendario.html">
+          <svg class="h-5 w-5 group-hover:text-sepGold transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+          <span class="font-medium tracking-wide">Calendario</span>
+        </a>
       </nav>
 
       <!-- Student Info Footer -->
@@ -64,7 +73,7 @@
         <div class="flex items-center space-x-3 group cursor-pointer">
           <div id="sidebar-avatar" class="w-10 h-10 rounded-full bg-gradient-to-br from-sepGold to-yellow-600 flex items-center justify-center text-sepBurgundy font-bold shadow-md group-hover:shadow-glow transition-all duration-300"></div>
           <div class="overflow-hidden">
-            <p id="sidebar-name" class="text-sm font-bold truncate text-white group-hover:text-sepGold transition-colors font-heading tracking-wide">Cargando...</p>
+            <p id="sidebar-name" class="text-sm font-bold truncate text-white group-hover:text-sepGold transition-colors font-heading tracking-wide" class="skeleton text-transparent">Cargando...</p>
             <p id="sidebar-grade" class="text-xs text-white/50 font-medium">Ciclo 2025-2026</p>
           </div>
         </div>
@@ -75,13 +84,13 @@
     <main class="flex-1 flex flex-col overflow-y-auto w-full scroll-smooth">
       
       <!-- Top Header -->
-      <header class="glass-header shadow-sm h-20 flex items-center justify-between px-6 md:px-10 flex-shrink-0 sticky top-0 z-20">
+      <header class="glass-header shadow-sm h-14 md:h-20 flex items-center justify-between px-4 md:px-10 flex-shrink-0 sticky top-0 z-20">
         <div class="flex items-center">
           <button id="mobile-menu-btn" class="md:hidden mr-4 text-sepBurgundy bg-sepBurgundy/5 p-2 rounded-lg hover:bg-sepBurgundy/10 transition-colors">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
           </button>
           <div>
-            <h2 id="welcome-message" class="text-xl md:text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sepGoldDark to-yellow-600 truncate font-heading tracking-tight">¡Hola de nuevo!</h2>
+            <h2 id="welcome-message" class="text-lg md:text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sepGoldDark to-yellow-600 truncate font-heading tracking-tight">¡Hola de nuevo!</h2>
             <p id="current-date-display" class="text-xs text-gray-400 font-medium">Cargando fecha...</p>
           </div>
         </div>
@@ -139,6 +148,21 @@
                 <p id="stat-shift" class="text-[10px] text-white/50 font-bold uppercase tracking-wider mt-1">Turno Matutino</p>
              </div>
           </article>
+
+          <!-- Última Asistencia -->
+          <article class="bg-white p-6 rounded-2xl shadow-soft border border-gray-100 group">
+             <div class="flex justify-between items-start mb-4">
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Última Asistencia</span>
+                <div class="p-2 bg-blue-50 rounded-lg text-blue-600">
+                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+             </div>
+             <div>
+                <span id="stat-ultima-fecha" class="text-lg font-black text-gray-800">--</span>
+                <p id="stat-ultima-hora" class="text-xs text-gray-400 font-semibold mt-1">--:-- AM</p>
+                <span id="stat-ultima-status" class="inline-block mt-2 bg-gray-100 text-gray-500 px-2 py-0.5 rounded text-xs font-bold">Sin registro</span>
+             </div>
+          </article>
         </section>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10">
@@ -146,7 +170,7 @@
           <section class="lg:col-span-2 space-y-8">
             
             <!-- Historial de Asistencia -->
-            <div id="asistencia" class="bg-white rounded-3xl shadow-soft border border-gray-100 overflow-hidden flex flex-col">
+            <div id="asistencia" class="glass-panel rounded-3xl shadow-soft border border-gray-100 overflow-hidden flex flex-col">
                <div class="bg-sepGreen px-6 py-5 border-b border-emerald-500/20 flex justify-between items-center">
                   <h3 class="font-extrabold text-white tracking-wide text-base md:text-lg font-heading flex items-center">
                     <svg class="w-5 h-5 mr-2 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
@@ -172,7 +196,7 @@
             </div>
 
             <!-- Reportes de Prefectura -->
-            <div id="reportes" class="bg-white rounded-3xl shadow-soft border border-gray-100 overflow-hidden flex flex-col">
+            <div id="reportes" class="glass-panel rounded-3xl shadow-soft border border-gray-100 overflow-hidden flex flex-col">
                <div class="bg-sepBurgundy px-6 py-5 border-b border-sepGold/20 flex justify-between items-center">
                   <h3 class="font-extrabold text-white tracking-wide text-base md:text-lg font-heading flex items-center">
                     <svg class="w-5 h-5 mr-2 text-sepGold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
@@ -187,7 +211,7 @@
 
           <!-- QR Credential -->
           <section class="lg:col-span-1">
-             <div class="bg-white rounded-3xl shadow-soft border border-gray-100 p-8 flex flex-col items-center text-center">
+             <div class="glass-panel rounded-3xl shadow-soft border border-gray-100 p-8 flex flex-col items-center text-center">
                 <h3 class="font-bold text-gray-800 font-heading mb-6">Mi Credencial Digital</h3>
                 
                 <div class="w-48 min-h-48 bg-gray-100 rounded-2xl p-4 shadow-inner mb-6 relative group overflow-hidden flex flex-col items-center justify-center">
@@ -204,8 +228,11 @@
                    </div>
                 </div>
 
-                <button id="btn-show-qr" class="mb-4 bg-sepBurgundy text-white font-bold py-2 px-6 rounded-full shadow-md hover:bg-sepBurgundyDark hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5">
+                <button id="btn-show-qr" class="mb-2 bg-sepBurgundy text-white font-bold py-2 px-6 rounded-full shadow-md hover:bg-sepBurgundyDark hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5">
                   Ver mi código QR
+                </button>
+                <button id="btn-print-qr" class="mb-4 hidden bg-gray-100 text-gray-600 border border-gray-200 font-bold py-2 px-6 rounded-full shadow-sm hover:shadow hover:bg-gray-200 transition-all duration-300 text-sm">
+                  🖨️ Imprimir QR
                 </button>
 
                 <p class="text-sm text-gray-500 leading-relaxed mb-6">Usa este código para registrar tu entrada y salida del plantel en los tótems automáticos.</p>
@@ -220,7 +247,7 @@
 
   <script src="../../assets/js/main.js"></script>
   <script type="module">
-    import { getAnnouncements, getStudentSummary, getStudentAttendance, getMisAsistencias } from '../../assets/js/api-client.js';
+    import { getAnnouncements, getStudentSummary, getStudentAttendance, getMisAsistencias, getUltimaAsistencia } from '../../assets/js/api-client.js';
     import { checkAuth } from '../../assets/js/auth-guard.js';
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -330,13 +357,60 @@
             });
             qrGenerated = true;
           }
+          document.getElementById('btn-print-qr').classList.remove('hidden');
         } else {
           qrContainer.classList.add('hidden');
           qrPlaceholder.classList.remove('hidden');
           btnShowQr.textContent = 'Ver mi código QR';
           btnShowQr.classList.replace('bg-gray-600', 'bg-sepBurgundy');
           btnShowQr.classList.replace('hover:bg-gray-700', 'hover:bg-sepBurgundyDark');
+          document.getElementById('btn-print-qr').classList.add('hidden');
         }
+      });
+
+      // 5. Cargar última asistencia
+      try {
+        const ultima = await getUltimaAsistencia(studentId);
+        if (ultima) {
+          const fechaObj = new Date(ultima.date + 'T00:00:00');
+          const opcionesFecha = { weekday: 'long', day: '2-digit', month: 'short', year: 'numeric' };
+          document.getElementById('stat-ultima-fecha').textContent = fechaObj.toLocaleDateString('es-MX', opcionesFecha);
+          
+          if (ultima.entry_time) {
+            const [h, m] = ultima.entry_time.split(':');
+            const ampm = Number(h) >= 12 ? 'PM' : 'AM';
+            const h12 = (Number(h) % 12) || 12;
+            document.getElementById('stat-ultima-hora').textContent = `${h12.toString().padStart(2, '0')}:${m} ${ampm}`;
+          }
+          
+          const statusEl = document.getElementById('stat-ultima-status');
+          if (ultima.status === 'A tiempo') { statusEl.textContent = 'A tiempo'; statusEl.className = 'inline-block mt-2 bg-green-100 text-green-700 px-2 py-0.5 rounded text-xs font-bold'; }
+          else if (ultima.status === 'Retardo') { statusEl.textContent = 'Retardo'; statusEl.className = 'inline-block mt-2 bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded text-xs font-bold'; }
+          else if (ultima.status === 'Falta') { statusEl.textContent = 'Falta'; statusEl.className = 'inline-block mt-2 bg-red-100 text-red-700 px-2 py-0.5 rounded text-xs font-bold'; }
+        }
+      } catch(e) { console.error('Error loading last attendance:', e); }
+
+      // 6. Print QR
+      document.getElementById('btn-print-qr').addEventListener('click', () => {
+        const qrImg = document.querySelector('#qrcode img') || document.querySelector('#qrcode canvas');
+        if (!qrImg) { showToast('Primero muestra el código QR.', "error"); return; }
+        const imgSrc = qrImg.tagName === 'IMG' ? qrImg.src : qrImg.toDataURL();
+        const w = window.open('', '_blank');
+        w.document.write(`
+          <html><head><title>QR - ${studentName}</title>
+          <style>body{font-family:Arial,sans-serif;text-align:center;padding:40px;}h1{color:#691C32;font-size:18px;}p{color:#666;font-size:14px;}.qr{margin:20px auto;}@media print{button{display:none;}}</style>
+          </head><body>
+          <h1>Secundaria Técnica No. 87</h1>
+          <p>Credencial Digital de Asistencia</p>
+          <hr style="margin:20px 0;border-color:#BC955C;">
+          <h2 style="color:#285C4D;">${studentName}</h2>
+          <p>${session.grupo || ''} &mdash; Ciclo 2025-2026</p>
+          <div class="qr"><img src="${imgSrc}" width="200" height="200"></div>
+          <p style="font-size:11px;color:#999;">Presenta este código en los puntos de escaneo del plantel</p>
+          <button onclick="window.print()" style="margin-top:20px;padding:10px 30px;background:#691C32;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">Imprimir</button>
+          </body></html>
+        `);
+        w.document.close();
       });
 
       // IMPORTANTE: Historial de asistencia y avisos fueron movidos a sus respectivas páginas
