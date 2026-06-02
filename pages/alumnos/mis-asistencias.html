@@ -98,7 +98,7 @@
 
   <header>
     <div class="header-left">
-      <div class="logo">SEP</div>
+      <div class="logo"><svg class="w-8 h-8 md:w-10 md:h-10 inline-block group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
       <div>
         <h1>Mis Asistencias</h1>
         <p>Secundaria Técnica No. 87</p>
@@ -187,7 +187,7 @@
 
   <script type="module">
     import { checkAuth } from '../../assets/js/auth-guard.js';
-    import { getMisAsistencias, getConfigPeriodos, getParciales } from '../../assets/js/api-client.js';
+    import { getMisAsistencias, getConfigPeriodos, getParciales } from '../../assets/js/api-client.js?v=4';
 
     // Verificar sesión con la lógica estándar
     const session = checkAuth(['alumno']);

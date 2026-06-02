@@ -170,7 +170,7 @@ export async function searchStudents(q = '', grado = '', grupo = '') {
   try {
     let query = supabase
       .from('alumnos')
-      .select('id, nombre_completo, grado, grupo, matricula')
+      .select('id, nombre_completo, grado, grupo, matricula, codigo_acceso')
       .order('nombre_completo').limit(100);
     if (q)     query = query.or(`nombre_completo.ilike.%${q}%,matricula.ilike.%${q}%`);
     if (grado) query = query.ilike('grado', `%${grado}%`);
@@ -186,7 +186,7 @@ export async function getAlumnos() {
   try {
     const { data, error } = await supabase
       .from('alumnos')
-      .select('id, nombre_completo, grado, grupo, matricula')
+      .select('id, nombre_completo, grado, grupo, matricula, codigo_acceso')
       .order('nombre_completo');
     if (error) throw error;
     return data || [];
@@ -196,8 +196,17 @@ export async function getAlumnos() {
 export async function deleteAlumno(id) {
   try {
     const { error } = await supabase.from('alumnos').delete().eq('id', id);
-    return !error;
+    if (error) throw error;
+    return true;
   } catch (e) { console.error('deleteAlumno:', e); return false; }
+}
+
+export async function updateAlumno(id, updates) {
+  try {
+    const { error } = await supabase.from('alumnos').update(updates).eq('id', id);
+    if (error) throw error;
+    return true;
+  } catch (e) { console.error('updateAlumno:', e); return false; }
 }
 
 // ─── 10. REGISTRAR ASISTENCIA ─────────────────────────────────────────────────
@@ -376,9 +385,6 @@ export async function esDiaInhabil(fecha) {
   } catch (e) { return null; }
 }
 
-export async function esDíaInhábil(fecha) {
-  return await esDiaInhabil(fecha);
-}
 
 export async function createDiaInhabil(fecha, razon = '') {
   try {
@@ -429,23 +435,37 @@ export async function getAsistenciasPorParcial(parcialId, grado = '', grupo = ''
 // ─── 11. LISTA DE ASISTENCIAS HOY ────────────────────────────────────────────
 export async function getAsistenciasHoy(grado = '', grupo = '', targetDate = null) {
   try {
-    let q = supabase
-      .from('alumnos')
-      .select('id, nombre_completo, grado, grupo, matricula, asistencias!left(status, entry_time, date)')
-      .order('nombre_completo');
+    const dateToCheck = targetDate || new Date().toISOString().split('T')[0];
+    
+    // 1. Fetch students
+    let q = supabase.from('alumnos').select('id, nombre_completo, grado, grupo, matricula').order('nombre_completo');
     if (grado) q = q.ilike('grado', `%${grado}%`);
     if (grupo) q = q.eq('grupo', grupo);
-    const { data, error } = await q;
-    if (error) throw error;
-    const dateToCheck = targetDate || new Date().toISOString().split('T')[0];
-    return (data || []).map(a => {
-      const hoy = a.asistencias?.find(x => x.date === dateToCheck);
+    
+    const { data: students, error: errStudents } = await q;
+    if (errStudents) throw errStudents;
+    if (!students || students.length === 0) return [];
+
+    // 2. Extract IDs and fetch ONLY today's attendances
+    const studentIds = students.map(s => s.id);
+    const { data: asistencias, error: errAsist } = await supabase
+      .from('asistencias')
+      .select('student_id, status, entry_time')
+      .in('student_id', studentIds)
+      .eq('date', dateToCheck);
+      
+    if (errAsist) throw errAsist;
+
+    // 3. Map attendances to students
+    const asisMap = {};
+    if (asistencias) {
+      asistencias.forEach(a => asisMap[a.student_id] = a);
+    }
+
+    return students.map(a => {
+      const hoy = asisMap[a.id];
       return {
-        id: a.id,
-        nombre_completo: a.nombre_completo,
-        grado: a.grado,
-        grupo: a.grupo,
-        matricula: a.matricula,
+        ...a,
         asistencia_hoy: hoy?.status || null,
         entry_time: hoy?.entry_time || null
       };
@@ -454,7 +474,7 @@ export async function getAsistenciasHoy(grado = '', grupo = '', targetDate = nul
 }
 
 // ─── 12. ASISTENCIA POR QR ────────────────────────────────────────────────────
-export async function registrarAsistenciaQR(codigo) {
+export async function registrarAsistenciaQR(codigo, targetDate = null) {
   try {
     const trimmed = codigo.trim();
     let student = null;
@@ -463,9 +483,7 @@ export async function registrarAsistenciaQR(codigo) {
     const { data: byAcceso } = await supabase
       .from('alumnos').select('id, nombre_completo, grado, grupo')
       .eq('codigo_acceso', trimmed).maybeSingle();
-    if (byAcceso) {
-      student = byAcceso;
-    }
+    if (byAcceso) student = byAcceso;
 
     // 2. Buscar por matrícula (exacto, case-insensitive)
     if (!student) {
@@ -475,7 +493,7 @@ export async function registrarAsistenciaQR(codigo) {
       if (byMatricula) student = byMatricula;
     }
 
-    // 3. Buscar por CURP (exacto, case-insensitive)
+    // 3. Buscar por CURP
     if (!student) {
       const { data: byCurp } = await supabase
         .from('alumnos').select('id, nombre_completo, grado, grupo')
@@ -483,7 +501,7 @@ export async function registrarAsistenciaQR(codigo) {
       if (byCurp) student = byCurp;
     }
 
-    // 4. Fallback: búsqueda general por nombre/matrícula parcial
+    // 4. Fallback: búsqueda parcial
     if (!student) {
       const arr = await searchStudents(trimmed);
       if (arr.length > 0) student = arr[0];
@@ -496,7 +514,7 @@ export async function registrarAsistenciaQR(codigo) {
     const minute = parseInt(now.split(':')[1]);
     const status = (hour > 7 || (hour === 7 && minute > 15)) ? 'Retardo' : 'A tiempo';
 
-    const result = await registrarAsistencia(student.id, status);
+    const result = await registrarAsistencia(student.id, status, targetDate);
     return { ...result, student, status, entry_time: now };
   } catch (e) { console.error('registrarAsistenciaQR:', e); return { success: false, error: e.message }; }
 }
@@ -558,6 +576,28 @@ export async function getMisAsistencias(alumnoId) {
     if (error) throw error;
     return data || [];
   } catch (e) { console.error('getMisAsistencias:', e); return []; }
+}
+
+export async function getAsistenciasCalendario(studentId, year, month) {
+  try {
+    const startDate = `${year}-${String(month).padStart(2,'0')}-01`;
+    const nextMonthDate = new Date(year, month, 1);
+    const endDate = `${nextMonthDate.getFullYear()}-${String(nextMonthDate.getMonth()+1).padStart(2,'0')}-01`;
+    
+    const { data, error } = await supabase
+      .from('asistencias')
+      .select('date, status, entry_time')
+      .eq('student_id', studentId)
+      .gte('date', startDate)
+      .lt('date', endDate);
+      
+    if (error) throw error;
+    
+    return (data || []).map(a => ({
+      ...a,
+      justificada: a.status === 'Justificada'
+    }));
+  } catch (e) { console.error('getAsistenciasCalendario:', e); return []; }
 }
 
 // ==========================================
@@ -802,7 +842,177 @@ export async function getAlumnosConMasFaltas(limit = 5) {
       .sort((a, b) => b.faltas - a.faltas)
       .slice(0, limit);
 
+
     return ranked;
   } catch (e) { console.error('getAlumnosConMasFaltas:', e); return []; }
+}
+
+// ─── 24. GUARDAR ASISTENCIA MASIVA (Bulk) ──────────────────────────────────────
+export async function saveBulkAttendance(asistencias, date) {
+  try {
+    const parcialActivo = await getParcialActivo();
+    const parcialId = parcialActivo?.id || null;
+
+    // Verificar fin de semana
+    const dateObj = new Date(date + 'T12:00:00');
+    const dayOfWeek = dateObj.getDay();
+    if (dayOfWeek === 0 || dayOfWeek === 6) {
+      return { success: false, error: 'No se puede registrar asistencia en fin de semana.' };
+    }
+
+    // Verificar día inhábil
+    const inhabil = await esDiaInhabil(date);
+    if (inhabil) return { success: false, error: `Día inhábil: ${inhabil.razon}` };
+
+    const studentIds = asistencias.map(a => a.student_id);
+    const { data: existentes } = await supabase
+      .from('asistencias').select('id, student_id')
+      .in('student_id', studentIds).eq('date', date);
+
+    const existMap = {};
+    if (existentes) existentes.forEach(r => existMap[r.student_id] = r.id);
+
+    const toUpdate = [];
+    const toInsert = [];
+
+    asistencias.forEach(a => {
+      const status = a.status || 'Falta';
+      const entry_time = (status === 'A tiempo' || status === 'Retardo')
+        ? (a.entry_time || new Date().toTimeString().substring(0, 5))
+        : null;
+      if (existMap[a.student_id]) {
+        toUpdate.push({ id: existMap[a.student_id], status, entry_time, parcial_id: parcialId });
+      } else {
+        toInsert.push({ student_id: a.student_id, date, status, entry_time, parcial_id: parcialId });
+      }
+    });
+
+    for (const u of toUpdate) {
+      const { id, ...fields } = u;
+      await supabase.from('asistencias').update(fields).eq('id', id);
+    }
+    if (toInsert.length > 0) {
+      const { error } = await supabase.from('asistencias').insert(toInsert);
+      if (error) throw error;
+    }
+    return { success: true, updated: toUpdate.length, inserted: toInsert.length };
+  } catch (e) { console.error('saveBulkAttendance:', e); return { success: false, error: e.message }; }
+}
+
+// ─── 25. JUSTIFICAR FALTA ─────────────────────────────────────────────────────
+export async function justificarFalta(studentId, date, motivo = '') {
+  try {
+    const { data: existing } = await supabase
+      .from('asistencias').select('id')
+      .eq('student_id', studentId).eq('date', date).maybeSingle();
+
+    if (existing) {
+      const { error } = await supabase.from('asistencias')
+        .update({ status: 'Justificada', justificacion: motivo })
+        .eq('id', existing.id);
+      if (error) throw error;
+    } else {
+      const { error } = await supabase.from('asistencias')
+        .insert({ student_id: studentId, date, status: 'Justificada', justificacion: motivo });
+      if (error) throw error;
+    }
+    return { success: true };
+  } catch (e) { console.error('justificarFalta:', e); return { success: false, error: e.message }; }
+}
+
+// ─── 26. ACTUALIZAR PARCIALES (batch) ────────────────────────────────────────
+export async function updateParciales(updates) {
+  try {
+    for (const u of updates) {
+      const { id, nombre, fecha_inicio, fecha_fin } = u;
+      const { error } = await supabase.from('parciales')
+        .update({ nombre, fecha_inicio, fecha_fin }).eq('id', id);
+      if (error) throw error;
+    }
+    return { success: true };
+  } catch (e) { console.error('updateParciales:', e); return { success: false, error: e.message }; }
+}
+
+// ─── 27. ALUMNOS POR GRADO Y GRUPO (texto) ───────────────────────────────────
+export async function getStudentsByGroup(grado, grupo) {
+  try {
+    const { data, error } = await supabase
+      .from('alumnos')
+      .select('id, nombre_completo, grado, grupo, matricula, codigo_acceso')
+      .ilike('grado', `%${grado}%`)
+      .ilike('grupo', grupo)
+      .order('nombre_completo');
+    if (error) throw error;
+    return data || [];
+  } catch (e) { console.error('getStudentsByGroup:', e); return []; }
+}
+
+// ─── 28. ESTADÍSTICAS GLOBALES HOY ───────────────────────────────────────────
+export async function getEstadisticasGlobales() {
+  try {
+    const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
+    const { count: total_alumnos } = await supabase
+      .from('alumnos').select('*', { count: 'exact', head: true });
+    const { data: hoyDataRaw } = await supabase
+      .from('asistencias').select('student_id, status').eq('date', today);
+    const uniqueMap = {};
+    if (hoyDataRaw) {
+      hoyDataRaw.forEach(row => uniqueMap[row.student_id] = row.status);
+    }
+    const hoyData = Object.values(uniqueMap).map(status => ({ status }));
+    const presentes_hoy = hoyData.filter(r => r.status === 'A tiempo' || r.status === 'Retardo').length;
+    const faltas_hoy    = hoyData.filter(r => r.status === 'Falta').length;
+    const justificadas_hoy = hoyData.filter(r => r.status === 'Justificada').length;
+    const totalHoy = hoyData.length;
+    const asistencia_promedio = totalHoy > 0 ? Math.round((presentes_hoy / totalHoy) * 100) : 0;
+    return { total_alumnos: total_alumnos || 0, presentes_hoy, faltas_hoy, justificadas_hoy, asistencia_promedio };
+  } catch (e) { console.error('getEstadisticasGlobales:', e); return null; }
+}
+
+// ─── 29. ÚLTIMA ASISTENCIA DE ALUMNO ─────────────────────────────────────────
+export async function getUltimaAsistencia(alumnoId) {
+  try {
+    const { data, error } = await supabase
+      .from('asistencias').select('date, entry_time, status')
+      .eq('student_id', alumnoId)
+      .order('date', { ascending: false })
+      .limit(1).maybeSingle();
+    if (error) throw error;
+    return data || null;
+  } catch (e) { console.error('getUltimaAsistencia:', e); return null; }
+}
+
+// ─── 30. VINCULAR TUTOR CON ALUMNO ───────────────────────────────────────────
+export async function getTutorAlumno(tutorNombre) {
+  try {
+    const { data: staffData } = await supabase
+      .from('staff').select('alumno_id, alumno_nombre')
+      .ilike('nombre', `%${tutorNombre}%`).maybeSingle();
+    if (staffData?.alumno_id) {
+      const { data: alumno } = await supabase
+        .from('alumnos').select('id, nombre_completo, grado, grupo, matricula, codigo_acceso')
+        .eq('id', staffData.alumno_id).maybeSingle();
+      if (alumno) return alumno;
+    }
+    if (staffData?.alumno_nombre) {
+      const { data: alumno } = await supabase
+        .from('alumnos').select('id, nombre_completo, grado, grupo, matricula, codigo_acceso')
+        .ilike('nombre_completo', `%${staffData.alumno_nombre}%`).maybeSingle();
+      if (alumno) return alumno;
+    }
+    return null;
+  } catch (e) { console.error('getTutorAlumno:', e); return null; }
+}
+
+// ─── 31. ASISTENCIAS DE UN ALUMNO (para tutores y alumno) ────────────────────
+export async function getAsistenciasAlumno(alumnoId, limit = 30) {
+  try {
+    const { data, error } = await supabase
+      .from('asistencias').select('date, entry_time, status, justificacion')
+      .eq('student_id', alumnoId)
+      .order('date', { ascending: false }).limit(limit);
+    if (error) throw error;
+    return data || [];
+  } catch (e) { console.error('getAsistenciasAlumno:', e); return []; }
 }
 

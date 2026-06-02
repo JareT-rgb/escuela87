@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>SEP - Mi Código QR</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <!-- QR Code generator -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="../../assets/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="../../assets/css/style.css?v=4">
+  <style>
+    .qr-container { position: relative; display: inline-block; }
+    .qr-container canvas { border-radius: 12px; display: block; }
+    @media print {
+      body * { visibility: hidden; }
+      .print-area, .print-area * { visibility: visible; }
+      .print-area { position: fixed; top: 0; left: 0; width: 100%; display: flex; justify-content: center; align-items: center; height: 100%; }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800 antialiased min-h-screen">
+  <div class="flex h-screen overflow-hidden relative">
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/40 z-30 hidden transition-opacity duration-300"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-72 bg-sepGreenDark text-white flex-shrink-0 flex flex-col sidebar-transition absolute z-40 h-full transform -translate-x-full md:relative md:translate-x-0 shadow-2xl border-r border-white/5">
+      <div class="p-8 border-b border-white/10 flex flex-col items-center bg-black/10">
+        <button id="close-sidebar-btn" class="absolute top-4 right-4 md:hidden text-white/50 hover:text-white"><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+        <div class="w-20 h-20 bg-gradient-to-tr from-sepGold to-yellow-200 rounded-2xl mb-4 flex items-center justify-center shadow-premium cursor-pointer" onclick="location.href='dashboard.html'">
+          <span class="text-sepGreenDark font-black text-2xl"><svg class="w-8 h-8 md:w-10 md:h-10 inline-block group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></span>
+        </div>
+        <h1 class="text-xs font-bold text-center uppercase tracking-widest text-white/90">Portal del Alumno</h1>
+        <p class="text-[10px] text-sepGold mt-2 font-semibold bg-black/30 px-3 py-1 rounded-full uppercase tracking-wider">Secundaria Técnica No. 87</p>
+      </div>
+      <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+        <a class="flex items-center space-x-3 p-3.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 hover:translate-x-1 transition-all duration-300 group" href="dashboard.html">
+          <svg class="h-5 w-5 group-hover:text-sepGold transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+          <span class="font-medium tracking-wide">Mi Resumen</span>
+        </a>
+        <a class="flex items-center space-x-3 p-3.5 rounded-xl bg-gradient-to-r from-sepGold/20 to-transparent border-l-4 border-sepGold shadow-[inset_0_0_20px_rgba(212,175,55,0.05)] text-sepGold group relative overflow-hidden" href="mi-qr.html">
+          <svg class="h-5 w-5 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
+          <span class="font-semibold relative z-10 font-heading tracking-wide">Mi Código QR</span>
+        </a>
+        <a class="flex items-center space-x-3 p-3.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 hover:translate-x-1 transition-all duration-300 group" href="asistencia.html">
+          <svg class="h-5 w-5 group-hover:text-sepGold transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+          <span class="font-medium tracking-wide">Mis Asistencias</span>
+        </a>
+        <a class="flex items-center space-x-3 p-3.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 hover:translate-x-1 transition-all duration-300 group" href="calendario.html">
+          <svg class="h-5 w-5 group-hover:text-sepGold transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+          <span class="font-medium tracking-wide">Calendario</span>
+        </a>
+        <a class="flex items-center space-x-3 p-3.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 hover:translate-x-1 transition-all duration-300 group" href="reportes.html">
+          <svg class="h-5 w-5 group-hover:text-sepGold transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+          <span class="font-medium tracking-wide">Mis Reportes</span>
+        </a>
+      </nav>
+      <div class="p-5 bg-black/20 border-t border-white/10">
+        <div class="flex items-center gap-3">
+          <div id="sidebar-avatar" class="w-10 h-10 rounded-full bg-gradient-to-br from-sepGold to-yellow-600 flex items-center justify-center text-white font-bold">A</div>
+          <div>
+            <p id="sidebar-name" class="text-sm font-bold text-white">Cargando...</p>
+            <p class="text-xs text-white/50">Alumno</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col overflow-y-auto">
+      <header class="glass-header shadow-sm h-14 md:h-20 flex items-center justify-between px-6 md:px-10 sticky top-0 z-20">
+        <div class="flex items-center">
+          <button id="mobile-menu-btn" class="md:hidden mr-4 text-sepGreenDark p-2 rounded-xl hover:bg-green-50"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
+          <div>
+            <h2 class="text-xl md:text-2xl font-extrabold text-sepGreenDark font-heading">Mi Código QR de Acceso</h2>
+            <p class="text-xs text-gray-400 hidden md:block">Credencial digital personal — úsala para registrar tu asistencia</p>
+          </div>
+        </div>
+        <button onclick="window.location.href='../../index.html'" class="bg-white text-gray-600 border border-gray-200 shadow-sm hover:shadow px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+          <span class="hidden md:inline">Cerrar Sesión</span>
+        </button>
+      </header>
+
+      <div class="p-6 md:p-10 max-w-4xl mx-auto w-full flex-1 flex flex-col items-center justify-center">
+        
+        <!-- QR Card -->
+        <div class="print-area w-full max-w-lg">
+          <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
+            <!-- Top bar -->
+            <div class="bg-gradient-to-r from-sepGreenDark to-[#285C4D] px-8 py-6 text-white text-center">
+              <div class="flex items-center justify-center gap-3 mb-1">
+                <div class="w-10 h-10 bg-sepGold rounded-xl flex items-center justify-center">
+                  <span class="text-white font-black text-sm"><svg class="w-8 h-8 md:w-10 md:h-10 inline-block group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></span>
+                </div>
+                <div class="text-left">
+                  <p class="text-xs font-bold uppercase tracking-widest text-white/60">Secretaría de Educación Pública</p>
+                  <p class="text-sm font-extrabold">Secundaria Técnica No. 87</p>
+                </div>
+              </div>
+              <h3 class="text-xs font-bold uppercase tracking-[0.3em] text-white/70 mt-3">CREDENCIAL DE ACCESO ESTUDIANTIL</h3>
+            </div>
+            
+            <!-- QR and info -->
+            <div class="px-8 py-10 flex flex-col items-center gap-8 md:flex-row md:gap-10">
+              
+              <!-- QR Code -->
+              <div class="flex-shrink-0 flex flex-col items-center gap-4">
+                <div id="qr-placeholder" class="w-48 h-48 bg-gray-100 rounded-2xl flex items-center justify-center animate-pulse">
+                  <svg class="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
+                </div>
+                <div id="qrcode" class="qr-container hidden"></div>
+                <span id="qr-code-text" class="text-xs font-mono text-gray-400 text-center break-all max-w-[12rem]"></span>
+              </div>
+
+              <!-- Info -->
+              <div class="flex-1 flex flex-col gap-4 w-full">
+                <div>
+                  <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Nombre Completo</p>
+                  <p id="info-nombre" class="text-xl font-extrabold text-gray-800 font-heading leading-tight">Cargando...</p>
+                </div>
+                <div class="grid animate-fade-in-up grid-cols-2 gap-4">
+                  <div>
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Matrícula</p>
+                    <p id="info-matricula" class="text-base font-extrabold text-sepGreenDark font-mono">---</p>
+                  </div>
+                  <div>
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Grado / Grupo</p>
+                    <p id="info-grado" class="text-base font-extrabold text-gray-700">---</p>
+                  </div>
+                </div>
+                <div class="pt-2 border-t border-gray-100">
+                  <div class="flex items-center gap-2 text-green-600 bg-green-50 rounded-xl px-3 py-2">
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    <p class="text-xs font-bold">Credencial Activa — Ciclo 2025-2026</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom bar -->
+            <div class="bg-gray-50 border-t border-gray-100 px-8 py-4 text-center">
+              <p class="text-[10px] text-gray-400 font-medium">Este código QR es personal e intransferible. Su uso es exclusivo para el registro de asistencia.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="mt-8 flex flex-col sm:flex-row gap-4 w-full max-w-lg">
+          <button id="btn-download" class="flex-1 bg-sepGreenDark text-white py-3 px-6 rounded-xl font-bold shadow-premium hover:shadow-xl hover:-translate-y-1 hover:shadow-premium-hover transition-all flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            Descargar QR
+          </button>
+          <button id="btn-print" class="flex-1 bg-white text-gray-700 border-2 border-gray-200 py-3 px-6 rounded-xl font-bold hover:border-gray-300 hover:shadow transition-all flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+            Imprimir Credencial
+          </button>
+        </div>
+
+        <!-- Instructions -->
+        <div class="mt-8 w-full max-w-lg bg-blue-50 border border-blue-100 rounded-2xl p-6">
+          <h4 class="font-bold text-blue-800 mb-3 text-sm uppercase tracking-wide">¿Cómo usar tu QR?</h4>
+          <ol class="space-y-2 text-sm text-blue-700">
+            <li class="flex items-start gap-2"><span class="font-black mt-0.5">1.</span> Muestra este código QR al prefecto o al escáner en la entrada de la escuela.</li>
+            <li class="flex items-start gap-2"><span class="font-black mt-0.5">2.</span> El sistema registrará automáticamente tu hora de entrada.</li>
+            <li class="flex items-start gap-2"><span class="font-black mt-0.5">3.</span> También puedes descargar o imprimir tu credencial para llevarla contigo.</li>
+          </ol>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../../assets/js/main.js?v=4"></script>
+  <script type="module">
+    import { checkAuth } from '../../assets/js/auth-guard.js';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const session = checkAuth(['alumno']);
+      if (!session) return;
+
+      const nombre = session.nombre || 'Alumno';
+      const matricula = session.matricula || '';
+      const codigoAcceso = session.codigo_acceso || session.id || matricula;
+      const grupo = session.grupo || '';
+
+      // Update sidebar
+      document.getElementById('sidebar-name').textContent = nombre;
+      const initials = nombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+      document.getElementById('sidebar-avatar').textContent = initials;
+
+      // Update info card
+      document.getElementById('info-nombre').textContent = nombre;
+      document.getElementById('info-matricula').textContent = matricula || '(sin matrícula)';
+      document.getElementById('info-grado').textContent = grupo || 'Sin asignar';
+      document.getElementById('qr-code-text').textContent = codigoAcceso;
+
+      // Generate QR
+      const qrPlaceholder = document.getElementById('qr-placeholder');
+      const qrDiv = document.getElementById('qrcode');
+
+      try {
+        new QRCode(qrDiv, {
+          text: codigoAcceso,
+          width: 192,
+          height: 192,
+          colorDark: '#1B4D3E',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.H
+        });
+        qrPlaceholder.classList.add('hidden');
+        qrDiv.classList.remove('hidden');
+      } catch(e) {
+        console.error('QR error:', e);
+        qrPlaceholder.innerHTML = '<p class="text-xs text-gray-400">Error al generar QR</p>';
+      }
+
+      // Download
+      document.getElementById('btn-download').addEventListener('click', () => {
+        const canvas = qrDiv.querySelector('canvas');
+        if (!canvas) return alert('No se pudo generar la imagen del QR.');
+
+        // Create a new canvas with card design
+        const exportCanvas = document.createElement('canvas');
+        const padding = 40;
+        exportCanvas.width = canvas.width + padding * 2;
+        exportCanvas.height = canvas.height + padding * 2 + 80;
+        const ctx = exportCanvas.getContext('2d');
+
+        // Background
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+
+        // Header strip
+        ctx.fillStyle = '#1B4D3E';
+        ctx.fillRect(0, 0, exportCanvas.width, 60);
+
+        // Title
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'bold 14px Montserrat, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('CREDENCIAL ESTUDIANTIL — SEP', exportCanvas.width / 2, 38);
+
+        // QR
+        ctx.drawImage(canvas, padding, 70);
+
+        // Footer
+        ctx.fillStyle = '#1B4D3E';
+        ctx.font = 'bold 13px Montserrat, sans-serif';
+        ctx.fillText(nombre, exportCanvas.width / 2, canvas.height + 90);
+        ctx.fillStyle = '#888';
+        ctx.font = '12px monospace';
+        ctx.fillText(codigoAcceso, exportCanvas.width / 2, canvas.height + 110);
+
+        const link = document.createElement('a');
+        link.href = exportCanvas.toDataURL('image/png');
+        link.download = `QR_Credencial_${nombre.replace(/\s+/g, '_')}.png`;
+        link.click();
+      });
+
+      // Print
+      document.getElementById('btn-print').addEventListener('click', () => window.print());
+    });
+  </script>
+</body>
+</html>

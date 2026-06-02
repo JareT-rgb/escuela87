@@ -1,241 +1,283 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="utf-8" />
-  <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport" />
-  <title>SEP - Registro de Asistencias | Prefectura</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>SEP - Asistencia y Acceso</title>
+  
+  <!-- Modern Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+  <!-- jsQR Library -->
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+  
+  <!-- Tailwind Config & Custom Styles -->
   <script src="../../assets/js/tailwind-config.js"></script>
-  <link rel="stylesheet" href="../../assets/css/style.css">
-  <style>
-    /* Mobile card layout animations */
-    @keyframes slideUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
-    .card-anim { animation: slideUp 0.3s ease forwards; }
-    /* Status row indicators */
-    .status-border-green { border-left: 4px solid #22c55e; }
-    .status-border-yellow { border-left: 4px solid #eab308; }
-    .status-border-red { border-left: 4px solid #ef4444; }
-    .status-border-gray { border-left: 4px solid #e5e7eb; }
-    /* Pulsing for unmarked */
-    @keyframes pulse-border { 0%,100%{ border-left-color:#e5e7eb; } 50%{ border-left-color:#fbbf24; } }
-    .status-border-unmarked { border-left: 4px solid #e5e7eb; animation: pulse-border 2s infinite; }
-    /* Fade transitions */
-    .fade-section { transition: opacity 0.3s ease, transform 0.3s ease; }
-    .fade-out { opacity:0; transform:translateY(-8px); pointer-events:none; }
-    .fade-in { opacity:1; transform:translateY(0); }
-    /* Sticky save bar */
-    .sticky-save-bar { position:fixed; bottom:0; left:0; right:0; z-index:30; padding-bottom: env(safe-area-inset-bottom, 0px); }
-    /* Group card status check */
-    .group-done { position:relative; }
-    .group-done::after { content:'✓'; position:absolute; top:6px; right:8px; font-size:14px; color:#22c55e; font-weight:bold; }
-  </style>
+  <link rel="stylesheet" href="../../assets/css/style.css?v=4">
 </head>
-<body class="bg-gradient-radial font-sans text-gray-800 antialiased selection:bg-sepGold selection:text-sepBurgundyDark bg-fixed relative">
 
-  <!-- Decorative Background Shapes -->
-  <div class="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-[#691C32]/5 blur-3xl pointer-events-none z-0"></div>
-  <div class="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-[#BC955C]/10 blur-3xl pointer-events-none z-0"></div>
-
+<body class="bg-sepLightGray font-sans text-gray-800 antialiased selection:bg-sepGold selection:text-sepGreenDark">
   <div class="flex h-screen overflow-hidden relative">
     
-    <div id="sidebar-overlay" class="fixed inset-0 bg-sepBurgundyDark/40 backdrop-blur-sm z-30 hidden md:hidden transition-opacity duration-300"></div>
+    <!-- Mobile Sidebar Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-sepGreenDark/40 backdrop-blur-sm z-30 hidden md:hidden transition-opacity duration-300"></div>
 
-    <aside id="sidebar" class="w-72 bg-sepGreenDark text-white flex-shrink-0 flex flex-col sidebar-transition absolute z-40 h-full transform -translate-x-full md:relative md:translate-x-0 shadow-2xl md:shadow-none border-r border-white/5">
+    <!-- BEGIN: Premium Sidebar -->
+    <aside id="sidebar" class="w-72 bg-gradient-to-b from-sepGreenDark via-sepGreen to-sepGreenDark text-white flex-shrink-0 flex flex-col sidebar-transition absolute z-40 h-full transform -translate-x-full md:relative md:translate-x-0 shadow-2xl md:shadow-none border-r border-white/5">
       
+      <!-- Institutional Logo Area -->
       <div class="p-8 border-b border-white/10 flex flex-col items-center relative bg-black/10">
         <button id="close-sidebar-btn" class="absolute top-4 right-4 md:hidden text-white/50 hover:text-white transition-colors">
           <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
-        <div class="w-20 h-20 bg-gradient-to-tr from-sepGold to-sepGoldDark rounded-2xl mb-4 flex items-center justify-center shadow-md transform transition duration-500 hover:scale-105 hover:rotate-3 group cursor-pointer" onclick="window.location.href='dashboard.html'">
-          <span class="text-white font-heading font-black text-2xl tracking-tighter transition-colors">SEP</span>
+        <div class="w-20 h-20 bg-gradient-to-tr from-sepGold to-yellow-200 rounded-2xl mb-4 flex items-center justify-center shadow-glow transform transition duration-500 hover:scale-105 hover:rotate-3 group cursor-pointer" onclick="window.location.href='dashboard.html'">
+          <span class="text-sepGreen font-heading font-black text-2xl tracking-tighter group-hover:text-sepGreenDark transition-colors"><svg class="w-8 h-8 md:w-10 md:h-10 inline-block group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></span>
         </div>
-        <h1 class="text-xs font-bold text-center uppercase tracking-widest text-white/90 font-heading">Portal de Prefectura</h1>
+        <h1 class="text-xs font-bold text-center uppercase tracking-widest text-white/90 font-heading">Secretaría de Educación Pública</h1>
         <p class="text-[10px] text-sepGold mt-2 font-semibold bg-black/30 px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-sm shadow-inner">Secundaria Técnica No. 87</p>
       </div>
 
+      <!-- Navigation Links -->
       <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
         <a class="flex items-center space-x-3 p-3.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 hover:translate-x-1 transition-all duration-300 group" href="dashboard.html">
           <svg class="h-5 w-5 group-hover:text-sepGold transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-          <span class="font-medium tracking-wide">Panel Principal</span>
+          <span class="font-medium tracking-wide">Inicio</span>
         </a>
-        <a class="flex items-center space-x-3 p-3.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 hover:translate-x-1 transition-all duration-300 group" href="escaner.html">
-          <svg class="h-5 w-5 group-hover:text-sepGold transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
-          <span class="font-medium tracking-wide">Escáner QR</span>
+        <a class="flex items-center space-x-3 p-3.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 hover:translate-x-1 transition-all duration-300 group" href="reportes.html">
+          <svg class="h-5 w-5 group-hover:text-sepGold transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          <span class="font-medium tracking-wide">Reportes</span>
         </a>
-        <a class="flex items-center space-x-3 p-3.5 rounded-xl bg-gradient-to-r from-sepGold/20 to-transparent border-l-4 border-sepGold shadow-[inset_0_0_20px_rgba(188,149,92,0.05)] text-sepGold group relative overflow-hidden" href="asistencias.html">
+        <a class="flex items-center space-x-3 p-3.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 hover:translate-x-1 transition-all duration-300 group" href="grupos.html">
+          <svg class="h-5 w-5 group-hover:text-sepGold transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+          <span class="font-medium tracking-wide">Gestión de Grupos</span>
+        </a>
+        <a class="flex items-center space-x-3 p-3.5 rounded-xl bg-gradient-to-r from-sepGold/20 to-transparent border-l-4 border-sepGold shadow-[inset_0_0_20px_rgba(212,175,55,0.05)] text-sepGold relative overflow-hidden" href="asistencias.html">
+          <div class="absolute inset-0 bg-white/5 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
           <svg class="h-5 w-5 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-          <span class="font-semibold relative z-10 font-heading tracking-wide">Asistencias</span>
+          <span class="font-semibold relative z-10 font-heading tracking-wide">Asistencia y Acceso</span>
         </a>
         <a class="flex items-center space-x-3 p-3.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 hover:translate-x-1 transition-all duration-300 group" href="busqueda.html">
           <svg class="h-5 w-5 group-hover:text-sepGold transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
           <span class="font-medium tracking-wide">Búsqueda Alumnos</span>
         </a>
-        <a class="flex items-center space-x-3 p-3.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 hover:translate-x-1 transition-all duration-300 group" href="reportes.html">
-          <svg class="h-5 w-5 group-hover:text-sepGold transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-          <span class="font-medium tracking-wide">Gestión de Reportes</span>
+        <a class="flex items-center space-x-3 p-3.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 hover:translate-x-1 transition-all duration-300 group" href="periodos.html">
+          <svg class="h-5 w-5 group-hover:text-sepGold transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+          <span class="font-medium tracking-wide">Periodos Académicos</span>
         </a>
       </nav>
 
+      <!-- User Info Footer -->
       <div class="p-5 bg-black/20 border-t border-white/10 backdrop-blur-sm">
         <div class="flex items-center space-x-3 group cursor-pointer">
-          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-sepGold to-yellow-600 flex items-center justify-center text-white font-bold shadow-md group-hover:shadow-glow transition-all duration-300">P</div>
+          <div id="sidebar-avatar" class="w-10 h-10 rounded-full bg-gradient-to-br from-sepGold to-yellow-600 flex items-center justify-center text-white font-bold shadow-premium group-hover:shadow-glow transition-all duration-300">P</div>
           <div class="overflow-hidden">
             <p id="sidebar-name" class="text-sm font-bold truncate text-white group-hover:text-sepGold transition-colors font-heading tracking-wide">Cargando...</p>
-            <p class="text-xs text-white/50 font-medium">Prefecto</p>
+            <p id="sidebar-role" class="text-xs text-white/50 font-medium">Prefecto</p>
           </div>
         </div>
       </div>
     </aside>
 
-    <main class="flex-1 flex flex-col overflow-y-auto w-full scroll-smooth pb-24 md:pb-6">
-      <!-- Header: reduced in mobile (4.5) -->
-      <header class="glass-header shadow-sm h-14 md:h-20 flex items-center justify-between px-4 md:px-10 flex-shrink-0 sticky top-0 z-20">
+    <!-- BEGIN: Main Content Area -->
+    <main class="flex-1 flex flex-col overflow-y-auto w-full scroll-smooth">
+      
+      <!-- Top Header -->
+      <header class="glass-header shadow-sm h-14 md:h-20 flex items-center justify-between px-6 md:px-10 flex-shrink-0 sticky top-0 z-20 transition-all">
         <div class="flex items-center">
-          <button id="mobile-menu-btn" class="md:hidden mr-3 text-sepBurgundy bg-sepBurgundy/5 p-2 rounded-xl hover:bg-sepBurgundy/10 hover:shadow-inner transition-all">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+          <button id="mobile-menu-btn" class="md:hidden mr-4 text-sepGreen bg-sepGreen/5 p-2 rounded-xl hover:bg-sepGreen/10 hover:shadow-inner transition-all focus:outline-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
           </button>
           <div>
-            <h2 class="text-lg md:text-3xl font-extrabold text-sepGreenDark truncate font-heading tracking-tight drop-shadow-sm">Registro de Asistencias</h2>
-            <p class="text-xs text-gray-400 font-medium hidden md:block">Consulta y justificación de faltas</p>
+            <h2 class="text-xl md:text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sepBurgundy to-sepBurgundyLight truncate font-heading tracking-tight">Registro de Asistencia Institucional</h2>
+            <p class="text-xs text-gray-400 font-medium hidden md:block">Control de Acceso y Pase de Lista</p>
           </div>
         </div>
-        <div class="flex items-center space-x-3 md:space-x-6">
-          <button onclick="window.location.href='../../index.html'" class="bg-gradient-to-r from-gray-100 to-white text-gray-600 border border-gray-200 shadow-sm hover:shadow hover:border-gray-300 px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-sm font-bold transition-all duration-300 hover:-translate-y-0.5 flex items-center gap-2">
+        <div class="flex items-center space-x-4 md:space-x-6">
+          <div class="hidden sm:flex flex-col items-end">
+            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Estado</span>
+            <span class="text-sm font-semibold text-green-600 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Escáner Listo</span>
+          </div>
+          <div class="w-px h-8 bg-gray-200 hidden sm:block"></div>
+          <button onclick="window.location.href='../../index.html'" class="bg-gradient-to-r from-gray-100 to-white text-gray-600 border border-gray-200 shadow-sm hover:shadow hover:border-gray-300 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300 hover:-translate-y-1 hover:shadow-premium-hover flex items-center gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
             <span class="hidden md:inline">Cerrar Sesión</span>
           </button>
         </div>
       </header>
 
-      <div class="p-4 md:p-10 space-y-6 md:space-y-8 max-w-7xl mx-auto w-full">
-        <!-- Stats Row -->
-        <section class="grid grid-cols-3 gap-3 md:gap-6 animate-fade-in-up">
-          <article class="bg-white p-3 md:p-6 rounded-2xl shadow-soft border border-gray-100">
-            <div class="flex justify-between items-start mb-2 md:mb-4">
-              <span class="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest">Presentes</span>
-              <div class="p-1.5 md:p-2 bg-green-50 rounded-lg text-green-500"><svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+      <!-- Main dashboard Grid -->
+      <div class="p-6 md:p-10 space-y-8 md:space-y-10 max-w-7xl mx-auto w-full">
+        
+        <!-- Periodo Banner -->
+        <div id="periodo-banner" class="hidden bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-2xl p-4 flex items-center justify-between shadow-sm">
+          <div class="flex items-center gap-3">
+            <div class="p-2 bg-blue-100 rounded-lg text-blue-600">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
             </div>
-            <span id="stat-presentes" class="text-2xl md:text-4xl font-black text-gray-800">--</span>
-          </article>
-          <article class="bg-white p-3 md:p-6 rounded-2xl shadow-soft border border-gray-100">
-            <div class="flex justify-between items-start mb-2 md:mb-4">
-              <span class="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest">Faltas</span>
-              <div class="p-1.5 md:p-2 bg-red-50 rounded-lg text-red-500"><svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg></div>
-            </div>
-            <span id="stat-faltas" class="text-2xl md:text-4xl font-black text-gray-800">--</span>
-          </article>
-          <article class="bg-white p-3 md:p-6 rounded-2xl shadow-soft border border-gray-100">
-            <div class="flex justify-between items-start mb-2 md:mb-4">
-              <span class="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest">Justificadas</span>
-              <div class="p-1.5 md:p-2 bg-blue-50 rounded-lg text-blue-500"><svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg></div>
-            </div>
-            <span id="stat-justificadas" class="text-2xl md:text-4xl font-black text-gray-800">--</span>
-          </article>
-        </section>
-
-        <!-- Groups Grid UI (3.3 fade transition, 3.4 only 3 grades) -->
-        <section id="grupos-view" class="glass-panel rounded-2xl shadow-soft border border-gray-100 p-4 md:p-6 animate-fade-in-up fade-section fade-in">
-          <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-4 md:mb-6 gap-3 border-b border-gray-100 pb-4">
             <div>
-              <h3 class="text-base md:text-lg font-extrabold text-gray-800 font-heading" id="header-title">Pase de Lista</h3>
-              <p class="text-xs text-gray-500 font-medium">Selecciona la fecha y el grupo para registrar asistencia.</p>
-            </div>
-            <div class="flex items-center gap-3">
-              <input type="date" id="attendance-date" class="border-gray-200 rounded-xl text-sm font-bold text-gray-700 bg-white px-3 py-2 shadow-sm focus:ring-sepBurgundy">
-              <button id="btn-volver-grupos" class="hidden bg-gray-200 text-gray-700 px-3 py-2 rounded-xl text-sm font-bold shadow-sm hover:bg-gray-300 transition-colors">Volver</button>
+              <p class="text-xs font-bold text-blue-600 uppercase tracking-wider">Sistema de Periodos Activo</p>
+              <h4 id="banner-parcial-nombre" class="text-sm font-extrabold text-gray-800">--</h4>
             </div>
           </div>
-          <!-- Groups grid: 3.4 only 3 grades, 4.4 optimized for mobile -->
-          <div id="grupos-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4">
-            <!-- Rendered by JS -->
-          </div>
-        </section>
+          <div id="banner-parcial-fecha" class="text-xs font-medium text-gray-500 hidden sm:block"></div>
+        </div>
 
-        <!-- Attendance Table (desktop: table, mobile: cards 4.1) -->
-        <section id="attendance-section" class="glass-panel rounded-2xl shadow-soft border border-gray-100 overflow-hidden fade-section fade-in">
-          <div class="bg-sepGreen px-4 md:px-6 py-4 md:py-5 border-b border-sepGreenDark/20 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-            <h3 class="font-extrabold text-white tracking-wide text-sm md:text-lg font-heading flex items-center">
-              <svg class="w-5 h-5 mr-2 text-sepGold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-              Asistencias del Día
-            </h3>
-            <div class="flex items-center gap-2 flex-wrap">
-              <span class="bg-white/20 text-white text-[10px] md:text-xs px-3 py-1 rounded-full font-bold tracking-wide" id="table-date">Cargando...</span>
-              <!-- 2.3 Bulk action buttons -->
-              <button id="btn-marcar-todos" class="hidden bg-green-500/90 hover:bg-green-600 text-white text-[10px] md:text-xs px-3 py-1 rounded-full font-bold tracking-wide transition-colors">✓ Todos Presente</button>
-              <button id="btn-limpiar-todos" class="hidden bg-white/20 hover:bg-white/30 text-white text-[10px] md:text-xs px-3 py-1 rounded-full font-bold tracking-wide transition-colors">↺ Limpiar</button>
+        <div id="Inhábil-banner" class="hidden bg-red-50 border border-red-200 rounded-2xl p-4 flex items-center gap-3 shadow-sm">
+          <div class="p-2 bg-red-100 rounded-lg text-red-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+          </div>
+          <div>
+            <h4 class="text-sm font-extrabold text-red-800">Día Inhábil</h4>
+            <p id="Inhábil-motivo" class="text-xs font-medium text-red-600">Hoy no se registrarán asistencias ni faltas.</p>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10">
+          
+          <!-- BEGIN: QR Scanner Section -->
+          <section class="lg:col-span-1 glass-panel rounded-2xl shadow-soft border border-gray-100 flex flex-col overflow-hidden hover:shadow-xl transition-shadow duration-300 opacity-0 animate-fade-in-up">
+            <div class="bg-sepGreen px-6 py-4 border-b border-sepGold/20 flex justify-between items-center relative overflow-hidden">
+              <div class="absolute inset-0 opacity-30"></div>
+              <h3 class="font-extrabold text-white tracking-wide text-sm font-heading z-10 flex items-center">
+                <svg class="w-5 h-5 text-sepGold mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
+                Control de Acceso QR
+              </h3>
             </div>
-          </div>
+            
+            <div class="p-8 flex-1 flex flex-col items-center justify-center bg-gray-50/50">
+              <div class="relative w-56 h-56 lg:w-64 lg:h-64 bg-gradient-to-b from-gray-800 to-gray-900 rounded-3xl overflow-hidden border-[6px] border-gray-200 flex items-center justify-center shadow-inner scanner-glow">
+                <!-- Video para la cámara real -->
+                <video id="qr-video" class="hidden absolute top-0 left-0 w-full h-full object-cover"></video>
+                <canvas id="qr-canvas" class="hidden"></canvas>
+                
+                <!-- Viewfinder Brackets -->
+                <div class="absolute top-4 left-4 w-6 h-6 border-t-4 border-l-4 border-sepGold rounded-tl-lg shadow-glow z-10"></div>
+                <div class="absolute top-4 right-4 w-6 h-6 border-t-4 border-r-4 border-sepGold rounded-tr-lg shadow-glow z-10"></div>
+                <div class="absolute bottom-4 left-4 w-6 h-6 border-b-4 border-l-4 border-sepGold rounded-bl-lg shadow-glow z-10"></div>
+                <div class="absolute bottom-4 right-4 w-6 h-6 border-b-4 border-r-4 border-sepGold rounded-br-lg shadow-glow z-10"></div>
+                
+                <!-- Placeholder UI cuando la cámara está apagada -->
+                <div id="scanner-placeholder" class="text-center z-10">
+                  <svg class="w-12 h-12 text-white/20 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                  <p class="text-white text-xs opacity-60 font-medium tracking-wide">Aproxime la credencial<br>hacia la cámara</p>
+                </div>
+                
+                <!-- Animated Line (solo decorativa) -->
+                <div class="scanner-line"></div>
+              </div>
 
-          <!-- Desktop table (hidden on mobile) -->
-          <div class="hidden md:block overflow-x-auto">
-            <table class="w-full text-left text-sm whitespace-nowrap">
-              <thead class="text-gray-400 font-bold text-xs uppercase tracking-wider bg-gray-50 border-b border-gray-100">
-                <tr>
-                  <th class="px-6 py-4">#</th>
-                  <th class="px-6 py-4">Estudiante</th>
-                  <th class="px-6 py-4">Grado</th>
-                  <th class="px-6 py-4">Hora</th>
-                  <th class="px-6 py-4 text-center">Registro Asistencia</th>
-                </tr>
-              </thead>
-              <tbody id="attendance-tbody" class="divide-y divide-gray-50">
-                <tr><td colspan="6" class="text-center py-8 text-gray-400 font-medium animate-pulse">Selecciona un grupo para comenzar.</td></tr>
-              </tbody>
-            </table>
-          </div>
+              <!-- Notificación de estado de escaneo -->
+              <div id="scanner-feedback" class="hidden mt-4 w-full px-4 py-2 text-center text-xs font-bold rounded-lg transition-colors"></div>
+              <p id="scanner-status" class="mt-4 text-xs font-bold text-gray-400 text-center uppercase tracking-wider">Escáner apagado</p>
+              
+              <button id="activate-scanner-btn" class="mt-6 w-full bg-gradient-to-r from-sepGold to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-sepGreen py-3.5 rounded-xl font-bold transition-all duration-300 shadow-premium shadow-sepGold/30 hover:-translate-y-1 flex items-center justify-center gap-2 group">
+                <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                Activar Escáner Óptico
+              </button>
+            </div>
+            
+            <div class="p-3 bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 text-xs font-bold text-center border-t border-green-100 flex items-center justify-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+              SISTEMA EN LÍNEA: 100% OPERATIVO
+            </div>
+          </section>
 
-          <!-- Mobile cards (hidden on desktop 4.1) -->
-          <div id="attendance-cards" class="md:hidden p-3 space-y-2">
-            <p class="text-center py-8 text-gray-400 font-medium text-sm">Selecciona un grupo para comenzar.</p>
-          </div>
-        </section>
+          <!-- BEGIN: Real-time Attendance Roster -->
+          <section class="lg:col-span-2 glass-panel rounded-2xl shadow-soft border border-gray-100 flex flex-col overflow-hidden hover:shadow-xl transition-shadow duration-300 opacity-0 animate-fade-in-up stagger-1">
+            
+            <div class="px-6 py-5 border-b border-gray-100 flex flex-col sm:flex-row justify-between sm:items-center gap-4 bg-gray-50/50">
+              <div>
+                <h3 class="font-extrabold text-gray-800 text-lg font-heading tracking-tight">Pase de Lista Operativo</h3>
+                <p class="text-xs text-gray-500 font-medium">Gestión manual y verificación de grupo</p>
+              </div>
+              
+              <div id="filtro-grados-container" class="flex flex-wrap items-center gap-3 transition-opacity duration-300">
+                <select id="grado-select" class="text-sm font-extrabold text-gray-700 border-2 border-gray-100 rounded-xl focus:ring-sepGold focus:border-sepGold py-2.5 px-5 shadow-sm bg-white hover:border-sepGold/50 transition-all cursor-pointer outline-none">
+                  <option value="">— Seleccionar Grado —</option>
+                  <option value="1">1° Grado</option>
+                  <option value="2">2° Grado</option>
+                  <option value="3">3° Grado</option>
+                </select>
+                <div id="loading-grupos" class="hidden items-center gap-2 text-sepGold text-sm font-bold">
+                  <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Cargando...
+                </div>
+              </div>
+            </div>
+
+            <!-- Contenedor de la cuadrícula de grupos -->
+            <div id="grupos-grid-container" class="hidden p-6 bg-gray-50/50 flex-1 flex-col">
+              <div class="flex items-center gap-2 mb-4 text-sepGreen">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                <h4 class="font-bold text-sm uppercase tracking-widest">Seleccione un Grupo</h4>
+              </div>
+              <div id="grupos-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                 <!-- Tarjetas insertadas por JS -->
+              </div>
+            </div>
+
+            <!-- Contenedor de la lista de asistencia -->
+            <div id="lista-estudiantes-container" class="hidden flex-col flex-1">
+              <div class="px-6 py-3 glass-panel border-b border-gray-100 flex items-center justify-between flex-wrap gap-3">
+                <button id="btn-volver-grupos" class="flex items-center gap-2 text-sm font-extrabold text-gray-400 hover:text-sepGreen transition-colors hover:-translate-x-1 duration-300">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                  Volver a Grupos
+                </button>
+                <div class="flex items-center gap-3">
+                  <input type="date" id="fecha-lista" class="text-sm border border-gray-200 rounded-lg focus:ring-sepGold focus:border-sepGold py-1 px-2 text-gray-600 font-bold outline-none cursor-pointer">
+                  <h4 id="titulo-grupo-actual" class="font-extrabold text-sepGreen text-lg tracking-tight"></h4>
+                </div>
+              </div>
+
+              <div id="lista-info-bar" class="px-6 py-2 bg-emerald-50 text-emerald-700 text-xs font-bold border-b border-emerald-100 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span id="lista-info-text">Cargando...</span>
+              </div>
+
+              <div class="overflow-x-auto flex-1 p-2 max-h-[420px] overflow-y-auto">
+                <table class="w-full text-left text-sm whitespace-nowrap">
+                  <thead class="text-gray-500 font-extrabold text-[10px] uppercase tracking-widest sticky top-0 bg-white z-10 shadow-sm">
+                    <tr>
+                      <th class="px-5 py-4 rounded-tl-xl">Matrícula</th>
+                      <th class="px-5 py-4">Estudiante</th>
+                      <th class="px-5 py-4 text-center rounded-tr-xl">Registro Asistencia</th>
+                    </tr>
+                  </thead>
+                  <tbody id="lista-table-body" class="divide-y divide-gray-50">
+                  </tbody>
+                </table>
+              </div>
+              
+              <div class="p-5 bg-gray-50/80 border-t border-gray-100 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                <span id="lista-count" class="text-xs text-gray-500 font-bold tracking-wide">0 alumnos</span>
+                <button id="btn-volver-grupos-bottom" class="text-white bg-gradient-to-r from-sepBurgundy to-sepBurgundyLight px-6 py-2.5 rounded-xl text-sm font-bold shadow-premium shadow-sepBurgundy/20 hover:shadow-premium hover:-translate-y-1 hover:shadow-premium-hover transition-all duration-300 flex items-center gap-2">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                  Terminar y Volver
+                </button>
+              </div>
+            </div>
+          </section>
+
+        </div>
       </div>
     </main>
   </div>
 
-  <!-- Sticky Save Bar (4.6) -->
-  <div id="sticky-save-bar" class="sticky-save-bar hidden">
-    <div class="bg-white/95 backdrop-blur-xl border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] px-4 md:px-8 py-3 md:py-4">
-      <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
-        <div class="flex items-center gap-3 md:gap-6 text-xs md:text-sm font-bold flex-wrap">
-          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-green-500"></span> <span id="count-presentes">0</span></span>
-          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-yellow-500"></span> <span id="count-retardos">0</span></span>
-          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-red-500"></span> <span id="count-faltas">0</span></span>
-          <span class="flex items-center gap-1.5 text-gray-400"><span class="w-2.5 h-2.5 rounded-full bg-gray-300"></span> <span id="count-sinmarcar">0</span></span>
-        </div>
-        <div class="flex items-center gap-2">
-          <!-- 2.5 Export button with options -->
-          <div class="relative" id="export-dropdown-container">
-            <button id="btn-exportar" class="hidden bg-gray-100 text-gray-600 border border-gray-200 px-3 py-2 md:py-2.5 rounded-xl text-xs md:text-sm font-bold shadow-sm hover:shadow transition-all flex items-center gap-1.5">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-              <span class="hidden sm:inline">Exportar</span>
-            </button>
-            <div id="export-menu" class="hidden absolute bottom-full right-0 mb-2 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden min-w-[180px] z-50">
-              <button onclick="exportarAsistencias('csv')" class="w-full text-left px-4 py-3 text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2">
-                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                Exportar CSV
-              </button>
-              <button onclick="exportarAsistencias('sheets')" class="w-full text-left px-4 py-3 text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2 border-t border-gray-50">
-                <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                Google Sheets
-              </button>
-            </div>
-          </div>
-          <button id="guardar-lista-btn" class="bg-gradient-to-r from-sepBurgundy to-sepBurgundyLight text-white px-4 md:px-6 py-2 md:py-2.5 rounded-xl text-xs md:text-sm font-bold shadow-lg hover:shadow-xl transition-all min-h-[44px] flex items-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-            Guardar Lista
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- Modal Justificar Falta -->
   <div id="justify-modal" class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300 opacity-0">
-    <div class="glass-panel rounded-2xl shadow-2xl w-full max-w-md p-6 transform scale-95 transition-transform duration-300 mx-4">
+    <div class="glass-panel rounded-2xl shadow-2xl w-full max-w-md p-6 transform scale-95 transition-all duration-300 mx-4">
       <div class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 mb-4 mx-auto">
         <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
       </div>
@@ -243,521 +285,469 @@
       <p class="text-sm text-gray-500 text-center mt-2" id="justify-modal-student">Alumno</p>
       <div class="mt-4">
         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Motivo de la justificación</label>
-        <textarea id="justify-motivo" rows="3" placeholder="Ej: Cita médica, permiso del tutor..." class="w-full border-gray-200 bg-gray-50 rounded-xl text-sm text-gray-700 focus:ring-sepGold focus:border-sepGold px-4 py-3 resize-none"></textarea>
+        <textarea id="justify-motivo" rows="3" placeholder="Ej: Cita médica, permiso del tutor..." class="w-full border border-gray-200 bg-gray-50 rounded-xl text-sm text-gray-700 focus:ring-sepGold focus:border-sepGold px-4 py-3 resize-none outline-none"></textarea>
       </div>
       <div class="mt-6 flex flex-col sm:flex-row gap-3">
-        <button id="cancel-justify-btn" class="w-full bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-xl text-sm font-bold hover:bg-gray-50 transition-colors min-h-[44px]">Cancelar</button>
-        <button id="confirm-justify-btn" class="w-full bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-md hover:bg-blue-700 transition-colors min-h-[44px]">Justificar Falta</button>
+        <button id="cancel-justify-btn" class="w-full glass-panel border border-gray-300 text-gray-700 px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-50 transition-colors">Cancelar</button>
+        <button id="confirm-justify-btn" class="w-full bg-blue-600 text-white px-4 py-2.5 rounded-xl text-sm font-bold shadow-premium hover:bg-blue-700 transition-colors">Justificar Falta</button>
       </div>
     </div>
   </div>
 
-  <!-- Modal Confirmación Guardar (2.1) -->
-  <div id="confirm-save-modal" class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300 opacity-0">
-    <div class="glass-panel rounded-2xl shadow-2xl w-full max-w-sm p-6 transform scale-95 transition-transform duration-300 mx-4">
-      <div class="flex items-center justify-center w-12 h-12 rounded-full bg-green-100 mb-4 mx-auto">
-        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-      </div>
-      <h3 class="text-lg font-extrabold text-gray-900 text-center font-heading">Confirmar Pase de Lista</h3>
-      <div id="confirm-save-summary" class="mt-4 space-y-2 text-sm text-center">
-        <!-- JS fills this -->
-      </div>
-      <p class="text-xs text-gray-400 text-center mt-3">Los alumnos sin marcar se registrarán como <strong class="text-red-500">Falta</strong>.</p>
-      <div class="mt-6 flex flex-col sm:flex-row gap-3">
-        <button id="cancel-save-btn" class="w-full bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-xl text-sm font-bold hover:bg-gray-50 transition-colors min-h-[44px]">Revisar</button>
-        <button id="confirm-save-btn" class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-md hover:from-green-600 hover:to-green-700 transition-colors min-h-[44px]">Confirmar y Guardar</button>
-      </div>
-    </div>
-  </div>
-
-  <script src="../../assets/js/main.js"></script>
+  <script src="../../assets/js/main.js?v=4"></script>
   <script type="module">
-    import { getAsistenciasHoy, justificarFalta, getEstadisticasGlobales, getStudentsByGroup, saveBulkAttendance, supabase } from '../../assets/js/api-client.js?v=1780036658127';
     import { checkAuth } from '../../assets/js/auth-guard.js';
+    document.addEventListener('DOMContentLoaded', () => {
+      const session = checkAuth(['prefecto']);
+      if(session) {
+        document.getElementById('sidebar-name').textContent = session.nombre || 'Directivo';
+        const initials = (session.nombre || 'directivo').split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
+        document.getElementById('sidebar-avatar').textContent = initials;
+      }
+    });
+    import { registrarAsistencia, registrarAsistenciaQR, getAsistenciasHoy, getConfigPeriodos, getParcialActivo, esDiaInhabil, justificarFalta } from '../../assets/js/api-client.js?v=4';
 
-    let currentSession = null;
-    let justifyTarget = null;
-    let currentGrupoSeleccionado = null;
-    let currentGradoSeleccionado = null;
+    // ── Estado global para avoid duplicate listeners ──
+    let globalAlumnosCache = {};
+    let justifyTarget = null; // { studentId, nombre, date }
 
-    document.addEventListener('DOMContentLoaded', async () => {
-      const dateInput = document.getElementById('attendance-date');
-      if (dateInput) {
-        const todayStr = (new Date(Date.now() - new Date().getTimezoneOffset() * 60000)).toISOString().split('T')[0];
-        dateInput.setAttribute('max', todayStr);
-        if (!dateInput.value) dateInput.value = todayStr;
-        dateInput.addEventListener('change', () => {
-          if (dateInput.value > todayStr) dateInput.value = todayStr;
-          if (currentGradoSeleccionado && currentGrupoSeleccionado) {
-            loadAttendance(currentGradoSeleccionado, currentGrupoSeleccionado);
+    // ── Justify modal ──
+    const justifyModal = document.getElementById('justify-modal');
+    const justifyModalContent = justifyModal.querySelector('div');
+
+    function openJustifyModal(studentId, nombre, date) {
+      justifyTarget = { studentId, nombre, date };
+      document.getElementById('justify-modal-student').textContent = nombre;
+      document.getElementById('justify-motivo').value = '';
+      justifyModal.classList.remove('hidden');
+      setTimeout(() => {
+        justifyModal.classList.remove('opacity-0');
+        justifyModalContent.classList.remove('scale-95');
+      }, 10);
+    }
+
+    function closeJustifyModal() {
+      justifyModal.classList.add('opacity-0');
+      justifyModalContent.classList.add('scale-95');
+      setTimeout(() => justifyModal.classList.add('hidden'), 300);
+      justifyTarget = null;
+    }
+
+    document.getElementById('cancel-justify-btn').addEventListener('click', closeJustifyModal);
+    document.getElementById('confirm-justify-btn').addEventListener('click', async () => {
+      if (!justifyTarget) return;
+      const motivo = document.getElementById('justify-motivo').value.trim();
+      if (!motivo) {
+        Swal.fire({ icon: 'warning', title: 'Falta motivo', text: 'Escribe el motivo de la justificación.', confirmButtonColor: '#93222D' });
+        return;
+      }
+      const btn = document.getElementById('confirm-justify-btn');
+      btn.disabled = true; btn.textContent = 'Justificando...';
+      const res = await justificarFalta(justifyTarget.studentId, justifyTarget.date, motivo);
+      btn.disabled = false; btn.textContent = 'Justificar Falta';
+      if (res.success) {
+        Swal.fire({ icon: 'success', title: 'Falta justificada', text: `Se justificó la falta de ${justifyTarget.nombre}.`, confirmButtonColor: '#93222D', timer: 2000, showConfirmButton: false });
+        closeJustifyModal();
+        const targetdate = document.getElementById('fecha-lista').value || null;
+        initGrupos(targetdate);
+      } else {
+        Swal.fire({ icon: 'error', title: 'Error', text: res.error || 'No se pudo justificar la falta.', confirmButtonColor: '#93222D' });
+      }
+    });
+
+    // ── Date Banner ──
+    async function updateDateBanner(dateStr) {
+      const banner = document.getElementById('Inhábil-banner');
+      const motivo = document.getElementById('Inhábil-motivo');
+      if (banner) banner.classList.add('hidden');
+
+      const dateObj = new Date(dateStr + 'T12:00:00');
+      const dayOfWeek = dateObj.getDay();
+      if (dayOfWeek === 0 || dayOfWeek === 6) {
+        if (banner) banner.classList.remove('hidden');
+        if (motivo) motivo.textContent = 'Fin de semana (Sábado/Domingo). No se permiten registros.';
+        return;
+      }
+      const inhabil = await esDiaInhabil(dateStr);
+      if (inhabil) {
+        if (banner) banner.classList.remove('hidden');
+        if (motivo) motivo.textContent = inhabil.razon || 'Día Inhábil. No se permiten registros.';
+      }
+    }
+
+    async function loadPeriodConfig() {
+      const todayISO = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
+      await updateDateBanner(todayISO);
+      const cfg = await getConfigPeriodos();
+      if (cfg && cfg.activo) {
+        document.getElementById('periodo-banner').classList.remove('hidden');
+        const pActivo = await getParcialActivo();
+        if (pActivo) {
+          document.getElementById('banner-parcial-nombre').textContent = pActivo.nombre;
+          document.getElementById('banner-parcial-fecha').textContent = `${pActivo.fecha_inicio} al ${pActivo.fecha_fin}`;
+        } else {
+          document.getElementById('banner-parcial-nombre').textContent = 'Ninguno (fuera de fechas)';
+        }
+      }
+    }
+    loadPeriodConfig();
+    initGrupos();
+
+    // ── Marcar asistencia (individual) ──
+    async function marcarAsistencia(studentId, status, tdStatus, date) {
+      // Desactivar todos los botones de esa fila
+      const row = tdStatus.closest('tr');
+      const allBtns = row.querySelectorAll('.att-btn');
+      allBtns.forEach(b => { b.disabled = true; b.classList.add('opacity-50'); });
+
+      const targetdate = date || document.getElementById('fecha-lista').value || null;
+      const data = await registrarAsistencia(studentId, status, targetdate);
+
+      if (data.success) {
+        const hora = new Date().toTimeString().substring(0, 5);
+        tdStatus.innerHTML = actionButtons(studentId, status) + 
+          (status === 'Falta' ? justifyBtnHtml(status, studentId, hora, targetdate, (Object.values(globalAlumnosCache).flatMap(g => g.alumnos).find(a => a.id === studentId)?.nombre_completo || '')) : '') +
+          (status === 'Justificada' ? '<span class="block mt-2 text-[10px] bg-blue-50 text-blue-600 border border-blue-200 px-2 py-0.5 rounded font-bold">Justificada</span>' : '');
+        // Update cache
+        Object.values(globalAlumnosCache).forEach(g => {
+          const a = g.alumnos.find(a => a.id === studentId);
+          if (a) { a.asistencia_hoy = status; a.entry_time = hora; }
+        });
+        if (window.currentActiveGroupKey) {
+          const info = globalAlumnosCache[window.currentActiveGroupKey];
+          if (info) {
+            const presentes = info.alumnos.filter(a => a.asistencia_hoy === 'A tiempo' || a.asistencia_hoy === 'Retardo').length;
+            const faltas = info.alumnos.filter(a => a.asistencia_hoy === 'Falta').length;
+            const sinMarcar = info.alumnos.length - presentes - faltas;
+            document.getElementById('lista-info-text').textContent = `${info.alumnos.length} alumnos · ${presentes} presentes · ${faltas} faltas · ${sinMarcar} sin marcar`;
           }
-        });
-      }
-
-      currentSession = checkAuth(['prefecto']);
-      if (!currentSession) return;
-      document.getElementById('sidebar-name').textContent = currentSession.nombre || 'Prefecto';
-
-      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-      document.getElementById('table-date').textContent = new Date().toLocaleDateString('es-MX', options);
-
-      loadStats();
-      renderGruposGrid();
-      setupBulkActions();
-      setupSaveFlow();
-      setupExport();
-    });
-
-    async function loadStats() {
-      try {
-        const stats = await getEstadisticasGlobales();
-        if (stats) {
-          document.getElementById('stat-presentes').textContent = stats.presentes_hoy;
-          document.getElementById('stat-faltas').textContent = stats.faltas_hoy;
-          document.getElementById('stat-justificadas').textContent = stats.justificadas_hoy;
-        }
-      } catch (e) { console.error('Error stats:', e); }
-    }
-
-    // ── 3.5: Render Groups Grid with status indicators ──
-    async function renderGruposGrid() {
-      const grid = document.getElementById('grupos-grid');
-      if (!grid) return;
-
-      // Check which groups already have attendance today
-      const selectedDate = document.getElementById('attendance-date').value;
-      let completedGroups = new Set();
-      try {
-        const { data: todayRecords } = await supabase
-          .from('asistencias')
-          .select('student_id, alumnos!inner(grado, grupo)')
-          .eq('date', selectedDate);
-        if (todayRecords) {
-          todayRecords.forEach(r => {
-            if (r.alumnos) completedGroups.add(`${r.alumnos.grado}-${r.alumnos.grupo}`);
-          });
-        }
-      } catch(e) { /* silently skip */ }
-
-      let html = '';
-      // 3.4: Only 3 grades for secondary school
-      for (let grado = 1; grado <= 3; grado++) {
-        ['A', 'B', 'C', 'D'].forEach(grupo => {
-          const key = `${grado}°-${grupo}`;
-          const isDone = completedGroups.has(key);
-          html += `<button onclick="abrirGrupo('${grado}', '${grupo}')" class="bg-white border-2 border-gray-100 hover:border-sepGold hover:bg-yellow-50 text-gray-700 font-bold py-4 rounded-xl shadow-sm hover:shadow-md transition-all text-center flex flex-col items-center justify-center gap-1 group min-h-[80px] relative ${isDone ? 'group-done' : ''}">
-            <span class="text-xl md:text-2xl font-black text-sepBurgundy group-hover:scale-110 transition-transform">${grado}°</span>
-            <span class="text-xs md:text-sm tracking-widest text-gray-400">GRUPO ${grupo}</span>
-            ${isDone ? '<span class="absolute top-1.5 right-2 text-green-500 text-xs font-bold">✓</span>' : ''}
-          </button>`;
-        });
-      }
-      grid.innerHTML = html;
-    }
-
-    // ── Open a group (3.3 fade transition) ──
-    window.abrirGrupo = function (grado, grupo) {
-      currentGradoSeleccionado = grado;
-      currentGrupoSeleccionado = grupo;
-
-      const gruposView = document.getElementById('grupos-view');
-      if (gruposView) {
-        gruposView.classList.add('fade-out');
-        setTimeout(() => gruposView.classList.add('hidden'), 300);
-      }
-
-      const dateInput = document.getElementById('attendance-date');
-      const todayStr = (new Date(Date.now() - new Date().getTimezoneOffset() * 60000)).toISOString().split('T')[0];
-      if (dateInput) {
-        dateInput.setAttribute('max', todayStr);
-        if (!dateInput.value) dateInput.value = todayStr;
-      }
-
-      document.getElementById('btn-volver-grupos')?.classList.remove('hidden');
-      loadAttendance(grado, grupo);
-    };
-
-    // ── Go back to groups grid ──
-    document.getElementById('btn-volver-grupos')?.addEventListener('click', () => {
-      const gruposView = document.getElementById('grupos-view');
-      gruposView.classList.remove('hidden');
-      setTimeout(() => gruposView.classList.remove('fade-out'), 10);
-      document.getElementById('btn-volver-grupos').classList.add('hidden');
-      document.getElementById('btn-marcar-todos').classList.add('hidden');
-      document.getElementById('btn-limpiar-todos').classList.add('hidden');
-      document.getElementById('btn-exportar')?.classList.add('hidden');
-      document.getElementById('sticky-save-bar').classList.add('hidden');
-      document.getElementById('attendance-tbody').innerHTML = '<tr><td colspan="6" class="text-center py-8 text-gray-400 font-medium">Selecciona un grupo para comenzar.</td></tr>';
-      document.getElementById('attendance-cards').innerHTML = '<p class="text-center py-8 text-gray-400 font-medium text-sm">Selecciona un grupo para comenzar.</p>';
-      window.asistenciasActuales = null;
-      renderGruposGrid();
-    });
-
-    // ── Load Attendance ──
-    let currentFetchId = 0;
-    async function loadAttendance(grado, grupo) {
-      const fetchId = ++currentFetchId;
-      const tbody = document.getElementById('attendance-tbody');
-      const cards = document.getElementById('attendance-cards');
-      tbody.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-gray-400 font-medium animate-pulse">Cargando alumnos...</td></tr>';
-      cards.innerHTML = '<p class="text-center py-8 text-gray-400 font-medium text-sm animate-pulse">Cargando alumnos...</p>';
-
-      try {
-        const students = await getStudentsByGroup(grado, grupo);
-        if (!students || students.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-gray-400 font-medium">No hay alumnos en este grupo.</td></tr>';
-          cards.innerHTML = '<p class="text-center py-8 text-gray-400 font-medium text-sm">No hay alumnos en este grupo.</p>';
-          return;
-        }
-
-        const today = document.getElementById('attendance-date').value;
-        const studentIds = students.map(s => s.id);
-        const { data: asistenciasHoy } = await supabase
-          .from('asistencias')
-          .select('student_id, status, entry_time')
-          .in('student_id', studentIds)
-          .eq('date', today);
-
-        const asisMap = {};
-        if (asistenciasHoy) asistenciasHoy.forEach(a => asisMap[a.student_id] = a);
-
-        if (fetchId !== currentFetchId) return;
-        window.asistenciasActuales = students.map(s => {
-          const record = asisMap[s.id];
-          return {
-            student_id: s.id,
-            nombre_completo: s.nombre_completo,
-            matricula: s.matricula,
-            status: record ? record.status : null,
-            entry_time: record ? record.entry_time : null
-          };
-        });
-
-        renderTablaGrupo();
-        document.getElementById('btn-marcar-todos').classList.remove('hidden');
-        document.getElementById('btn-limpiar-todos').classList.remove('hidden');
-        document.getElementById('btn-exportar')?.classList.remove('hidden');
-        document.getElementById('sticky-save-bar').classList.remove('hidden');
-      } catch (e) {
-        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-red-400 font-bold">Error al cargar grupo.</td></tr>';
-        cards.innerHTML = '<p class="text-center py-8 text-red-400 font-bold text-sm">Error al cargar grupo.</p>';
-      }
-    }
-
-    // ── Change attendance status ──
-    window.cambiarEstadoAsistencia = function (index, newStatus) {
-      const item = window.asistenciasActuales[index];
-      item.status = newStatus;
-      if (newStatus === 'Retardo' || newStatus === 'A tiempo') {
-        if (!item.entry_time) {
-          const d = new Date();
-          item.entry_time = d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
         }
       } else {
-        item.entry_time = null;
+        allBtns.forEach(b => { b.disabled = false; b.classList.remove('opacity-50'); });
+        const msg = data.error === 'dia_inhabil' || data.error === 'fin_de_semana' ? data.message : (data.error || 'Error desconocido');
+        Swal.fire({ icon: 'warning', title: 'No permitido', text: msg, confirmButtonColor: '#93222D' });
       }
-      renderTablaGrupo();
-    };
-
-    // ── Render table + cards (3.1 color indicators, 4.1 mobile cards) ──
-    function renderTablaGrupo() {
-      const tbody = document.getElementById('attendance-tbody');
-      const cards = document.getElementById('attendance-cards');
-      const selDate = document.getElementById('attendance-date').value;
-      const [year, month, day] = selDate.split('-');
-      const dateObj = new Date(year, month - 1, day);
-      const formattedDate = dateObj.toLocaleDateString('es-MX', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-      document.getElementById('table-date').textContent = "Fecha: " + formattedDate;
-
-      // Update counters
-      const presentes = window.asistenciasActuales.filter(a => a.status === 'A tiempo').length;
-      const retardos = window.asistenciasActuales.filter(a => a.status === 'Retardo').length;
-      const faltas = window.asistenciasActuales.filter(a => a.status === 'Falta').length;
-      const sinMarcar = window.asistenciasActuales.filter(a => !a.status).length;
-      document.getElementById('count-presentes').textContent = presentes;
-      document.getElementById('count-retardos').textContent = retardos;
-      document.getElementById('count-faltas').textContent = faltas;
-      document.getElementById('count-sinmarcar').textContent = sinMarcar;
-
-      // Desktop table
-      tbody.innerHTML = window.asistenciasActuales.map((a, i) => {
-        const borderClass = a.status === 'A tiempo' ? 'status-border-green' : a.status === 'Retardo' ? 'status-border-yellow' : a.status === 'Falta' ? 'status-border-red' : 'status-border-unmarked';
-        let toggleHtml = buildToggleHtml(a, i, false);
-        
-        if (a.status === 'Falta') {
-          toggleHtml += ` <button onclick="openJustifyModal('${a.student_id}', '${a.nombre_completo.replace(/'/g, "\\'")}', '${selDate}')" class="bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white px-3 py-2 rounded-xl text-xs font-bold ml-2 shadow-sm transition-colors border border-blue-100 hover:border-blue-600">Justificar</button>`;
-        }
-
-        return `
-          <tr class="hover:bg-gray-50 transition-colors border-b border-gray-50 ${borderClass}">
-            <td class="px-6 py-4 font-bold text-gray-400">${i + 1}</td>
-            <td class="px-6 py-4 font-bold text-gray-800">${a.nombre_completo}</td>
-            <td class="px-6 py-4 text-gray-500 font-semibold">${currentGradoSeleccionado}° ${currentGrupoSeleccionado}</td>
-            <td class="px-6 py-4 text-gray-400 font-medium font-mono">${a.entry_time || '--:--'}</td>
-            <td class="px-6 py-4 text-center">${toggleHtml}</td>
-          </tr>`;
-      }).join('');
-
-      // Mobile cards (4.1)
-      cards.innerHTML = window.asistenciasActuales.map((a, i) => {
-        const borderClass = a.status === 'A tiempo' ? 'border-l-green-500' : a.status === 'Retardo' ? 'border-l-yellow-500' : a.status === 'Falta' ? 'border-l-red-500' : 'border-l-gray-300';
-        const bgClass = !a.status ? 'bg-yellow-50/30' : 'bg-white';
-        let justifyBtn = '';
-        if (a.status === 'Falta') {
-          justifyBtn = `<button onclick="openJustifyModal('${a.student_id}', '${a.nombre_completo.replace(/'/g, "\\'")}', '${selDate}')" class="w-full bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white py-2 rounded-xl text-xs font-bold transition-colors border border-blue-100 mt-2 min-h-[44px]">Justificar Falta</button>`;
-        }
-        return `
-          <div class="card-anim ${bgClass} border-l-4 ${borderClass} rounded-xl p-3 shadow-sm border border-gray-100" style="animation-delay:${i * 30}ms">
-            <div class="flex justify-between items-start mb-2">
-              <div>
-                <p class="font-bold text-gray-800 text-sm">${a.nombre_completo}</p>
-                <p class="text-[10px] text-gray-400">${currentGradoSeleccionado}° ${currentGrupoSeleccionado} · ${a.entry_time || '--:--'}</p>
-              </div>
-              <span class="text-xs font-mono text-gray-300">#${i + 1}</span>
-            </div>
-            <div class="grid grid-cols-3 gap-1.5">
-              <button onclick="cambiarEstadoAsistencia(${i}, 'A tiempo')" class="py-2.5 rounded-lg text-xs font-bold transition-all min-h-[44px] ${a.status === 'A tiempo' ? 'bg-green-500 text-white shadow-inner' : 'bg-gray-50 text-gray-500 hover:bg-green-50 border border-gray-200'}">✓ Presente</button>
-              <button onclick="cambiarEstadoAsistencia(${i}, 'Retardo')" class="py-2.5 rounded-lg text-xs font-bold transition-all min-h-[44px] ${a.status === 'Retardo' ? 'bg-yellow-500 text-white shadow-inner' : 'bg-gray-50 text-gray-500 hover:bg-yellow-50 border border-gray-200'}">⏱ Retardo</button>
-              <button onclick="cambiarEstadoAsistencia(${i}, 'Falta')" class="py-2.5 rounded-lg text-xs font-bold transition-all min-h-[44px] ${a.status === 'Falta' ? 'bg-red-500 text-white shadow-inner' : 'bg-gray-50 text-gray-500 hover:bg-red-50 border border-gray-200'}">✗ Falta</button>
-            </div>
-            ${justifyBtn}
-          </div>`;
-      }).join('');
     }
 
-    function buildToggleHtml(a, i, isMobile) {
+    function statusBadge(status, time) {
+      const colors = {
+        'A tiempo': 'bg-green-100 text-green-700 ring-green-600/20',
+        'Retardo':  'bg-yellow-100 text-yellow-700 ring-yellow-600/20',
+        'Falta':    'bg-red-100 text-red-700 ring-red-600/20',
+        'Justificada': 'bg-blue-100 text-blue-700 ring-blue-600/20'
+      };
+      const icons = {
+        'A tiempo': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>',
+        'Retardo':  '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>',
+        'Falta':    '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>',
+        'Justificada': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>'
+      };
+      const timeStr = time ? ` (${String(time).substring(0,5)})` : '';
+      return `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ring-1 ${colors[status] || 'bg-gray-100 text-gray-600 ring-gray-200'}">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">${icons[status] || ''}</svg>
+        ${status}${timeStr}
+      </span>`;
+    }
+
+    function justifyBtnHtml(status, studentId, time, date, studentName = "") {
+      if (status !== 'Falta') return '';
+      const safeDate = date || document.getElementById('fecha-lista').value || '';
+      return `<button class="justify-falta-btn mt-2 inline-flex items-center text-[10px] font-bold text-blue-600 border border-blue-200 bg-blue-50 hover:bg-blue-600 hover:text-white px-2 py-1 rounded-lg transition-colors" data-id="${studentId}" data-date="${safeDate}" data-name="${studentName.replace(/"/g, '&quot;')}">
+        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg> Justificar
+      </button>`;
+    }
+
+    function actionButtons(studentId, currentStatus) {
+      const isA = currentStatus === 'A tiempo';
+      const isF = currentStatus === 'Falta';
+      const isR = currentStatus === 'Retardo';
+      const isJ = currentStatus === 'Justificada';
+
       return `
-        <div class="inline-flex rounded-xl shadow-sm border border-gray-200 overflow-hidden bg-white">
-          <button onclick="cambiarEstadoAsistencia(${i}, 'A tiempo')" class="px-3 py-2 text-xs font-bold transition-all ${a.status === 'A tiempo' ? 'bg-green-500 text-white shadow-inner' : 'bg-white text-gray-500 hover:bg-green-50 hover:text-green-600'}">
-            <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Presente
+        <div class="flex items-center justify-center gap-1.5 sm:gap-2 flex-wrap">
+          <button data-id="${studentId}" data-status="A tiempo"
+            class="att-btn w-8 h-8 sm:w-9 sm:h-9 rounded-xl border ${isA ? 'bg-green-100 border-green-500 text-green-700' : 'border-gray-200 hover:bg-green-50 hover:border-green-400 text-gray-400 hover:text-green-600'} flex items-center justify-center transition-all duration-200" title="Presente">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
           </button>
-          <button onclick="cambiarEstadoAsistencia(${i}, 'Retardo')" class="px-3 py-2 text-xs font-bold transition-all border-l border-gray-200 ${a.status === 'Retardo' ? 'bg-yellow-500 text-white shadow-inner' : 'bg-white text-gray-500 hover:bg-yellow-50 hover:text-yellow-600'}">
-            <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Retardo
+          <button data-id="${studentId}" data-status="Retardo"
+            class="att-btn w-8 h-8 sm:w-9 sm:h-9 rounded-xl border ${isR ? 'bg-yellow-100 border-yellow-500 text-yellow-700' : 'border-gray-200 hover:bg-yellow-50 hover:border-yellow-400 text-gray-400 hover:text-yellow-600'} flex items-center justify-center transition-all duration-200" title="Retardo">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           </button>
-          <button onclick="cambiarEstadoAsistencia(${i}, 'Falta')" class="px-3 py-2 text-xs font-bold transition-all border-l border-gray-200 ${a.status === 'Falta' ? 'bg-red-500 text-white shadow-inner' : 'bg-white text-gray-500 hover:bg-red-50 hover:text-red-600'}">
-            <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg> Falta
+          <button data-id="${studentId}" data-status="Falta"
+            class="att-btn w-8 h-8 sm:w-9 sm:h-9 rounded-xl border ${isF || isJ ? 'bg-red-100 border-red-500 text-red-700' : 'border-gray-200 hover:bg-red-50 hover:border-red-400 text-gray-400 hover:text-red-600'} flex items-center justify-center transition-all duration-200" title="Falta">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
           </button>
         </div>`;
     }
 
-    // ── 2.3: Bulk action buttons ──
-    function setupBulkActions() {
-      document.getElementById('btn-marcar-todos')?.addEventListener('click', () => {
-        if (!window.asistenciasActuales) return;
-        window.asistenciasActuales.forEach((a, i) => {
-          if (!a.status) {
-            a.status = 'A tiempo';
-            const d = new Date();
-            a.entry_time = d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
-          }
-        });
-        renderTablaGrupo();
-        showToast('Todos los alumnos sin marcar se registraron como Presente.', 'success');
-      });
+    // ── Event delegation on tbody — only set once ──
+    const tbody = document.getElementById('lista-table-body');
+    tbody.addEventListener('click', e => {
+      // Attendance buttons
+      const attBtn = e.target.closest('.att-btn');
+      if (attBtn) {
+        const tdStatus = attBtn.closest('tr').querySelector('.td-status');
+        const date = document.getElementById('fecha-lista').value || null;
+        marcarAsistencia(attBtn.dataset.id, attBtn.dataset.status, tdStatus, date);
+        return;
+      }
+      // Justify button
+      const justifyBtn = e.target.closest('.justify-falta-btn');
+      if (justifyBtn) {
+        const row = justifyBtn.closest('tr');
+        const nombre = row.querySelector('td:nth-child(2) .font-bold')?.textContent || 'Alumno';
+        openJustifyModal(justifyBtn.dataset.id, nombre, justifyBtn.dataset.date);
+      }
+    });
 
-      document.getElementById('btn-limpiar-todos')?.addEventListener('click', () => {
-        if (!window.asistenciasActuales) return;
-        window.asistenciasActuales.forEach(a => { a.status = null; a.entry_time = null; });
-        renderTablaGrupo();
-        showToast('Todas las marcas han sido limpiadas.', 'warning');
-      });
-    }
-
-    // ── 2.1: Confirmation modal before saving ──
-    function setupSaveFlow() {
-      const saveBtn = document.getElementById('guardar-lista-btn');
-      const confirmModal = document.getElementById('confirm-save-modal');
+    // ── Load grupos ──
+    async function initGrupos(targetdate = null) {
+      const loader = document.getElementById('loading-grupos');
+      const gridContainer = document.getElementById('grupos-grid-container');
+      loader.classList.remove('hidden');
       
-      saveBtn?.addEventListener('click', () => {
-        if (!window.asistenciasActuales) return;
-        const presentes = window.asistenciasActuales.filter(a => a.status === 'A tiempo').length;
-        const retardos = window.asistenciasActuales.filter(a => a.status === 'Retardo').length;
-        const faltas = window.asistenciasActuales.filter(a => a.status === 'Falta').length;
-        const sinMarcar = window.asistenciasActuales.filter(a => !a.status).length;
-
-        document.getElementById('confirm-save-summary').innerHTML = `
-          <div class="grid grid-cols-2 gap-2">
-            <div class="bg-green-50 p-3 rounded-xl"><span class="text-green-600 font-black text-lg">${presentes}</span><br><span class="text-xs text-green-500 font-bold">Presentes</span></div>
-            <div class="bg-yellow-50 p-3 rounded-xl"><span class="text-yellow-600 font-black text-lg">${retardos}</span><br><span class="text-xs text-yellow-500 font-bold">Retardos</span></div>
-            <div class="bg-red-50 p-3 rounded-xl"><span class="text-red-600 font-black text-lg">${faltas}</span><br><span class="text-xs text-red-500 font-bold">Faltas</span></div>
-            <div class="bg-gray-50 p-3 rounded-xl"><span class="text-gray-600 font-black text-lg">${sinMarcar}</span><br><span class="text-xs text-gray-400 font-bold">Sin marcar → Falta</span></div>
-          </div>`;
-
-        confirmModal.classList.remove('hidden');
-        setTimeout(() => {
-          confirmModal.classList.remove('opacity-0');
-          confirmModal.querySelector('div').classList.remove('scale-95');
-        }, 10);
+      const alumnos = await getAsistenciasHoy('', '', targetdate);
+      globalAlumnosCache = {};
+      
+      alumnos.forEach(a => {
+        const grado = a.grado || 'Sin Grado';
+        const grupo = a.grupo || 'Sin Grupo';
+        const key = `${grado}-${grupo}`;
+        if (!globalAlumnosCache[key]) globalAlumnosCache[key] = { grado, grupo, alumnos: [] };
+        globalAlumnosCache[key].alumnos.push(a);
       });
-
-      document.getElementById('cancel-save-btn')?.addEventListener('click', () => closeModal(confirmModal));
-
-      document.getElementById('confirm-save-btn')?.addEventListener('click', async () => {
-        closeModal(confirmModal);
-        await doSave();
-      });
-    }
-
-    async function doSave() {
-      if (!window.asistenciasActuales) return;
-      const btn = document.getElementById('guardar-lista-btn');
-      const originalText = btn.innerHTML;
-      btn.innerHTML = '<svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Guardando...';
-      btn.disabled = true;
-
-      // Auto-assign "Falta" to unmarked
-      window.asistenciasActuales.forEach(a => { if (!a.status) a.status = 'Falta'; });
-      renderTablaGrupo();
-
-      const selectedDate = document.getElementById('attendance-date').value;
-      const res = await saveBulkAttendance(window.asistenciasActuales, selectedDate);
-
-      if (res.success) {
-        showToast('✓ Pase de lista guardado correctamente.', 'success');
-        loadStats(); // 2.6: refresh stats after save
-        renderGruposGrid(); // Refresh group status indicators
+      
+      if (window.currentActiveGroupKey) {
+        abrirGrupo(window.currentActiveGroupKey);
       } else {
-        showToast('Error al guardar: ' + res.error, 'error');
+        renderGruposGrid('');
+        gridContainer.classList.remove('hidden');
+        gridContainer.classList.add('animate-fade-in-up');
       }
-      btn.innerHTML = originalText;
-      btn.disabled = false;
+      loader.classList.add('hidden');
     }
 
-    // ── 2.5: Export (CSV or Google Sheets) ──
-    function setupExport() {
-      const exportBtn = document.getElementById('btn-exportar');
-      const exportMenu = document.getElementById('export-menu');
+    function renderGruposGrid(filtroGrado) {
+      const grid = document.getElementById('grupos-grid');
+      let keys = Object.keys(globalAlumnosCache).sort();
+      if (filtroGrado) keys = keys.filter(k => k.startsWith(`${filtroGrado}-`));
+      if (keys.length === 0) {
+        grid.innerHTML = `<div class="col-span-full text-center py-10 text-gray-400 font-bold">No hay alumnos registrados${filtroGrado ? ` en ${filtroGrado}° Grado` : ''}.</div>`;
+        return;
+      }
+      grid.innerHTML = keys.map(key => {
+        const { grado, grupo, alumnos } = globalAlumnosCache[key];
+        const count = alumnos.length;
+        const presentes = alumnos.filter(a => a.asistencia_hoy === 'A tiempo' || a.asistencia_hoy === 'Retardo').length;
+        const faltas = alumnos.filter(a => a.asistencia_hoy === 'Falta').length;
+        const sinMarcar = count - presentes - faltas;
+        return `
+          <button onclick="abrirGrupo('${key}')" class="glass-panel border border-gray-100 hover:border-sepGold/30 hover:bg-gradient-to-br hover:from-white hover:to-sepGold/5 text-gray-700 p-6 rounded-2xl shadow-[0_2px_10px_-3px_rgba(6,81,237,0.05)] hover:shadow-[0_8px_20px_-6px_rgba(157,36,73,0.15)] transition-all duration-300 text-left flex flex-col gap-4 group relative overflow-hidden">
+             <div class="absolute inset-0 bg-sepGold/10 transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out opacity-50"></div>
+             <div class="flex justify-between items-start relative z-10 w-full">
+               <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 group-hover:from-white group-hover:to-sepGold/10 flex items-center justify-center shadow-sm border border-gray-100 group-hover:border-sepGold/30 transition-all duration-300">
+                 <span class="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-br from-sepBurgundy to-gray-800 group-hover:to-sepBurgundy transition-colors">${grado}°</span>
+               </div>
+               <span class="text-5xl font-black text-gray-100 group-hover:text-sepGold/20 transition-colors drop-shadow-sm">${grupo}</span>
+             </div>
+             <div class="relative z-10 mt-1">
+               <h5 class="text-sm font-extrabold tracking-widest text-gray-800 group-hover:text-sepGreen transition-colors uppercase flex items-center gap-2">
+                 Grupo ${grupo}
+                 <svg class="w-4 h-4 text-sepGold opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+               </h5>
+               <p class="text-xs text-gray-400 mt-1.5 font-medium"><span class="font-bold text-gray-700 group-hover:text-sepGreenDark transition-colors">${count}</span> Alumnos inscritos</p>
+             </div>
+             <div class="flex flex-wrap items-center gap-2 mt-auto pt-2 relative z-10 w-full">
+               <span class="whitespace-nowrap flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-md bg-green-50/80 text-green-700 border border-green-200/50 shadow-sm">
+                 <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                 ${presentes} Presentes
+               </span>
+               <span class="whitespace-nowrap flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-md bg-red-50/80 text-red-600 border border-red-200/50 shadow-sm">
+                 <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                 ${faltas} Faltas
+               </span>
+               <span class="whitespace-nowrap flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-md bg-gray-50/80 text-gray-500 border border-gray-200/50 shadow-sm">
+                 <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
+                 ${sinMarcar} Sin marcar
+               </span>
+             </div>
+          </button>
+        `;
+      }).join('');
+    }
+
+    document.getElementById('grado-select').addEventListener('change', (e) => {
+      const grado = e.target.value;
+      document.getElementById('lista-estudiantes-container').classList.add('hidden');
+      document.getElementById('grupos-grid-container').classList.remove('hidden');
+      renderGruposGrid(grado);
+    });
+
+    const volverAGrupos = (e) => {
+      // Si el click vino del boton de abajo, mostramos alerta de exito
+      if (e && e.target && (e.target.id === 'btn-volver-grupos-bottom' || e.target.closest('#btn-volver-grupos-bottom'))) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Asistencias Guardadas',
+          text: 'Las asistencias se han registrado correctamente en tiempo real.',
+          confirmButtonColor: '#285C4D',
+          timer: 2000,
+          showConfirmButton: false
+        });
+      }
+      window.currentActiveGroupKey = null;
+      document.getElementById('lista-estudiantes-container').classList.add('hidden');
+      document.getElementById('grupos-grid-container').classList.remove('hidden');
+      const filtroContainer = document.getElementById('filtro-grados-container');
+      if (filtroContainer) filtroContainer.classList.remove('hidden');
+    };
+
+    document.getElementById('btn-volver-grupos').addEventListener('click', volverAGrupos);
+    document.getElementById('btn-volver-grupos-bottom').addEventListener('click', volverAGrupos);
+    
+    // Configurar input de fecha
+    const fechaInput = document.getElementById('fecha-lista');
+    const todayISO = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
+    fechaInput.value = todayISO;
+    fechaInput.max = todayISO;
+
+    fechaInput.addEventListener('change', (e) => {
+      const selecteddate = e.target.value;
+      updateDateBanner(selecteddate);
+      initGrupos(selecteddate);
+    });
+
+    window.currentActiveGroupKey = null;
+
+    window.abrirGrupo = function(key) {
+      window.currentActiveGroupKey = key;
+      document.getElementById('grupos-grid-container').classList.add('hidden');
+      document.getElementById('lista-estudiantes-container').classList.remove('hidden');
+      const filtroContainer = document.getElementById('filtro-grados-container');
+      if (filtroContainer) filtroContainer.classList.add('hidden');
       
-      exportBtn?.addEventListener('click', (e) => {
-        e.stopPropagation();
-        exportMenu.classList.toggle('hidden');
-      });
-
-      document.addEventListener('click', () => exportMenu?.classList.add('hidden'));
-    }
-
-    window.exportarAsistencias = function (format) {
-      if (!window.asistenciasActuales) return;
-      document.getElementById('export-menu')?.classList.add('hidden');
-
-      const selDate = document.getElementById('attendance-date').value;
-      const headers = ['#', 'Nombre', 'Grado-Grupo', 'Hora', 'Estado'];
-      const rows = window.asistenciasActuales.map((a, i) => [
-        i + 1,
-        a.nombre_completo,
-        `${currentGradoSeleccionado}° ${currentGrupoSeleccionado}`,
-        a.entry_time || '--:--',
-        a.status || 'Sin marcar'
-      ]);
-
-      if (format === 'csv') {
-        let csv = '\uFEFF' + headers.join(',') + '\n'; // BOM for Excel UTF-8
-        rows.forEach(r => csv += r.map(c => `"${c}"`).join(',') + '\n');
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `asistencias_${currentGradoSeleccionado}${currentGrupoSeleccionado}_${selDate}.csv`;
-        link.click();
-        URL.revokeObjectURL(url);
-        showToast('Archivo CSV descargado.', 'success');
-      } else if (format === 'sheets') {
-        // Build TSV and open Google Sheets import
-        let tsv = headers.join('\t') + '\n';
-        rows.forEach(r => tsv += r.join('\t') + '\n');
-        const encoded = encodeURIComponent(tsv);
-        // Google Sheets can import from a pasted URL or we open a new blank sheet
-        const blob = new Blob(['\uFEFF' + headers.join(',') + '\n' + rows.map(r => r.map(c => `"${c}"`).join(',')).join('\n')], { type: 'text/csv;charset=utf-8;' });
-        const csvUrl = URL.createObjectURL(blob);
-        // First download CSV, then open Google Sheets
-        const link = document.createElement('a');
-        link.href = csvUrl;
-        link.download = `asistencias_${currentGradoSeleccionado}${currentGrupoSeleccionado}_${selDate}.csv`;
-        link.click();
-        URL.revokeObjectURL(csvUrl);
-        // Open Google Sheets for import
-        setTimeout(() => {
-          window.open('https://docs.google.com/spreadsheets/create', '_blank');
-          showToast('CSV descargado. Se abrió Google Sheets — usa Archivo → Importar para cargar el CSV.', 'success');
-        }, 500);
+      const { grado, grupo, alumnos } = globalAlumnosCache[key];
+      document.getElementById('titulo-grupo-actual').textContent = `${grado}° Grado - Grupo ${grupo}`;
+      
+      const tbodyEl = document.getElementById('lista-table-body');
+      const infoText = document.getElementById('lista-info-text');
+      const count = document.getElementById('lista-count');
+      
+      if (alumnos.length === 0) {
+        tbodyEl.innerHTML = `<tr><td colspan="3" class="text-center py-10 text-gray-400 font-bold">Sin alumnos en este grupo.</td></tr>`;
+        count.textContent = '0 alumnos';
+        return;
       }
+      
+      const presentes = alumnos.filter(a => a.asistencia_hoy === 'A tiempo' || a.asistencia_hoy === 'Retardo').length;
+      const faltas    = alumnos.filter(a => a.asistencia_hoy === 'Falta').length;
+      const sinMarcar = alumnos.length - presentes - faltas;
+
+      infoText.textContent = `${alumnos.length} alumnos · ${presentes} presentes · ${faltas} faltas · ${sinMarcar} sin marcar`;
+      count.textContent = `${alumnos.length} alumnos cargados`;
+
+      const currentDate = fechaInput.value || todayISO;
+
+      tbodyEl.innerHTML = alumnos.map(a => `
+        <tr class="hover:bg-gray-50/80 transition-colors group" data-id="${a.id}">
+          <td class="px-5 py-4 text-gray-400 text-xs font-mono tracking-wider">${a.matricula || '---'}</td>
+          <td class="px-5 py-4">
+            <div class="font-bold text-gray-800">${a.nombre_completo}</div>
+            <div class="text-xs text-gray-400 mt-0.5">${a.grado || '?'}° ${a.grupo || ''}</div>
+          </td>
+          <td class="px-5 py-4 text-center td-status flex flex-col items-center justify-center">
+            ${actionButtons(a.id, a.asistencia_hoy)}
+            ${a.asistencia_hoy === 'Falta' ? justifyBtnHtml(a.asistencia_hoy, a.id, a.entry_time, currentDate, a.nombre_completo) : ''}
+            ${a.asistencia_hoy === 'Justificada' ? '<span class="block mt-2 text-[10px] bg-blue-50 text-blue-600 border border-blue-200 px-2 py-0.5 rounded font-bold">Justificada</span>' : ''}
+          </td>
+        </tr>
+      `).join('');
     };
 
-    // ── Justify Modal Logic (1.2, 1.3, 1.4 fixes applied) ──
-    const modal = document.getElementById('justify-modal');
+    // ── QR SCANNER ───────────────────────────────────────────────────────────
+    let scannerStream = null;
+    let animFrame    = null;
+    const scannerVideo    = document.getElementById('qr-video');
+    const scannerCanvas   = document.getElementById('qr-canvas');
+    const activateBtn     = document.getElementById('activate-scanner-btn');
+    const scannerStatus   = document.getElementById('scanner-status');
+    const scannerFeedback = document.getElementById('scanner-feedback');
 
-    window.openJustifyModal = function (studentId, nombre, fecha) {
-      justifyTarget = { studentId, fecha };
-      document.getElementById('justify-modal-student').textContent = nombre;
-      document.getElementById('justify-motivo').value = '';
-      modal.classList.remove('hidden');
-      setTimeout(() => {
-        modal.classList.remove('opacity-0');
-        modal.querySelector('div').classList.remove('scale-95');
-      }, 10);
-    };
-
-    function closeModal(m) {
-      m.classList.add('opacity-0');
-      m.querySelector('div')?.classList.add('scale-95');
-      setTimeout(() => m.classList.add('hidden'), 300);
-    }
-
-    document.getElementById('cancel-justify-btn').addEventListener('click', () => {
-      closeModal(modal);
-      justifyTarget = null;
-    });
-
-    document.getElementById('confirm-justify-btn').addEventListener('click', async () => {
-      if (!justifyTarget) return;
-      const motivo = document.getElementById('justify-motivo').value.trim();
-      if (!motivo) { showToast('Ingresa un motivo para la justificación.', 'error'); return; }
-
-      const btn = document.getElementById('confirm-justify-btn');
-      btn.textContent = 'Procesando...';
-      btn.disabled = true;
-
+    async function initCamera() {
+      if (scannerStream) { stopCamera(); return; }
+      scannerStatus.textContent = 'Iniciando cámara...';
+      activateBtn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg> Detener Escáner`;
+      activateBtn.classList.replace('from-sepGold','from-red-500');
+      activateBtn.classList.replace('to-yellow-500','to-red-400');
+      activateBtn.classList.replace('text-sepGreen','text-white');
       try {
-        // 1.2 FIX: Use justifyTarget.fecha (the selected date) instead of hardcoded today
-        const { data: asistencia } = await supabase
-          .from('asistencias').select('id')
-          .eq('student_id', justifyTarget.studentId)
-          .eq('date', justifyTarget.fecha)
-          .maybeSingle();
-
-        if (!asistencia) {
-          showToast('No se encontró registro de falta para este alumno en esta fecha.', 'error');
-          btn.textContent = 'Justificar Falta';
-          btn.disabled = false;
-          return;
-        }
-
-        // 1.4 FIX: Send staff_id (numeric) instead of text name
-        const result = await justificarFalta(
-          asistencia.id,
-          justifyTarget.studentId,
-          justifyTarget.fecha,
-          motivo,
-          currentSession.id  // staff_id instead of currentSession.nombre
-        );
-
-        if (result.success) {
-          closeModal(modal);
-          justifyTarget = null;
-          // 1.3 FIX: Pass current grado/grupo to reload correctly
-          loadAttendance(currentGradoSeleccionado, currentGrupoSeleccionado);
-          loadStats();
-          showToast('Falta justificada correctamente.', 'success');
-        } else {
-          showToast('Error: ' + (result.error || 'No se pudo justificar.'), 'error');
-        }
-      } catch (e) {
-        showToast('Error de conexión.', 'error');
+        scannerStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        scannerVideo.srcObject = scannerStream;
+        scannerVideo.setAttribute('playsinline', true);
+        scannerVideo.play();
+        scannerVideo.classList.remove('hidden');
+        document.getElementById('scanner-placeholder').classList.add('hidden');
+        scannerStatus.textContent = 'Cámara activa — Acerque la credencial QR';
+        requestAnimationFrame(scanFrame);
+      } catch(err) {
+        scannerStatus.textContent = 'Error: ' + (err.name === 'NotAllowedError' ? 'Permiso de cámara denegado' : err.message);
+        stopCamera();
       }
+    }
 
-      btn.textContent = 'Justificar Falta';
-      btn.disabled = false;
-    });
+    function stopCamera() {
+      if (scannerStream) { scannerStream.getTracks().forEach(t => t.stop()); scannerStream = null; }
+      if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
+      scannerVideo.classList.add('hidden');
+      document.getElementById('scanner-placeholder').classList.remove('hidden');
+      scannerStatus.textContent = 'Escáner detenido';
+      activateBtn.innerHTML = `<svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> Activar Escáner Óptico`;
+      activateBtn.classList.replace('from-red-500','from-sepGold');
+      activateBtn.classList.replace('to-red-400','to-yellow-500');
+      activateBtn.classList.replace('text-white','text-sepGreen');
+    }
+
+    function scanFrame() {
+      if (!scannerStream) return;
+      if (scannerVideo.readyState === scannerVideo.HAVE_ENOUGH_DATA) {
+        const ctx = scannerCanvas.getContext('2d');
+        scannerCanvas.height = scannerVideo.videoHeight;
+        scannerCanvas.width  = scannerVideo.videoWidth;
+        ctx.drawImage(scannerVideo, 0, 0, scannerCanvas.width, scannerCanvas.height);
+        const imagedata = ctx.getImageData(0, 0, scannerCanvas.width, scannerCanvas.height);
+        const code = window.jsQR && jsQR(imagedata.data, imagedata.width, imagedata.height, { inversionAttempts: 'dontInvert' });
+        if (code) { handleQRDetected(code.data); return; }
+      }
+      animFrame = requestAnimationFrame(scanFrame);
+    }
+
+    async function handleQRDetected(qrdata) {
+      scannerFeedback.classList.remove('hidden', 'bg-red-50', 'text-red-700', 'bg-green-50', 'text-green-700');
+      scannerFeedback.classList.add('bg-yellow-50', 'text-yellow-700');
+      scannerFeedback.textContent = `QR detectado — registrando...`;
+
+      const targetdate = fechaInput.value || null;
+      const result = await registrarAsistenciaQR(qrdata.trim(), targetdate);
+
+      if (result.success) {
+        scannerFeedback.classList.replace('bg-yellow-50','bg-green-50');
+        scannerFeedback.classList.replace('text-yellow-700','text-green-700');
+        const nombre = result.student?.nombre_completo || 'Alumno';
+        scannerFeedback.textContent = `✅ ${nombre} — ${result.status}`;
+        initGrupos(targetdate);
+      } else {
+        scannerFeedback.classList.replace('bg-yellow-50','bg-red-50');
+        scannerFeedback.classList.replace('text-yellow-700','text-red-700');
+        scannerFeedback.textContent = result.error === 'dia_inhabil'
+          ? `Día Inhábil: ${result.message}`
+          : result.error === 'Alumno no encontrado'
+          ? `QR no reconocido. Verifica que el alumno esté registrado.`
+          : `Error: ${result.error}`;
+      }
+      setTimeout(() => { scannerFeedback.classList.add('hidden'); animFrame = requestAnimationFrame(scanFrame); }, 2500);
+    }
+
+    if (activateBtn) activateBtn.addEventListener('click', initCamera);
   </script>
 </body>
 </html>
