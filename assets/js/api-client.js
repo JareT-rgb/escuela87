@@ -6,6 +6,16 @@
  */
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
+// --- TIMEZONE HELPERS ---
+export function getMonterreyDate() {
+  return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Monterrey' });
+}
+
+export function getMonterreyTime() {
+  return new Date().toLocaleTimeString('en-GB', { timeZone: 'America/Monterrey' });
+}
+// ------------------------
+
 // Clave pública (anon/publishable) — segura para el frontend
 const SUPABASE_URL     = 'https://krgyqrebnfwzplpayitx.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_Z1CnbY2zxmyjom4dO9YCZw_-t0fLlIM';
@@ -46,6 +56,31 @@ export async function staffLogin(email, password) {
   } catch (e) { console.error('staffLogin:', e); return null; }
 }
 
+// ─── 2.5 REGISTRO STAFF ────────────────────────────────────────────────────────
+export async function registerStaff(nombre, email, password, rol) {
+  try {
+    const { data, error } = await supabase
+      .from('staff')
+      .insert([
+        {
+          nombre: nombre,
+          email: email.toLowerCase(),
+          password: password,
+          rol: rol,
+          tipo_personal: rol
+        }
+      ])
+      .select('id, nombre, rol, tipo_personal')
+      .maybeSingle();
+      
+    if (error) throw error;
+    return { success: true, data };
+  } catch (e) {
+    console.error('registerStaff:', e);
+    return { success: false, error: e.message || 'Error al registrar.' };
+  }
+}
+
 // ─── 3. RESUMEN ALUMNO ───────────────────────────────────────────────────────
 export async function getStudentSummary(studentId) {
   try {
@@ -57,9 +92,8 @@ export async function getStudentSummary(studentId) {
       .from('asistencias').select('status').eq('student_id', studentId);
 
     const total   = asis?.length || 0;
-    const onTime  = asis?.filter(r => r.status === 'A tiempo').length || 0;
     const faltas  = asis?.filter(r => r.status === 'Falta').length || 0;
-    const percent = total > 0 ? Math.round((onTime / total) * 100) : 100;
+    const percent = total > 0 ? Math.round(((total - faltas) / total) * 100) : 100;
 
     return {
       attendance_percentage: percent,
@@ -195,10 +229,18 @@ export async function getAlumnos() {
 
 export async function deleteAlumno(id) {
   try {
+    // Primero, eliminar registros dependientes
+    await supabase.from('asistencias').delete().eq('student_id', id);
+    await supabase.from('reportes_disciplinarios').delete().eq('student_id', id);
+
+    // Luego eliminar al alumno
     const { error } = await supabase.from('alumnos').delete().eq('id', id);
     if (error) throw error;
     return true;
-  } catch (e) { console.error('deleteAlumno:', e); return false; }
+  } catch (e) {
+    console.error('deleteAlumno:', e);
+    return false;
+  }
 }
 
 export async function updateAlumno(id, updates) {
@@ -212,8 +254,8 @@ export async function updateAlumno(id, updates) {
 // ─── 10. REGISTRAR ASISTENCIA ─────────────────────────────────────────────────
 export async function registrarAsistencia(studentId, status, targetDate = null) {
   try {
-    const dateToUse = targetDate || new Date().toISOString().split('T')[0];
-    const now   = new Date().toTimeString().split(' ')[0];
+    const dateToUse = targetDate || getMonterreyDate();
+    const now   = getMonterreyTime();
 
     // Verificar fines de semana (sábado y domingo) usando la fecha objetivo
     const dateObj = new Date(dateToUse + 'T12:00:00'); // mediodía para evitar desfase de timezone
@@ -230,16 +272,20 @@ export async function registrarAsistencia(studentId, status, targetDate = null) 
     const parcialActivo = await getParcialActivo();
     const parcialId = parcialActivo?.id || null;
 
-    const { data: existing } = await supabase
+    const { data: existing, error: existErr } = await supabase
       .from('asistencias').select('id')
       .eq('student_id', studentId).eq('date', dateToUse).maybeSingle();
+    if (existErr) throw existErr;
+
     if (existing) {
-      await supabase.from('asistencias')
+      const { error: updErr } = await supabase.from('asistencias')
         .update({ status, entry_time: now, parcial_id: parcialId })
         .eq('student_id', studentId).eq('date', dateToUse);
+      if (updErr) throw updErr;
     } else {
-      await supabase.from('asistencias')
+      const { error: insErr } = await supabase.from('asistencias')
         .insert({ student_id: studentId, date: dateToUse, entry_time: now, status, parcial_id: parcialId });
+      if (insErr) throw insErr;
     }
     return { success: true, parcial: parcialActivo };
   } catch (e) { console.error('registrarAsistencia:', e); return { success: false, error: e.message }; }
@@ -283,7 +329,7 @@ export async function getParciales() {
 
 export async function getParcialActivo() {
   try {
-    const today = new Date().toISOString().split('T')[0];
+    const today = getMonterreyDate();
     const { data, error } = await supabase
       .from('parciales').select('*')
       .lte('fecha_inicio', today)
@@ -435,7 +481,7 @@ export async function getAsistenciasPorParcial(parcialId, grado = '', grupo = ''
 // ─── 11. LISTA DE ASISTENCIAS HOY ────────────────────────────────────────────
 export async function getAsistenciasHoy(grado = '', grupo = '', targetDate = null) {
   try {
-    const dateToCheck = targetDate || new Date().toISOString().split('T')[0];
+    const dateToCheck = targetDate || getMonterreyDate();
     
     // 1. Fetch students
     let q = supabase.from('alumnos').select('id, nombre_completo, grado, grupo, matricula').order('nombre_completo');
@@ -466,8 +512,8 @@ export async function getAsistenciasHoy(grado = '', grupo = '', targetDate = nul
       const hoy = asisMap[a.id];
       return {
         ...a,
-        asistencia_hoy: hoy?.status || null,
-        entry_time: hoy?.entry_time || null
+        asistencia_hoy: hoy?.status || 'Falta',
+        entry_time: hoy?.entry_time || '--:--'
       };
     });
   } catch (e) { console.error('getAsistenciasHoy:', e); return []; }
@@ -479,18 +525,18 @@ export async function registrarAsistenciaQR(codigo, targetDate = null) {
     const trimmed = codigo.trim();
     let student = null;
 
-    // 1. Buscar por codigo_acceso (exacto)
-    const { data: byAcceso } = await supabase
+    // 1. Buscar por matrícula (exacto, case-insensitive)
+    const { data: byMatricula } = await supabase
       .from('alumnos').select('id, nombre_completo, grado, grupo')
-      .eq('codigo_acceso', trimmed).maybeSingle();
-    if (byAcceso) student = byAcceso;
+      .ilike('matricula', trimmed).maybeSingle();
+    if (byMatricula) student = byMatricula;
 
-    // 2. Buscar por matrícula (exacto, case-insensitive)
+    // 2. Buscar por codigo_acceso (exacto)
     if (!student) {
-      const { data: byMatricula } = await supabase
+      const { data: byAcceso } = await supabase
         .from('alumnos').select('id, nombre_completo, grado, grupo')
-        .ilike('matricula', trimmed).maybeSingle();
-      if (byMatricula) student = byMatricula;
+        .eq('codigo_acceso', trimmed).maybeSingle();
+      if (byAcceso) student = byAcceso;
     }
 
     // 3. Buscar por CURP
@@ -509,10 +555,10 @@ export async function registrarAsistenciaQR(codigo, targetDate = null) {
 
     if (!student) return { success: false, error: 'Alumno no encontrado' };
 
-    const now    = new Date().toTimeString().split(' ')[0];
+    const now    = getMonterreyTime();
     const hour   = parseInt(now.split(':')[0]);
     const minute = parseInt(now.split(':')[1]);
-    const status = (hour > 7 || (hour === 7 && minute > 15)) ? 'Retardo' : 'A tiempo';
+    const status = (hour > 7 || (hour === 7 && minute >= 15)) ? 'Retardo' : 'A tiempo';
 
     const result = await registrarAsistencia(student.id, status, targetDate);
     return { ...result, student, status, entry_time: now };
@@ -527,12 +573,12 @@ export async function uploadAlumnosFromData(rows) {
     const nombre         = row['Nombre Completo'] || row['nombre'] || row['Estudiante'] || '';
     const grado          = row['Grado']  || row['grado']  || '';
     const grupo          = row['Grupo']  || row['grupo']  || '';
-    const matricula      = row['Matricula'] || row['matricula'] || null;
+    const finalMatricula = 'MAT' + Math.floor(100000 + Math.random() * 900000).toString();
     const curp           = row['CURP'] || row['Curp'] || row['curp'] || null;
-    const codigo_acceso  = row['Codigo'] || row['Nip'] || crypto.randomUUID();
-    if (nombre) {
+    const codigo_acceso  = curp || crypto.randomUUID();
+    if (nombre && curp) {
       await supabase.from('alumnos').upsert(
-        { nombre_completo: nombre, grado, grupo, matricula, curp, codigo_acceso },
+        { nombre_completo: nombre.toUpperCase(), grado, grupo, matricula: finalMatricula, curp, codigo_acceso },
         { onConflict: 'matricula' }
       );
       count++;
@@ -563,6 +609,21 @@ export async function loginAlumno(matricula, password) {
 
     return { success: true, alumno: data };
   } catch (e) { console.error('loginAlumno:', e); return { success: false, error: e.message }; }
+}
+
+export async function getMatriculaById(alumnoId) {
+  try {
+    const { data, error } = await supabase
+      .from('alumnos')
+      .select('matricula')
+      .eq('id', alumnoId)
+      .maybeSingle();
+    if (error) throw error;
+    return data ? data.matricula : null;
+  } catch (e) {
+    console.error('getMatriculaById:', e);
+    return null;
+  }
 }
 
 // ─── 19. MIS ASISTENCIAS (vista del alumno) ───────────────────────────────────
@@ -718,9 +779,10 @@ export async function insertAlumno(alumno) {
     const { data, error } = await supabase
       .from('alumnos')
       .insert([{
-        nombre_completo: alumno.nombre_completo,
+        nombre_completo: alumno.nombre_completo.toUpperCase(),
         matricula: alumno.matricula || null,
         curp: alumno.curp || null,
+        codigo_acceso: alumno.curp || null,
         grado: alumno.grado || '0',
         grupo: alumno.grupo || '0'
       }])
@@ -739,9 +801,10 @@ export async function insertAlumnosMasivo(alumnos) {
     const { data, error } = await supabase
       .from('alumnos')
       .insert(alumnos.map(a => ({
-        nombre_completo: a.nombre_completo,
+        nombre_completo: a.nombre_completo.toUpperCase(),
         matricula: a.matricula || null,
         curp: a.curp || null,
+        codigo_acceso: a.curp || null,
         grado: a.grado || '0',
         grupo: a.grupo || '0'
       })))
@@ -751,6 +814,20 @@ export async function insertAlumnosMasivo(alumnos) {
   } catch (e) {
     console.error('insertAlumnosMasivo:', e);
     throw e;
+  }
+}
+
+export async function checkCurpsExistentes(curps = []) {
+  try {
+    const { data, error } = await supabase
+      .from('alumnos')
+      .select('curp, nombre_completo')
+      .in('curp', curps);
+    if (error) throw error;
+    return data || [];
+  } catch (e) {
+    console.error('checkCurpsExistentes:', e);
+    return [];
   }
 }
 
@@ -878,7 +955,7 @@ export async function saveBulkAttendance(asistencias, date) {
     asistencias.forEach(a => {
       const status = a.status || 'Falta';
       const entry_time = (status === 'A tiempo' || status === 'Retardo')
-        ? (a.entry_time || new Date().toTimeString().substring(0, 5))
+        ? (a.entry_time || getMonterreyTime().substring(0, 5))
         : null;
       if (existMap[a.student_id]) {
         toUpdate.push({ id: existMap[a.student_id], status, entry_time, parcial_id: parcialId });
@@ -1015,4 +1092,4 @@ export async function getAsistenciasAlumno(alumnoId, limit = 30) {
     return data || [];
   } catch (e) { console.error('getAsistenciasAlumno:', e); return []; }
 }
-
+

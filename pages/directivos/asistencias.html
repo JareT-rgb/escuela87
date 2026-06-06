@@ -39,11 +39,11 @@
         <button id="close-sidebar-btn" class="absolute top-4 right-4 md:hidden text-white/50 hover:text-white transition-colors">
           <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
-        <div class="w-20 h-20 bg-gradient-to-tr from-sepGold to-yellow-200 rounded-2xl mb-4 flex items-center justify-center shadow-glow transform transition duration-500 hover:scale-105 hover:rotate-3 group cursor-pointer" onclick="window.location.href='dashboard.html'">
+        <div class="w-20 h-20 bg-gradient-to-tr from-sepGold to-yellow-200 rounded-2xl mb-4 flex items-center justify-center shadow-glow transform transition duration-500 hover:scale-105 hover:rotate-3 group cursor-pointer" onclick="window.location.href='../../index.html'">
           <span class="text-sepBurgundy font-heading font-black text-2xl tracking-tighter group-hover:text-sepBurgundyDark transition-colors"><svg class="w-8 h-8 md:w-10 md:h-10 inline-block group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></span>
         </div>
         <h1 class="text-xs font-bold text-center uppercase tracking-widest text-white/90 font-heading">Secretaría de Educación Pública</h1>
-        <p class="text-[10px] text-sepGold mt-2 font-semibold bg-black/30 px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-sm shadow-inner">Secundaria Técnica No. 87</p>
+        <p class="text-[10px] text-sepGold mt-2 font-semibold bg-black/30 px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-sm shadow-inner">Secundaria NO. 87</p>
       </div>
 
       <!-- Navigation Links -->
@@ -512,6 +512,7 @@
       alumnos.forEach(a => {
         const grado = a.grado || 'Sin Grado';
         const grupo = a.grupo || 'Sin Grupo';
+        if (grado === '0' || grado === 0) return;
         const key = `${grado}-${grupo}`;
         if (!globalAlumnosCache[key]) globalAlumnosCache[key] = { grado, grupo, alumnos: [] };
         globalAlumnosCache[key].alumnos.push(a);

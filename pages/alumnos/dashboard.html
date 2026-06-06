@@ -41,11 +41,11 @@
         <button id="close-sidebar-btn" class="absolute top-4 right-4 md:hidden text-white/50 hover:text-white transition-colors">
           <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
-        <div class="w-20 h-20 bg-gradient-to-tr from-sepGold to-yellow-200 rounded-2xl mb-4 flex items-center justify-center shadow-glow transform transition duration-500 hover:scale-105 hover:rotate-3 group cursor-pointer" onclick="window.location.href='dashboard.html'">
+        <div class="w-20 h-20 bg-gradient-to-tr from-sepGold to-yellow-200 rounded-2xl mb-4 flex items-center justify-center shadow-glow transform transition duration-500 hover:scale-105 hover:rotate-3 group cursor-pointer" onclick="window.location.href='../../index.html'">
           <span class="text-sepBlue font-heading font-black text-2xl tracking-tighter group-hover:text-sepBlueDark transition-colors"><svg class="w-8 h-8 md:w-10 md:h-10 inline-block group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></span>
         </div>
         <h1 class="text-xs font-bold text-center uppercase tracking-widest text-white/90 font-heading">Portal del Estudiante</h1>
-        <p class="text-[10px] text-sepGold mt-2 font-semibold bg-black/30 px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-sm shadow-inner">Secundaria Técnica No. 87</p>
+        <p class="text-[10px] text-sepGold mt-2 font-semibold bg-black/30 px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-sm shadow-inner">Secundaria NO. 87</p>
       </div>
 
       <!-- Navigation Links -->
@@ -78,7 +78,7 @@
           <div id="sidebar-avatar" class="w-10 h-10 rounded-full bg-gradient-to-br from-sepGold to-yellow-600 flex items-center justify-center text-sepBlue font-bold shadow-premium group-hover:shadow-glow transition-all duration-300"></div>
           <div class="overflow-hidden">
             <p id="sidebar-name" class="text-sm font-bold truncate text-white group-hover:text-sepGold transition-colors font-heading tracking-wide">Cargando...</p>
-            <p id="sidebar-grade" class="text-xs text-white/50 font-medium">Ciclo 2025-2026</p>
+            <p id="sidebar-grade" class="text-xs text-white/50 font-medium">Ciclo 2025-2028</p>
           </div>
         </div>
       </div>
@@ -226,7 +226,7 @@
 
             <!-- Reportes de Prefectura -->
             <div id="reportes" class="glass-panel rounded-3xl shadow-soft border border-gray-100 overflow-hidden flex flex-col">
-               <div class="bg-sepBlue px-6 py-5 border-b border-sepGold/20 flex justify-between items-center">
+               <div class="bg-sepGreenDark px-6 py-5 border-b border-white/10 flex justify-between items-center">
                   <h3 class="font-extrabold text-white tracking-wide text-base md:text-lg font-heading flex items-center">
                     <svg class="w-5 h-5 mr-2 text-sepGold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                     Mis Reportes de Conducta
@@ -245,18 +245,14 @@
                 <p class="text-xs text-gray-400 mb-6">Código de acceso personal</p>
                 
                 <div class="w-48 min-h-48 bg-gray-100 rounded-2xl p-4 shadow-inner mb-6 relative group overflow-hidden flex flex-col items-center justify-center">
-                   <div id="qr-container" class="hidden w-full h-full flex items-center justify-center bg-white p-2 rounded-xl">
+                   <div id="qr-container" class="w-full h-full flex items-center justify-center bg-white p-2 rounded-xl">
                       <div id="qrcode"></div>
                    </div>
-                   <div id="qr-placeholder" class="w-full h-full border-4 border-dashed border-gray-200 rounded-xl flex items-center justify-center opacity-40 absolute inset-4">
+                   <div id="qr-placeholder" class="hidden w-full h-full border-4 border-dashed border-gray-200 rounded-xl flex items-center justify-center opacity-40 absolute inset-4">
                       <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
                    </div>
                 </div>
-
-                <button id="btn-show-qr" class="mb-3 bg-sepBlue text-white font-bold py-2.5 px-6 rounded-full shadow-premium hover:bg-sepBlueDark hover:shadow-premium transition-all duration-300 transform hover:-translate-y-1 hover:shadow-premium-hover w-full">
-                  Ver mi código QR
-                </button>
-                <button id="btn-print-qr" class="mb-4 hidden bg-gray-100 text-gray-600 border border-gray-200 font-bold py-2 px-6 rounded-full shadow-sm hover:shadow hover:bg-gray-200 transition-all duration-300 text-sm w-full">
+                <button id="btn-print-qr" class="mb-4 bg-gray-100 text-gray-600 border border-gray-200 font-bold py-2 px-6 rounded-full shadow-sm hover:shadow hover:bg-gray-200 transition-all duration-300 text-sm w-full">
                   🖨️ Imprimir QR
                 </button>
 
@@ -275,7 +271,7 @@
 
   <script src="../../assets/js/main.js"></script>
   <script type="module">
-    import { getAnnouncements, getStudentSummary, getMisAsistencias, getUltimaAsistencia } from '../../assets/js/api-client.js';
+    import { getAnnouncements, getStudentSummary, getMisAsistencias, getUltimaAsistencia, getMatriculaById } from '../../assets/js/api-client.js';
     import { checkAuth } from '../../assets/js/auth-guard.js';
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -296,6 +292,15 @@
       document.getElementById('current-date-display').textContent = 'Hoy es ' + new Date().toLocaleDateString('es-MX', options);
 
       const studentId = session.id;
+
+      // Parche: Si la sesión en caché no tiene matrícula, la obtenemos de la BD
+      if (!session.matricula) {
+        const realMatricula = await getMatriculaById(studentId);
+        if (realMatricula) {
+          session.matricula = realMatricula;
+          localStorage.setItem('sep_session', JSON.stringify(session));
+        }
+      }
 
       // 2. Cargar resumen del estudiante
       try {
@@ -353,40 +358,15 @@
         document.getElementById('attendance-tbody').innerHTML = `<tr><td colspan="3" class="px-6 py-6 text-center text-red-500 font-medium">Error al cargar el historial.</td></tr>`;
       }
 
-      // 4. Lógica para mostrar Código QR
-      const btnShowQr = document.getElementById('btn-show-qr');
-      const qrContainer = document.getElementById('qr-container');
-      const qrPlaceholder = document.getElementById('qr-placeholder');
+      // 4. Lógica para generar Código QR automáticamente
       const qrcodeElement = document.getElementById('qrcode');
-      let qrGenerated = false;
-
-      btnShowQr.addEventListener('click', () => {
-        if (qrContainer.classList.contains('hidden')) {
-          qrContainer.classList.remove('hidden');
-          qrPlaceholder.classList.add('hidden');
-          btnShowQr.textContent = 'Ocultar código QR';
-          btnShowQr.classList.replace('bg-sepBlue', 'bg-gray-600');
-          btnShowQr.classList.replace('hover:bg-sepBlueDark', 'hover:bg-gray-700');
-          if (!qrGenerated) {
-            const qrText = session.codigo_acceso || session.matricula || session.id;
-            new QRCode(qrcodeElement, {
-              text: qrText,
-              width: 140, height: 140,
-              colorDark: "#1B4D3E",
-              colorLight: "#ffffff",
-              correctLevel: QRCode.CorrectLevel.H
-            });
-            qrGenerated = true;
-          }
-          document.getElementById('btn-print-qr').classList.remove('hidden');
-        } else {
-          qrContainer.classList.add('hidden');
-          qrPlaceholder.classList.remove('hidden');
-          btnShowQr.textContent = 'Ver mi código QR';
-          btnShowQr.classList.replace('bg-gray-600', 'bg-sepBlue');
-          btnShowQr.classList.replace('hover:bg-gray-700', 'hover:bg-sepBlueDark');
-          document.getElementById('btn-print-qr').classList.add('hidden');
-        }
+      const qrText = session.matricula || session.codigo_acceso || session.id;
+      new QRCode(qrcodeElement, {
+        text: qrText,
+        width: 140, height: 140,
+        colorDark: "#1B4D3E",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.L
       });
 
       // 5. Cargar última asistencia
@@ -425,11 +405,11 @@
           <html><head><title>QR - ${studentName}</title>
           <style>body{font-family:Arial,sans-serif;text-align:center;padding:40px;}h1{color:#691C32;font-size:18px;}p{color:#666;font-size:14px;}.qr{margin:20px auto;}@media print{button{display:none;}}</style>
           </head><body>
-          <h1>Secundaria Técnica No. 87</h1>
+          <h1>Secundaria NO. 87</h1>
           <p>Credencial Digital de Asistencia</p>
           <hr style="margin:20px 0;border-color:#BC955C;">
           <h2 style="color:#285C4D;">${studentName}</h2>
-          <p>${session.grupo || ''} &mdash; Ciclo 2025-2026</p>
+          <p>${session.grupo || ''} &mdash; Ciclo 2025-2028</p>
           <div class="qr"><img src="${imgSrc}" width="200" height="200"></div>
           <p style="font-size:11px;color:#999;">Presenta este código en los puntos de escaneo del plantel</p>
           <button onclick="window.print()" style="margin-top:20px;padding:10px 30px;background:#691C32;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">Imprimir</button>

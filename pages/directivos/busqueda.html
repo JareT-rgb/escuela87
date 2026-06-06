@@ -37,11 +37,11 @@
         <button id="close-sidebar-btn" class="absolute top-4 right-4 md:hidden text-white/50 hover:text-white transition-colors">
           <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
-        <div class="w-20 h-20 bg-gradient-to-tr from-sepGold to-yellow-200 rounded-2xl mb-4 flex items-center justify-center shadow-glow transform transition duration-500 hover:scale-105 hover:rotate-3 group cursor-pointer" onclick="window.location.href='dashboard.html'">
+        <div class="w-20 h-20 bg-gradient-to-tr from-sepGold to-yellow-200 rounded-2xl mb-4 flex items-center justify-center shadow-glow transform transition duration-500 hover:scale-105 hover:rotate-3 group cursor-pointer" onclick="window.location.href='../../index.html'">
           <span class="text-sepBurgundy font-heading font-black text-2xl tracking-tighter group-hover:text-sepBurgundyDark transition-colors"><svg class="w-8 h-8 md:w-10 md:h-10 inline-block group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></span>
         </div>
         <h1 class="text-xs font-bold text-center uppercase tracking-widest text-white/90 font-heading">Secretaría de Educación Pública</h1>
-        <p class="text-[10px] text-sepGold mt-2 font-semibold bg-black/30 px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-sm shadow-inner">Secundaria Técnica No. 87</p>
+        <p class="text-[10px] text-sepGold mt-2 font-semibold bg-black/30 px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-sm shadow-inner">Secundaria NO. 87</p>
       </div>
 
       <!-- Navigation Links -->
@@ -130,13 +130,12 @@
             
           </div>
           
-          <div class="mt-6 flex flex-wrap gap-2 items-center">
-            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider mr-2">Filtros rápidos:</span>
-            <span class="px-3 py-1.5 bg-gray-100/80 text-gray-600 rounded-lg text-xs font-semibold cursor-pointer hover:bg-gray-200 hover:text-gray-800 transition-colors">1° Grado</span>
-            <span class="px-3 py-1.5 bg-gray-100/80 text-gray-600 rounded-lg text-xs font-semibold cursor-pointer hover:bg-gray-200 hover:text-gray-800 transition-colors">2° Grado</span>
-            <span class="px-3 py-1.5 bg-gray-100/80 text-gray-600 rounded-lg text-xs font-semibold cursor-pointer hover:bg-gray-200 hover:text-gray-800 transition-colors">3° Grado</span>
-            <span class="px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-xs font-bold border border-red-100 cursor-pointer hover:bg-red-100 transition-colors shadow-sm">Con Riesgo Académico</span>
-            <span class="px-3 py-1.5 bg-yellow-50 text-yellow-700 rounded-lg text-xs font-bold border border-yellow-200 cursor-pointer hover:bg-yellow-100 transition-colors shadow-sm">Reportes Disciplinarios</span>
+          <div id="filter-buttons" class="mt-6 flex flex-wrap gap-2 items-center">
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider mr-2">Filtros:</span>
+            <span data-filter="grado:1" class="filter-btn px-3 py-1.5 bg-gray-100 text-gray-600 rounded-lg text-xs font-semibold cursor-pointer border border-transparent hover:bg-gray-200 transition-colors">1° Grado</span>
+            <span data-filter="grado:2" class="filter-btn px-3 py-1.5 bg-gray-100 text-gray-600 rounded-lg text-xs font-semibold cursor-pointer border border-transparent hover:bg-gray-200 transition-colors">2° Grado</span>
+            <span data-filter="grado:3" class="filter-btn px-3 py-1.5 bg-gray-100 text-gray-600 rounded-lg text-xs font-semibold cursor-pointer border border-transparent hover:bg-gray-200 transition-colors">3° Grado</span>
+            <span data-filter="grado:0" class="filter-btn px-3 py-1.5 bg-gray-100 text-gray-600 rounded-lg text-xs font-semibold cursor-pointer border border-transparent hover:bg-gray-200 transition-colors">Sin Grupo / Recién Ingreso</span>
           </div>
         </section>
 
@@ -303,7 +302,7 @@
           <p class="text-sm text-gray-500 flex justify-between"><span class="font-bold">Grado/Grupo:</span> <span class="bg-gray-100 px-2 rounded">${s.grado || '?'} ${s.grupo || ''}</span></p>
           <p class="text-sm text-gray-500 mt-1 flex justify-between"><span class="font-bold">Matrícula:</span> <span>${s.matricula || '---'}</span></p>
           <div class="mt-5 grid grid-cols-2 gap-2">
-            <button class="border border-sepGold bg-yellow-50 text-yellow-700 hover:bg-sepGold hover:text-white font-bold py-2 rounded-xl text-[10px] sm:text-xs uppercase tracking-widest transition-colors open-qr-modal" data-name="${s.nombre_completo}" data-qr="${s.codigo_acceso || s.matricula || ''}">Ver QR</button>
+            <button class="border border-sepGold bg-yellow-50 text-yellow-700 hover:bg-sepGold hover:text-white font-bold py-2 rounded-xl text-[10px] sm:text-xs uppercase tracking-widest transition-colors open-qr-modal" data-name="${s.nombre_completo}" data-qr="${s.matricula || s.codigo_acceso || ''}">Ver QR</button>
             <button class="border border-red-200 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white font-bold py-2 rounded-xl text-[10px] sm:text-xs uppercase tracking-widest transition-colors open-report-modal" data-id="${s.id}" data-name="${s.nombre_completo}">Reporte</button>
             <button class="border border-blue-200 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white font-bold py-2 rounded-xl text-[10px] sm:text-xs uppercase tracking-widest transition-colors edit-student-btn" data-id="${s.id}" data-name="${s.nombre_completo}" data-grado="${s.grado || ''}" data-grupo="${s.grupo || ''}" data-matricula="${s.matricula || ''}">Editar</button>
             <button class="border border-gray-300 bg-gray-50 text-gray-700 hover:bg-gray-800 hover:text-white font-bold py-2 rounded-xl text-[10px] sm:text-xs uppercase tracking-widest transition-colors delete-student-btn" data-id="${s.id}" data-name="${s.nombre_completo}">Baja</button>
@@ -312,15 +311,33 @@
       `).join('');
     }
 
+    let currentGradoFilter = '';
+
     // ── Search button events ─────────────────────────────────────────────────
-    if (searchBtn) searchBtn.addEventListener('click', () => renderResults(searchInput.value.trim(), ''));
-    if (searchInput) searchInput.addEventListener('keypress', e => { if (e.key === 'Enter') renderResults(searchInput.value.trim(), ''); });
+    if (searchBtn) searchBtn.addEventListener('click', () => renderResults(searchInput.value.trim(), currentGradoFilter));
+    if (searchInput) searchInput.addEventListener('keypress', e => { if (e.key === 'Enter') renderResults(searchInput.value.trim(), currentGradoFilter); });
 
     // ── QUICK FILTER BUTTONS ─────────────────────────────────────────────────
-    document.querySelectorAll('.mt-6 span.cursor-pointer').forEach(btn => {
+    document.querySelectorAll('.filter-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        const txt = btn.textContent.trim();
-        if (txt.includes('Grado')) renderResults('', txt.split('°')[0].trim());
+        const isActive = btn.classList.contains('active-filter');
+        
+        // Remove active state from all buttons
+        document.querySelectorAll('.filter-btn').forEach(b => {
+          b.classList.remove('active-filter', 'bg-sepBurgundy', 'text-white', 'shadow-md');
+          b.classList.add('bg-gray-100', 'text-gray-600');
+        });
+
+        if (isActive) {
+          currentGradoFilter = ''; // Deactivate
+        } else {
+          // Activate clicked button
+          btn.classList.add('active-filter', 'bg-sepBurgundy', 'text-white', 'shadow-md');
+          btn.classList.remove('bg-gray-100', 'text-gray-600');
+          currentGradoFilter = btn.dataset.filter.split(':')[1];
+        }
+        
+        renderResults(searchInput.value.trim(), currentGradoFilter);
       });
     });
 
@@ -439,7 +456,7 @@
         height: 200,
         colorDark : "#000000",
         colorLight : "#ffffff",
-        correctLevel : QRCode.CorrectLevel.H
+        correctLevel : QRCode.CorrectLevel.L
       });
       
       qrModal.classList.remove('hidden');

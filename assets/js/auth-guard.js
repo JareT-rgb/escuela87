@@ -14,6 +14,7 @@ export function checkAuth(requiredRoles = []) {
     const loginUrl = '../../index.html';
 
     if (!sessionStr) {
+        alert('DEBUG: No sessionStr found. Redirecting to login.');
         window.location.replace(loginUrl);
         return null;
     }
@@ -23,11 +24,16 @@ export function checkAuth(requiredRoles = []) {
         
         // Si hay roles requeridos y el tipo no está, denegar
         if (requiredRoles.length > 0 && !requiredRoles.includes(session.tipo)) {
+            alert('DEBUG: Role mismatch. Required: ' + requiredRoles.join(',') + ' but got: ' + session.tipo);
             if(window.showToast) { window.showToast('Acceso denegado: No tienes permisos para esta área.', 'error'); } else { alert('Acceso denegado: No tienes permisos para esta área.'); }
             window.location.replace(loginUrl);
             return null;
         }
         
+        if (session && session.nombre) {
+            session.nombre = session.nombre.toUpperCase();
+        }
+
         // Actualizar interfaz con el nombre del usuario si hay elementos genéricos
         const userNameDisplays = document.querySelectorAll('.session-user-name');
         userNameDisplays.forEach(el => el.textContent = session.nombre);
@@ -35,6 +41,7 @@ export function checkAuth(requiredRoles = []) {
         return session;
     } catch(e) {
         // En caso de que el JSON esté corrupto
+        alert('DEBUG: JSON parse error or similar in auth-guard: ' + e.message);
         localStorage.removeItem('sep_session');
         window.location.replace(loginUrl);
         return null;

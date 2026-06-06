@@ -175,7 +175,7 @@
           <h1 class="text-lg font-extrabold tracking-tight text-gray-900 heading-font transition-colors">
             Plataforma de Asistencia
           </h1>
-          <p class="text-[10px] font-bold text-[#BC955C] tracking-widest uppercase">Secundaria Técnica No. 87</p>
+          <p class="text-[10px] font-bold text-[#BC955C] tracking-widest uppercase">Secundaria NO. 87</p>
         </div>
       </div>
     </div>
@@ -190,7 +190,7 @@
       <!-- Hero Section -->
       <div class="text-center mb-16 animate-float-hero">
         <span class="inline-block py-1 px-4 rounded-full bg-white/60 backdrop-blur-md border border-white text-[#691C32] text-xs font-bold uppercase tracking-widest mb-4 shadow-sm">
-          Plataforma Institucional 2025-2026
+          Plataforma Institucional 2025-2028
         </span>
         <h2 class="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-4 heading-font tracking-tight">
           Sistema de <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#691C32] to-[#BC955C]">Gestión Escolar</span>
@@ -245,8 +245,8 @@
               </button>
             
   <div class="mt-4 text-center z-20">
-    <button type="button" onclick="document.getElementById('flip-container').classList.add('flipped')" class="text-[11px] font-bold text-gray-500 hover:text-[#006341] uppercase tracking-widest transition-colors flex items-center justify-center gap-1 mx-auto">
-      Eres Personal de la Escuela?
+    <button type="button" onclick="requestStaffAccess()" class="text-[11px] font-bold text-gray-500 hover:text-[#006341] uppercase tracking-widest transition-colors flex items-center justify-center gap-1 mx-auto">
+      ¿Eres director o prefecto?
       <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
     </button>
   </div>
@@ -263,50 +263,140 @@
             </div>
           </div>
           
-          <div class="p-8 flex-grow flex flex-col bg-white/30">
-            <form id="staff-login-form" class="w-full mt-auto flex flex-col gap-5">
-              <div class="group/input relative z-20">
-                <label for="staff-email" class="block text-[11px] font-bold text-gray-600 mb-2 uppercase tracking-widest transition-colors group-focus-within/input:text-[#691C32]">Usuario</label>
-                <div class="relative">
-                  <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <svg class="h-5 w-5 text-gray-400 group-focus-within/input:text-[#691C32] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                  </div>
-                  <input type="text" id="staff-email" placeholder="Nombre de usuario" required="" class="w-full pl-11 pr-4 py-3.5 rounded-xl border border-white/60 bg-white/50 focus:bg-white focus:border-[#691C32] focus:ring-2 focus:ring-[#691C32]/20 outline-none transition-all text-gray-900 font-medium shadow-sm backdrop-blur-md">
-                </div>
-              </div>
+          <div class="p-8 flex-grow flex flex-col bg-white/30 relative">
+            <!-- Animated Sliding Tabs -->
+            <div class="relative flex bg-white/40 backdrop-blur-md rounded-xl p-1 mb-6 z-20 shadow-inner border border-white/50">
+              <div id="tab-bg" class="absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] bg-white rounded-lg shadow-sm transition-all duration-300 ease-in-out border border-white/60"></div>
               
-              <div class="group/input relative z-20">
-                <label for="staff-password" class="block text-[11px] font-bold text-gray-600 mb-2 uppercase tracking-widest transition-colors group-focus-within/input:text-[#691C32]">Contraseña</label>
-                <div class="relative">
-                  <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <svg class="h-5 w-5 text-gray-400 group-focus-within/input:text-[#691C32] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+              <button type="button" onclick="toggleStaffForm('login')" class="relative flex-1 py-2 text-[11px] font-bold uppercase tracking-widest text-[#691C32] transition-colors z-10" id="tab-btn-login">Ingresar</button>
+              <button type="button" onclick="toggleStaffForm('register')" class="relative flex-1 py-2 text-[11px] font-bold uppercase tracking-widest text-gray-500 hover:text-[#691C32] transition-colors z-10" id="tab-btn-register">Registrarse</button>
+            </div>
+
+            <!-- Forms Container (Relative for absolute positioning inside) -->
+            <div class="relative w-full flex-grow overflow-hidden min-h-[360px]">
+              
+              <!-- Form Login -->
+              <form id="staff-login-form" class="absolute inset-0 w-full flex flex-col gap-4 transition-all duration-500 ease-in-out transform translate-x-0 opacity-100 z-20">
+                <div class="group/input relative">
+                  <label for="staff-email" class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-widest transition-colors group-focus-within/input:text-[#691C32]">Usuario</label>
+                  <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <svg class="h-5 w-5 text-gray-400 group-focus-within/input:text-[#691C32] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    </div>
+                    <input type="text" id="staff-email" placeholder="Nombre de usuario" required="" class="w-full pl-11 pr-4 py-3 rounded-xl border border-white/60 bg-white/50 focus:bg-white focus:border-[#691C32] focus:ring-2 focus:ring-[#691C32]/20 outline-none transition-all text-gray-900 text-sm shadow-sm">
                   </div>
-                  <input type="password" id="staff-password" placeholder="••••••••" required="" class="w-full pl-11 pr-12 py-3.5 rounded-xl border border-white/60 bg-white/50 focus:bg-white focus:border-[#691C32] focus:ring-2 focus:ring-[#691C32]/20 outline-none transition-all text-gray-900 font-medium shadow-sm backdrop-blur-md">
-                  <button type="button" onclick="togglePassword('staff-password')" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 hover:text-[#691C32] focus:outline-none transition-colors">
-                    <svg id="eye-staff-password" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                </div>
+                
+                <div class="group/input relative">
+                  <label for="staff-password" class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-widest transition-colors group-focus-within/input:text-[#691C32]">Contraseña</label>
+                  <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <svg class="h-5 w-5 text-gray-400 group-focus-within/input:text-[#691C32] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    </div>
+                    <input type="password" id="staff-password" placeholder="••••••••" required="" class="w-full pl-11 pr-12 py-3 rounded-xl border border-white/60 bg-white/50 focus:bg-white focus:border-[#691C32] focus:ring-2 focus:ring-[#691C32]/20 outline-none transition-all text-gray-900 text-sm shadow-sm">
+                    <button type="button" onclick="togglePassword('staff-password')" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 hover:text-[#691C32] focus:outline-none transition-colors">
+                      <svg id="eye-staff-password" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                    </button>
+                  </div>
+                </div>
+
+                <p id="staff-error" class="text-red-600 text-xs font-bold hidden flex items-center gap-2 bg-red-50/90 backdrop-blur-sm p-3 rounded-xl border border-red-200 shadow-sm">
+                  <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                  <span>Credenciales incorrectas.</span>
+                </p>
+
+                <button type="submit" class="w-full mt-4 flex items-center justify-center text-white font-bold text-xs uppercase tracking-widest gap-2 bg-gradient-to-r from-[#691C32] to-[#8C2543] hover:to-[#691C32] px-4 py-3.5 rounded-xl shadow-[0_10px_20px_rgba(105,28,50,0.3)] hover:shadow-[0_15px_30px_rgba(105,28,50,0.4)] transition-all duration-300 transform hover:-translate-y-1">
+                  Ingresar al Sistema
+                  <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </button>
+                
+                <div class="mt-auto pt-4 text-center">
+                  <button type="button" onclick="document.getElementById('flip-container').classList.remove('flipped')" class="text-[11px] font-bold text-gray-500 hover:text-[#691C32] uppercase tracking-widest transition-colors flex items-center justify-center gap-1 mx-auto">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path></svg>
+                    Volver al Portal de Alumnos
                   </button>
                 </div>
-              </div>
+              </form>
 
-              <p id="staff-error" class="text-red-600 text-xs font-bold hidden flex items-center gap-2 bg-red-50/90 backdrop-blur-sm p-3 rounded-xl border border-red-200 shadow-sm mt-1 z-20">
-                <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
-                <span>Credenciales incorrectas.</span>
-              </p>
+              <!-- Form Register -->
+              <form id="staff-register-form" class="absolute inset-0 w-full flex flex-col gap-3 transition-all duration-500 ease-in-out transform translate-x-[120%] opacity-0 pointer-events-none z-10 overflow-y-auto pr-1">
+                <div class="group/input relative">
+                  <label for="reg-nombre" class="block text-[10px] font-bold text-gray-600 mb-1 uppercase tracking-widest">Nombre Completo</label>
+                  <input type="text" id="reg-nombre" placeholder="Ej. Juan Pérez" required class="w-full px-4 py-2.5 rounded-xl border border-white/60 bg-white/50 focus:bg-white focus:border-[#691C32] outline-none transition-all text-gray-900 text-sm shadow-sm">
+                </div>
+                
+                <div class="group/input relative">
+                  <label for="reg-email" class="block text-[10px] font-bold text-gray-600 mb-1 uppercase tracking-widest">Usuario / Email</label>
+                  <input type="text" id="reg-email" placeholder="usuario@secundaria87.edu" required class="w-full px-4 py-2.5 rounded-xl border border-white/60 bg-white/50 focus:bg-white focus:border-[#691C32] outline-none transition-all text-gray-900 text-sm shadow-sm">
+                </div>
 
-              <button type="submit" class="relative z-20 w-full mt-4 flex items-center justify-center text-white font-bold text-sm uppercase tracking-widest gap-2 bg-gradient-to-r from-[#691C32] to-[#8C2543] hover:to-[#691C32] px-4 py-4 rounded-xl shadow-[0_10px_20px_rgba(105,28,50,0.3)] hover:shadow-[0_15px_30px_rgba(105,28,50,0.4)] transition-all duration-300 transform hover:-translate-y-1 hover:shadow-premium-hover border border-[#8C2543]">
-                Ingresar al Sistema
-                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-              </button>
-            
-  <div class="mt-4 text-center z-20">
-    <button type="button" onclick="document.getElementById('flip-container').classList.remove('flipped')" class="text-[11px] font-bold text-gray-500 hover:text-[#691C32] uppercase tracking-widest transition-colors flex items-center justify-center gap-1 mx-auto">
-      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path></svg>
-      Volver al Portal de Alumnos
-    </button>
-  </div>
-</form>
+                <div class="flex gap-3">
+                  <div class="group/input relative flex-1">
+                    <label for="reg-password" class="block text-[10px] font-bold text-gray-600 mb-1 uppercase tracking-widest">Contraseña</label>
+                    <input type="password" id="reg-password" placeholder="••••••••" required class="w-full px-4 py-2.5 rounded-xl border border-white/60 bg-white/50 focus:bg-white focus:border-[#691C32] outline-none transition-all text-gray-900 text-sm shadow-sm">
+                  </div>
+                  
+                  <div class="group/input relative flex-1">
+                    <label for="reg-rol" class="block text-[10px] font-bold text-gray-600 mb-1 uppercase tracking-widest">Rol</label>
+                    <select id="reg-rol" required class="w-full px-4 py-2.5 rounded-xl border border-white/60 bg-white/50 focus:bg-white focus:border-[#691C32] outline-none transition-all text-gray-900 text-sm shadow-sm">
+                      <option value="prefecto">Prefecto</option>
+                      <option value="director">Director</option>
+                    </select>
+                  </div>
+                </div>
+
+                <p id="reg-error" class="text-red-600 text-[10px] font-bold hidden flex items-center gap-2 bg-red-50/90 p-2 rounded-xl border border-red-200 shadow-sm">
+                  <svg class="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                  <span>Error.</span>
+                </p>
+
+                <button type="submit" class="w-full mt-2 flex items-center justify-center text-white font-bold text-xs uppercase tracking-widest gap-2 bg-gradient-to-r from-[#691C32] to-[#8C2543] hover:to-[#691C32] px-4 py-3.5 rounded-xl shadow-[0_10px_20px_rgba(105,28,50,0.3)] hover:shadow-[0_15px_30px_rgba(105,28,50,0.4)] transition-all duration-300 transform hover:-translate-y-1">
+                  Crear Cuenta
+                </button>
+                
+                <div class="mt-auto pt-2 text-center pb-2">
+                  <button type="button" onclick="document.getElementById('flip-container').classList.remove('flipped')" class="text-[10px] font-bold text-gray-500 hover:text-[#691C32] uppercase tracking-widest transition-colors flex items-center justify-center gap-1 mx-auto">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path></svg>
+                    Volver al Portal
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div></div></div></div>
+    </div>
+
+    <!-- Modal de Éxito General -->
+    <div id="success-modal" class="fixed inset-0 bg-black/60 backdrop-blur-md z-[100] hidden flex items-center justify-center p-4 transition-opacity duration-300">
+      <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-sm w-full transform scale-95 transition-transform duration-300 border border-white/20 text-center">
+        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 text-green-600">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+        </div>
+        <h3 id="success-modal-title" class="text-xl font-black text-gray-900 heading-font mb-2">¡Éxito!</h3>
+        <p id="success-modal-msg" class="text-sm text-gray-500 mb-6">Operación realizada correctamente.</p>
+        <button onclick="closeSuccessModal()" class="w-full px-4 py-3 rounded-xl bg-green-600 text-white font-bold text-sm shadow-lg hover:bg-green-700 transition-colors">Aceptar</button>
+      </div>
+    </div>
+
+    <!-- Modal de Seguridad para Acceso Staff -->
+    <div id="staff-auth-modal" class="fixed inset-0 bg-black/60 backdrop-blur-md z-[100] hidden flex items-center justify-center p-4 transition-opacity duration-300">
+      <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-sm w-full transform scale-95 transition-transform duration-300 border border-white/20">
+        <div class="text-center mb-6">
+          <div class="w-16 h-16 bg-[#691C32]/10 rounded-full flex items-center justify-center mx-auto mb-4 text-[#691C32]">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+          </div>
+          <h3 class="text-xl font-black text-gray-900 heading-font">Acceso Restringido</h3>
+          <p class="text-sm text-gray-500 mt-2">Ingresa la contraseña para habilitar el portal de staff.</p>
+        </div>
+        <div class="space-y-4">
+          <input type="password" id="staff-auth-password" placeholder="Contraseña" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-[#691C32] focus:ring-2 focus:ring-[#691C32]/20 outline-none transition-all text-center text-lg tracking-widest font-bold shadow-sm" onkeydown="if(event.key === 'Enter') submitStaffAuth()">
+          <p id="staff-auth-error" class="text-red-500 text-xs font-bold text-center hidden">Contraseña incorrecta</p>
+          <div class="flex gap-3 mt-6">
+            <button onclick="closeStaffAuth()" class="flex-1 px-4 py-3 rounded-xl bg-gray-100 text-gray-600 font-bold text-sm hover:bg-gray-200 transition-colors">Cancelar</button>
+            <button onclick="submitStaffAuth()" class="flex-1 px-4 py-3 rounded-xl bg-[#691C32] text-white font-bold text-sm shadow-lg hover:bg-[#4A1323] transition-colors">Desbloquear</button>
+          </div>
+        </div>
+      </div>
     </div>
   </main>
 
@@ -323,7 +413,7 @@
   
   <!-- Lógica Interactiva y Conexión API -->
   <script type="module">
-    import { loginAlumno, staffLogin } from './assets/js/api-client.js?v=2';
+    import { loginAlumno, staffLogin, registerStaff } from './assets/js/api-client.js?v=2';
 
     // 1. Efecto Glow dinámico con el Mouse
     const cards = document.querySelectorAll('.glow-card');
@@ -396,14 +486,15 @@
       try {
         const staff = await staffLogin(email, password);
         if(staff) {
+          const staffRol = (staff.rol || '').toLowerCase();
           localStorage.setItem('sep_session', JSON.stringify({
-            tipo: staff.tipo_personal === 'tutor' ? 'tutor' : staff.rol,
+            tipo: staff.tipo_personal === 'tutor' ? 'tutor' : staffRol,
             id: staff.id,
             nombre: staff.nombre
           }));
           
-          if(staff.rol === 'director' || staff.rol === 'directivo') window.location.href = 'pages/directivos/dashboard.html';
-          else if(staff.rol === 'prefecto') window.location.href = 'pages/prefectos/dashboard.html';
+          if(staffRol === 'director' || staffRol === 'directivo') window.location.href = 'pages/directivos/dashboard.html';
+          else if(staffRol === 'prefecto') window.location.href = 'pages/prefectos/dashboard.html';
           else window.location.href = 'pages/tutores/dashboard.html';
         } else {
            errorMsg.classList.remove('hidden');
@@ -418,9 +509,140 @@
         btn.classList.remove('opacity-80', 'cursor-not-allowed', 'scale-95');
       }
     });
+
+    // 4. Registro de Staff
+    document.getElementById('staff-register-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const btn = e.target.querySelector('button[type="submit"]');
+      const errorMsg = document.getElementById('reg-error');
+      const nombre = document.getElementById('reg-nombre').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const password = document.getElementById('reg-password').value.trim();
+      const rol = document.getElementById('reg-rol').value;
+      const defaultText = btn.innerHTML;
+
+      errorMsg.classList.add('hidden');
+      btn.innerHTML = `<span class="ml-2">Registrando...</span>`;
+      btn.classList.add('opacity-80', 'cursor-not-allowed', 'scale-95');
+
+      try {
+        const result = await registerStaff(nombre, email, password, rol);
+        if(result && result.success) {
+          showSuccessModal('¡Registro Exitoso!', 'Tu cuenta ha sido creada. Ahora puedes iniciar sesión con tus credenciales.');
+          toggleStaffForm('login');
+          document.getElementById('staff-email').value = email;
+          document.getElementById('staff-password').value = password;
+        } else {
+           errorMsg.querySelector('span').textContent = (result && result.error) ? result.error : 'Error al registrar.';
+           errorMsg.classList.remove('hidden');
+        }
+      } catch(err) {
+        console.error(err);
+        errorMsg.querySelector('span').textContent = "Error de conexión.";
+        errorMsg.classList.remove('hidden');
+      } finally {
+        btn.innerHTML = defaultText;
+        btn.classList.remove('opacity-80', 'cursor-not-allowed', 'scale-95');
+      }
+    });
   </script>
   
   <script>
+    window.showSuccessModal = function(title, message) {
+      const modal = document.getElementById('success-modal');
+      document.getElementById('success-modal-title').textContent = title;
+      document.getElementById('success-modal-msg').textContent = message;
+      modal.classList.remove('hidden');
+      setTimeout(() => {
+        modal.firstElementChild.classList.remove('scale-95');
+        modal.firstElementChild.classList.add('scale-100');
+      }, 10);
+    };
+
+    window.closeSuccessModal = function() {
+      const modal = document.getElementById('success-modal');
+      modal.firstElementChild.classList.remove('scale-100');
+      modal.firstElementChild.classList.add('scale-95');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 300);
+    };
+
+    window.requestStaffAccess = function() {
+      const modal = document.getElementById('staff-auth-modal');
+      const input = document.getElementById('staff-auth-password');
+      const error = document.getElementById('staff-auth-error');
+      
+      error.classList.add('hidden');
+      input.value = '';
+      modal.classList.remove('hidden');
+      
+      // Delay for transition
+      setTimeout(() => {
+        modal.firstElementChild.classList.remove('scale-95');
+        modal.firstElementChild.classList.add('scale-100');
+        input.focus();
+      }, 10);
+    };
+
+    window.closeStaffAuth = function() {
+      const modal = document.getElementById('staff-auth-modal');
+      modal.firstElementChild.classList.remove('scale-100');
+      modal.firstElementChild.classList.add('scale-95');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 300);
+    };
+
+    window.submitStaffAuth = function() {
+      const input = document.getElementById('staff-auth-password').value;
+      const error = document.getElementById('staff-auth-error');
+      
+      if (input === "escsec87") {
+        closeStaffAuth();
+        setTimeout(() => {
+          document.getElementById('flip-container').classList.add('flipped');
+        }, 150);
+      } else {
+        error.classList.remove('hidden');
+      }
+    };
+
+    window.toggleStaffForm = function(formName) {
+      const loginForm = document.getElementById('staff-login-form');
+      const regForm = document.getElementById('staff-register-form');
+      const btnLogin = document.getElementById('tab-btn-login');
+      const btnReg = document.getElementById('tab-btn-register');
+      const tabBg = document.getElementById('tab-bg');
+
+      if (formName === 'login') {
+        // Update Tab Indicator
+        tabBg.style.transform = 'translateX(0)';
+        btnLogin.classList.replace('text-gray-500', 'text-[#691C32]');
+        btnReg.classList.replace('text-[#691C32]', 'text-gray-500');
+
+        // Update Forms
+        regForm.classList.add('translate-x-[120%]', 'opacity-0', 'pointer-events-none');
+        regForm.classList.remove('translate-x-0', 'opacity-100');
+        
+        loginForm.classList.remove('-translate-x-[120%]', 'opacity-0', 'pointer-events-none');
+        loginForm.classList.add('translate-x-0', 'opacity-100');
+      } else {
+        // Update Tab Indicator
+        tabBg.style.transform = 'translateX(100%)';
+        btnReg.classList.replace('text-gray-500', 'text-[#691C32]');
+        btnLogin.classList.replace('text-[#691C32]', 'text-gray-500');
+
+        // Update Forms
+        loginForm.classList.add('-translate-x-[120%]', 'opacity-0', 'pointer-events-none');
+        loginForm.classList.remove('translate-x-0', 'opacity-100');
+        
+        regForm.classList.remove('translate-x-[120%]', 'opacity-0', 'pointer-events-none');
+        regForm.classList.add('translate-x-0', 'opacity-100');
+      }
+    };
+
     function togglePassword(inputId) {
       const input = document.getElementById(inputId);
       const icon = document.getElementById('eye-' + inputId);

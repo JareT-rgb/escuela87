@@ -8,6 +8,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="../../assets/js/tailwind-config.js"></script>
   <link rel="stylesheet" href="../../assets/css/style.css?v=4">
   <!-- html5-qrcode para escanear QR con la cámara -->
@@ -23,16 +25,16 @@
     
     <div id="sidebar-overlay" class="fixed inset-0 bg-sepBurgundyDark/40 backdrop-blur-sm z-30 hidden md:hidden transition-opacity duration-300"></div>
 
-    <aside id="sidebar" class="w-72 bg-sepGreenDark text-white flex-shrink-0 flex flex-col sidebar-transition absolute z-40 h-full transform -translate-x-full md:relative md:translate-x-0 shadow-2xl md:shadow-none border-r border-white/5">
+    <aside id="sidebar" class="w-72 bg-gradient-to-b from-sepGreenDark via-sepGreen to-sepGreenDark text-white flex-shrink-0 flex flex-col sidebar-transition absolute z-40 h-full transform -translate-x-full md:relative md:translate-x-0 shadow-2xl md:shadow-none border-r border-white/5">
       <div class="p-8 border-b border-white/10 flex flex-col items-center relative bg-black/10">
         <button id="close-sidebar-btn" class="absolute top-4 right-4 md:hidden text-white/50 hover:text-white transition-colors">
           <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
-        <div class="w-20 h-20 bg-gradient-to-tr from-sepGold to-sepGoldDark rounded-2xl mb-4 flex items-center justify-center shadow-premium transform transition duration-500 hover:scale-105 hover:rotate-3 group cursor-pointer" onclick="window.location.href='dashboard.html'">
-          <span class="text-white font-heading font-black text-2xl tracking-tighter transition-colors"><svg class="w-8 h-8 md:w-10 md:h-10 inline-block group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></span>
+        <div class="w-20 h-20 bg-gradient-to-tr from-sepGold to-yellow-200 rounded-2xl mb-4 flex items-center justify-center shadow-glow">
+          <span class="text-sepGreen font-heading font-black text-2xl tracking-tighter"><svg class="w-8 h-8 md:w-10 md:h-10 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></span>
         </div>
-        <h1 class="text-xs font-bold text-center uppercase tracking-widest text-white/90 font-heading">Portal de Prefectura</h1>
-        <p class="text-[10px] text-sepGold mt-2 font-semibold bg-black/30 px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-sm shadow-inner">Secundaria Técnica No. 87</p>
+        <h1 class="text-xs font-bold text-center uppercase tracking-widest text-white/90 font-heading">Secretaría de Educación Pública</h1>
+        <p class="text-[10px] text-sepGold mt-2 font-semibold bg-black/30 px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-sm shadow-inner">Secundaria NO. 87</p>
       </div>
 
       <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
@@ -41,6 +43,7 @@
           <span class="font-medium tracking-wide">Panel Principal</span>
         </a>
         <a class="flex items-center space-x-3 p-3.5 rounded-xl bg-gradient-to-r from-sepGold/20 to-transparent border-l-4 border-sepGold shadow-[inset_0_0_20px_rgba(188,149,92,0.05)] text-sepGold group relative overflow-hidden" href="escaner.html">
+          <div class="absolute inset-0 bg-white/5 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
           <svg class="h-5 w-5 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
           <span class="font-semibold relative z-10 font-heading tracking-wide">Escáner QR</span>
         </a>
@@ -51,10 +54,6 @@
         <a class="flex items-center space-x-3 p-3.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 hover:translate-x-1 transition-all duration-300 group" href="busqueda.html">
           <svg class="h-5 w-5 group-hover:text-sepGold transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
           <span class="font-medium tracking-wide">Búsqueda Alumnos</span>
-        </a>
-        <a class="flex items-center space-x-3 p-3.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 hover:translate-x-1 transition-all duration-300 group" href="reportes.html">
-          <svg class="h-5 w-5 group-hover:text-sepGold transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-          <span class="font-medium tracking-wide">Gestión de Reportes</span>
         </a>
       </nav>
 
@@ -70,65 +69,133 @@
     </aside>
 
     <main class="flex-1 flex flex-col overflow-y-auto w-full scroll-smooth">
-      <header class="glass-header shadow-sm h-20 flex items-center justify-between px-6 md:px-10 flex-shrink-0 sticky top-0 z-20">
-        <div class="flex items-center">
-          <button id="mobile-menu-btn" class="md:hidden mr-4 text-sepBurgundy bg-sepBurgundy/5 p-2 rounded-xl hover:bg-sepBurgundy/10 hover:shadow-inner transition-all">
+      <header class="glass-header shadow-sm h-16 md:h-20 flex items-center justify-between px-6 md:px-10 flex-shrink-0 sticky top-0 z-20">
+        <div class="flex items-center gap-4">
+          <button id="mobile-menu-btn" class="md:hidden text-sepGreenDark bg-sepGreenDark/5 p-2 rounded-xl hover:bg-sepGreenDark/10 transition-all">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
           </button>
           <div>
-            <h2 class="text-xl md:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r text-sepGreenDark truncate font-heading tracking-tight drop-shadow-sm">Terminal de Acceso</h2>
-            <p class="text-xs text-gray-400 font-medium hidden md:block">Escaneo automático de credenciales dinámicas</p>
+            <h2 class="text-xl md:text-2xl font-extrabold text-sepGreenDark font-heading tracking-tight">Escáner de Asistencia QR</h2>
+            <p class="text-xs text-gray-400 font-medium hidden md:block">Registro automático de credenciales dinámicas</p>
           </div>
         </div>
-        <div class="flex items-center space-x-4 md:space-x-6">
-          <button onclick="window.location.href='../../index.html'" class="bg-gradient-to-r from-gray-100 to-white text-gray-600 border border-gray-200 shadow-sm hover:shadow hover:border-gray-300 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300 hover:-translate-y-1 hover:shadow-premium-hover flex items-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-            <span class="hidden md:inline">Cerrar Sesión</span>
-          </button>
-        </div>
+        <button onclick="window.location.href='../../index.html'" class="bg-gradient-to-r from-gray-100 to-white text-gray-600 border border-gray-200 shadow-sm hover:shadow hover:border-gray-300 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300 hover:-translate-y-1 flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+          <span class="hidden md:inline">Cerrar Sesión</span>
+        </button>
       </header>
 
-      <div class="p-6 md:p-10 max-w-7xl mx-auto w-full flex flex-col lg:flex-row gap-8">
-        
-        <!-- Scanner Panel -->
-        <section class="flex-1 glass-panel rounded-3xl shadow-soft border border-gray-100 p-8 flex flex-col items-center justify-center text-center relative overflow-hidden min-h-[500px]">
-           <h3 class="text-gray-800 font-bold text-xl mb-4 font-heading tracking-wide">Cámara de Escaneo</h3>
-           <p class="text-gray-500 text-sm mb-6 max-w-sm mx-auto">Coloca el código QR del alumno frente a la cámara para registrar su asistencia automáticamente.</p>
-           
-           <div class="w-full max-w-md mx-auto bg-gray-50 rounded-2xl overflow-hidden border-2 border-dashed border-gray-300 flex items-center justify-center" id="reader-container" style="min-height: 300px;">
-             <!-- div for html5-qrcode -->
-             <div id="reader" width="600px"></div>
-           </div>
+      <div class="p-6 md:p-10 max-w-7xl mx-auto w-full flex flex-col lg:flex-row gap-8 items-start">
 
-           <!-- Estado del escáner -->
-           <div id="scan-status" class="mt-6 text-sm font-bold text-blue-600 animate-pulse hidden">
-             Procesando asistencia...
-           </div>
-           
-           <button id="toggle-camera-btn" class="mt-8 bg-sepGreen hover:bg-sepGreenDark text-white font-bold py-3.5 px-8 rounded-xl shadow-premium transition-transform hover:-translate-y-1 tracking-wide">
-             Activar Cámara
-           </button>
-        </section>
-        
-        <!-- Live Log Panel -->
-        <aside class="w-full lg:w-96 flex flex-col">
-          <div class="bg-white rounded-t-3xl border-t border-l border-r border-gray-100 p-6 shadow-sm z-10">
-            <h3 class="font-extrabold text-gray-800 text-lg font-heading">Últimos Registros</h3>
-            <p class="text-xs font-semibold text-blue-600 mt-1 uppercase tracking-wider">Hoy, <span id="hoy-fecha">--</span></p>
+        <!-- ── Scanner Panel ─────────────────────────────────────────── -->
+        <section class="flex-1 flex flex-col gap-6">
+
+          <!-- Camera box -->
+          <div class="glass-panel rounded-3xl shadow-soft border border-gray-100 overflow-hidden">
+            <!-- Panel header -->
+            <div class="bg-gradient-to-r from-sepGreenDark to-sepGreen px-8 py-5 flex items-center gap-4">
+              <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
+              </div>
+              <div>
+                <h3 class="font-bold text-white text-lg font-heading leading-tight">Cámara de Escaneo</h3>
+                <p class="text-white/60 text-xs mt-0.5">Coloca el código QR frente a la cámara</p>
+              </div>
+              <!-- Status indicator -->
+              <div id="camera-status-badge" class="ml-auto flex items-center gap-2 bg-white/10 px-4 py-1.5 rounded-full">
+                <span class="w-2 h-2 rounded-full bg-gray-400 inline-block" id="status-dot"></span>
+                <span class="text-white/70 text-xs font-semibold" id="status-label">Cámara apagada</span>
+              </div>
+            </div>
+
+            <!-- Camera area -->
+            <div class="p-6 md:p-8 flex flex-col items-center">
+              <div class="relative w-full max-w-md mx-auto rounded-2xl overflow-hidden bg-gray-900 border-2 border-dashed border-gray-300" id="reader-container" style="min-height: 300px;">
+                <!-- Scan line animation (shown when active) -->
+                <div id="scan-line" class="absolute left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-sepGold to-transparent z-10 hidden" style="animation: scanline 2s linear infinite;"></div>
+                <!-- Corner guides -->
+                <div class="absolute top-3 left-3 w-8 h-8 border-t-4 border-l-4 border-sepGold rounded-tl-lg z-10 opacity-0 transition-opacity duration-500" id="corner-tl"></div>
+                <div class="absolute top-3 right-3 w-8 h-8 border-t-4 border-r-4 border-sepGold rounded-tr-lg z-10 opacity-0 transition-opacity duration-500" id="corner-tr"></div>
+                <div class="absolute bottom-3 left-3 w-8 h-8 border-b-4 border-l-4 border-sepGold rounded-bl-lg z-10 opacity-0 transition-opacity duration-500" id="corner-bl"></div>
+                <div class="absolute bottom-3 right-3 w-8 h-8 border-b-4 border-r-4 border-sepGold rounded-br-lg z-10 opacity-0 transition-opacity duration-500" id="corner-br"></div>
+                <div id="reader" class="w-full"></div>
+                <!-- Idle placeholder -->
+                <div id="idle-placeholder" class="absolute inset-0 flex flex-col items-center justify-center text-center p-6 bg-gray-900">
+                  <svg class="w-16 h-16 text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
+                  <p class="text-gray-500 text-sm font-medium">Activa la cámara para comenzar<br>a escanear credenciales</p>
+                </div>
+              </div>
+
+              <!-- Processing status -->
+              <div id="scan-status" class="mt-4 flex items-center gap-2 text-sm font-bold text-sepGold animate-pulse hidden">
+                <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                Procesando asistencia...
+              </div>
+
+              <!-- Toggle button -->
+              <button id="toggle-camera-btn" class="mt-6 w-full max-w-xs bg-gradient-to-r from-sepGreen to-sepGreenDark hover:from-sepGreenDark hover:to-sepGreen text-white font-bold py-3.5 px-8 rounded-xl shadow-premium transition-all duration-300 hover:-translate-y-1 hover:shadow-xl tracking-wide flex items-center justify-center gap-3">
+                <svg class="w-5 h-5" id="camera-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <span id="camera-btn-text">Activar Cámara</span>
+              </button>
+            </div>
           </div>
-          
-          <div class="flex-1 bg-gray-50 border border-gray-100 rounded-b-3xl shadow-inner p-4 space-y-3 overflow-y-auto max-h-[400px]" id="logs-container">
-             <!-- Empty state / waiting -->
-             <div id="empty-log" class="h-full flex flex-col items-center justify-center opacity-50 text-center py-10">
-                <svg class="w-10 h-10 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                <p class="text-sm font-medium text-gray-500">Esperando nuevo registro...</p>
-             </div>
+
+          <!-- Hint cards -->
+          <div class="grid grid-cols-3 gap-4 text-center">
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+              <div class="w-9 h-9 bg-sepGold/10 text-sepGold rounded-xl flex items-center justify-center mx-auto mb-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              </div>
+              <p class="text-xs font-bold text-gray-700">Buena iluminación</p>
+            </div>
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+              <div class="w-9 h-9 bg-blue-50 text-blue-500 rounded-xl flex items-center justify-center mx-auto mb-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+              </div>
+              <p class="text-xs font-bold text-gray-700">QR visible y nítido</p>
+            </div>
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+              <div class="w-9 h-9 bg-green-50 text-green-500 rounded-xl flex items-center justify-center mx-auto mb-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              </div>
+              <p class="text-xs font-bold text-gray-700">Registro en tiempo real</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── Live Log Panel ────────────────────────────────────────── -->
+        <aside class="w-full lg:w-96 flex flex-col gap-0 rounded-3xl overflow-hidden shadow-soft border border-gray-100">
+          <!-- Log header -->
+          <div class="bg-gradient-to-r from-gray-800 to-gray-700 px-6 py-5 flex items-center justify-between">
+            <div>
+              <h3 class="font-extrabold text-white text-base font-heading">Últimos Registros</h3>
+              <p class="text-xs font-semibold text-sepGold/80 mt-0.5 uppercase tracking-wider">Hoy, <span id="hoy-fecha">--</span></p>
+            </div>
+            <div class="w-9 h-9 bg-white/10 rounded-xl flex items-center justify-center">
+              <svg class="w-5 h-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+            </div>
+          </div>
+
+          <!-- Log entries -->
+          <div class="flex-1 bg-gray-50 p-4 space-y-3 overflow-y-auto" style="max-height: 480px;" id="logs-container">
+            <div id="empty-log" class="h-full flex flex-col items-center justify-center opacity-50 text-center py-14">
+              <svg class="w-12 h-12 text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <p class="text-sm font-semibold text-gray-400">Esperando registros...</p>
+              <p class="text-xs text-gray-300 mt-1">Activa la cámara para comenzar</p>
+            </div>
           </div>
         </aside>
 
       </div>
     </main>
   </div>
+
+  <style>
+    @keyframes scanline {
+      0%   { top: 10%; }
+      100% { top: 90%; }
+    }
+  </style>
 
   <script src="../../assets/js/main.js?v=4"></script>
   <script type="module">
@@ -157,19 +224,48 @@
       
       isProcessing = true;
       scanStatus.classList.remove('hidden');
+      scanStatus.textContent = 'Procesando código...';
+      
+      // Reproducir sonido beep de escaneo
+      try {
+        const audio = new Audio('https://www.soundjay.com/buttons/sounds/beep-07a.mp3');
+        audio.play();
+      } catch(e) {}
 
       try {
         const { registrarAsistenciaQR } = await import('../../assets/js/api-client.js?v=4');
         const data = await registrarAsistenciaQR(decodedText);
         
         if (data.success) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Escaneo correcto',
+            text: data.student.nombre_completo,
+            timer: 2000,
+            showConfirmButton: false,
+            position: 'center'
+          });
           addLogEntry(data.student.nombre_completo, data.status, data.entry_time);
         } else {
-          showToast('Error: ' + data.error, "error");
+          Swal.fire({
+            icon: 'error',
+            title: 'No Autorizado',
+            text: data.error || 'Alumno no encontrado o código inválido.',
+            timer: 3000,
+            showConfirmButton: true,
+            confirmButtonColor: '#93222D',
+            position: 'center'
+          });
         }
       } catch (err) {
         console.error('Error de escaneo:', err);
-        showToast('Error de conexión con el servidor.', "error");
+        Swal.fire({
+          icon: 'error',
+          title: 'Error de conexión',
+          text: 'No se pudo conectar con el servidor.',
+          timer: 2000,
+          showConfirmButton: false
+        });
       } finally {
         setTimeout(() => {
           isProcessing = false;
@@ -183,6 +279,7 @@
       
       let badgeColor = 'bg-green-100 text-green-700';
       if (estado === 'Retardo') badgeColor = 'bg-yellow-100 text-yellow-700';
+      if (estado === 'Falta') badgeColor = 'bg-red-100 text-red-700';
       
       const div = document.createElement('div');
       div.className = 'bg-white p-4 rounded-xl border border-gray-100 shadow-sm animate-fade-in-up flex justify-between items-center';
@@ -196,10 +293,35 @@
       logsContainer.prepend(div);
     }
 
+    const idlePlaceholder = document.getElementById('idle-placeholder');
+    const scanLine = document.getElementById('scan-line');
+    const corners = ['corner-tl','corner-tr','corner-bl','corner-br'].map(id => document.getElementById(id));
+    const statusDot = document.getElementById('status-dot');
+    const statusLabel = document.getElementById('status-label');
+    const cameraBtnText = document.getElementById('camera-btn-text');
+
+    function setCameraUI(active) {
+      if (active) {
+        idlePlaceholder.classList.add('hidden');
+        scanLine.classList.remove('hidden');
+        corners.forEach(c => c.classList.replace('opacity-0', 'opacity-100'));
+        statusDot.className = 'w-2 h-2 rounded-full bg-green-400 inline-block animate-pulse';
+        statusLabel.textContent = 'Cámara activa';
+        cameraBtnText.textContent = 'Detener Cámara';
+      } else {
+        idlePlaceholder.classList.remove('hidden');
+        scanLine.classList.add('hidden');
+        corners.forEach(c => { c.classList.remove('opacity-100'); c.classList.add('opacity-0'); });
+        statusDot.className = 'w-2 h-2 rounded-full bg-gray-400 inline-block';
+        statusLabel.textContent = 'Cámara apagada';
+        cameraBtnText.textContent = 'Activar Cámara';
+      }
+    }
+
     toggleCameraBtn.addEventListener('click', async () => {
       if (!isCameraActive) {
         try {
-          toggleCameraBtn.textContent = 'Iniciando...';
+          cameraBtnText.textContent = 'Iniciando...';
           toggleCameraBtn.disabled = true;
 
           html5QrCode = new Html5Qrcode("reader");
@@ -207,16 +329,16 @@
           const config = {
             fps: 10,
             qrbox: { width: 250, height: 250 },
-            aspectRatio: 1.0
+            aspectRatio: 1.0,
+            formatsToSupport: [ Html5QrcodeSupportedFormats.QR_CODE ]
           };
 
-          // Try rear camera first, fallback to any available
           try {
             await html5QrCode.start(
               { facingMode: "environment" },
               config,
               onScanSuccess,
-              () => {} // ignore scan failures
+              () => {} 
             );
           } catch (envErr) {
             console.warn('Rear camera failed, trying any camera:', envErr);
@@ -233,15 +355,22 @@
             }
           }
           
-          toggleCameraBtn.textContent = 'Detener Cámara';
-          toggleCameraBtn.classList.replace('bg-sepGreen', 'bg-red-600');
-          toggleCameraBtn.classList.replace('hover:bg-sepGreenDark', 'hover:bg-red-700');
+          // Update button style to "stop"
+          toggleCameraBtn.classList.remove('from-sepGreen', 'to-sepGreenDark', 'hover:from-sepGreenDark', 'hover:to-sepGreen');
+          toggleCameraBtn.classList.add('from-red-600', 'to-red-700', 'hover:from-red-700', 'hover:to-red-800');
           toggleCameraBtn.disabled = false;
           isCameraActive = true;
+          setCameraUI(true);
         } catch (err) {
           console.error('Error al iniciar cámara:', err);
-          showToast('Error al iniciar la cámara: ' + (err.message || err, "error"));
-          toggleCameraBtn.textContent = 'Activar Cámara';
+          Swal.fire({
+            icon: 'error',
+            title: 'Error de cámara',
+            text: err.message || err,
+            timer: 2000,
+            showConfirmButton: false
+          });
+          cameraBtnText.textContent = 'Activar Cámara';
           toggleCameraBtn.disabled = false;
           if (html5QrCode) {
             try { await html5QrCode.clear(); } catch(e) {}
@@ -260,10 +389,10 @@
           console.warn('Error stopping scanner:', e);
         }
         html5QrCode = null;
-        toggleCameraBtn.textContent = 'Activar Cámara';
-        toggleCameraBtn.classList.replace('bg-red-600', 'bg-sepGreen');
-        toggleCameraBtn.classList.replace('hover:bg-red-700', 'hover:bg-sepGreenDark');
+        toggleCameraBtn.classList.remove('from-red-600', 'to-red-700', 'hover:from-red-700', 'hover:to-red-800');
+        toggleCameraBtn.classList.add('from-sepGreen', 'to-sepGreenDark', 'hover:from-sepGreenDark', 'hover:to-sepGreen');
         isCameraActive = false;
+        setCameraUI(false);
       }
     });
   </script>

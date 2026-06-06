@@ -1,4 +1,4 @@
-import { supabase, getGrupos, createGrupo, getAlumnosSinGrupo, getAlumnosPorGrupo, asignarAlumnosAGrupo, removerAlumnosDeGrupo, promoverCicloMasivo, insertAlumno, insertAlumnosMasivo } from './api-client.js';
+import { supabase, getGrupos, createGrupo, getAlumnosSinGrupo, getAlumnosPorGrupo, asignarAlumnosAGrupo, removerAlumnosDeGrupo, promoverCicloMasivo, insertAlumno, insertAlumnosMasivo, checkCurpsExistentes } from './api-client.js';
 import { checkAuth, logout } from './auth-guard.js';
 
 let currentGrupoId = null;
@@ -364,15 +364,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   tabInd.addEventListener('click', () => {
-    tabInd.className = 'pb-3 px-4 font-bold text-sm text-sepBurgundy border-b-2 border-sepBurgundy transition-colors focus:outline-none';
-    tabMas.className = 'pb-3 px-4 font-bold text-sm text-gray-500 border-b-2 border-transparent hover:text-gray-700 transition-colors focus:outline-none';
+    tabInd.className = 'flex-1 py-3 font-bold text-sm text-sepBurgundy bg-white shadow-sm rounded-lg transition-all focus:outline-none';
+    tabMas.className = 'flex-1 py-3 font-bold text-sm text-gray-500 hover:text-gray-700 rounded-lg transition-all focus:outline-none';
     formInd.classList.remove('hidden');
     formMas.classList.add('hidden');
   });
 
   tabMas.addEventListener('click', () => {
-    tabMas.className = 'pb-3 px-4 font-bold text-sm text-sepBurgundy border-b-2 border-sepBurgundy transition-colors focus:outline-none';
-    tabInd.className = 'pb-3 px-4 font-bold text-sm text-gray-500 border-b-2 border-transparent hover:text-gray-700 transition-colors focus:outline-none';
+    tabMas.className = 'flex-1 py-3 font-bold text-sm text-sepBurgundy bg-white shadow-sm rounded-lg transition-all focus:outline-none';
+    tabInd.className = 'flex-1 py-3 font-bold text-sm text-gray-500 hover:text-gray-700 rounded-lg transition-all focus:outline-none';
     formMas.classList.remove('hidden');
     formInd.classList.add('hidden');
   });
@@ -382,16 +382,17 @@ document.addEventListener('DOMContentLoaded', () => {
   btnGuardarInd.addEventListener('click', async () => {
     const nombres = document.getElementById('alta-nombres').value.trim();
     const apellidos = document.getElementById('alta-apellidos').value.trim();
-    let matricula = document.getElementById('alta-matricula').value.trim();
     const curp = document.getElementById('alta-curp').value.trim();
 
     if(!nombres || !apellidos) {
       return Swal.fire('Faltan Datos', 'Nombres y apellidos son obligatorios.', 'warning');
     }
 
-    if(!matricula) {
-      matricula = 'MAT' + Date.now().toString().slice(-6); // Auto mat
+    if(!curp) {
+      return Swal.fire('Faltan Datos', 'El CURP es obligatorio.', 'warning');
     }
+
+    const matricula = 'MAT' + Date.now().toString().slice(-6); // Auto mat
 
     btnGuardarInd.disabled = true;
     btnGuardarInd.textContent = 'Guardando...';
@@ -407,7 +408,6 @@ document.addEventListener('DOMContentLoaded', () => {
       Swal.fire('Éxito', 'Alumno registrado correctamente. Ahora puedes asignarle grupo.', 'success');
       document.getElementById('alta-nombres').value = '';
       document.getElementById('alta-apellidos').value = '';
-      document.getElementById('alta-matricula').value = '';
       document.getElementById('alta-curp').value = '';
       cerrarModal();
       location.reload();
@@ -422,7 +422,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Excel a JSON / Descarga Plantilla
   const btnDescargarPlantilla = document.getElementById('btn-descargar-plantilla');
   btnDescargarPlantilla.addEventListener('click', () => {
-    const csvData = "nombres,apellidos,matricula,curp\nJuan,Perez,MAT001,CURP01\nMaria,Gomez,,";
+    const csvData = "nombres,apellidos,curp\nJuan,Perez,ROVE080828HNLBZDA4\nMaria,Gomez,ROVE080828HNLBZDA5";
     const blob = new Blob([csvData], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -462,26 +462,65 @@ document.addEventListener('DOMContentLoaded', () => {
     btnProcesarMasivo.textContent = 'Procesando...';
 
     const cleanData = parsedData.map(r => {
-      const nom = r.nombres || r.Nombre || r.Nombres || r.NOMBRES || '';
-      const ape = r.apellidos || r.Apellidos || r.APELLIDOS || '';
-      let mat = r.matricula || r.Matricula || r.MATRICULA || '';
-      const curp = r.curp || r.Curp || r.CURP || '';
+      const nom = (r.nombres || r.Nombre || r.Nombres || r.NOMBRES || '').toString().trim();
+      const ape = (r.apellidos || r.Apellidos || r.APELLIDOS || '').toString().trim();
+      const curp = (r.curp || r.Curp || r.CURP || '').toString().trim();
       
-      if(!mat) mat = 'MAT' + Math.floor(Math.random()*1000000);
+      const mat = 'MAT' + Math.floor(100000 + Math.random()*900000);
       
-      return {
-        nombre_completo: nom + ' ' + ape,
+      return { 
+        nombre_completo: (nom + ' ' + ape).trim(), 
+        nombres_raw: nom,
+        apellidos_raw: ape,
         matricula: mat,
-        curp: curp,
+        curp,
         grado: '0',
         grupo: '0'
       };
-    }).filter(x => x.nombre_completo.trim() !== '');
+    }).filter(x => x.nombres_raw !== '' || x.apellidos_raw !== '' || x.curp !== '');
 
     if(cleanData.length === 0) {
       btnProcesarMasivo.disabled = false;
       btnProcesarMasivo.textContent = 'Procesar Archivo';
-      return Swal.fire('Error', 'No se encontraron registros válidos (nombres, apellidos) en el archivo.', 'error');
+      return Swal.fire('Error', 'El archivo parece estar vacío.', 'error');
+    }
+
+    const missingData = cleanData.some(x => !x.nombres_raw || !x.apellidos_raw || !x.curp);
+    if(missingData) {
+      btnProcesarMasivo.disabled = false;
+      btnProcesarMasivo.textContent = 'Procesar Archivo';
+      return Swal.fire('Faltan Datos', 'Todos los alumnos deben tener Nombres, Apellidos y CURP de manera obligatoria. Por favor verifica tu archivo.', 'error');
+    }
+
+    // ── Validar CURPs duplicados dentro del mismo archivo ───────────────────
+    const curpsSeen = new Set();
+    const curpsDuplicadosEnArchivo = [];
+    for (const x of cleanData) {
+      const curpUpper = x.curp.toUpperCase();
+      if (curpsSeen.has(curpUpper)) {
+        curpsDuplicadosEnArchivo.push(x.curp);
+      }
+      curpsSeen.add(curpUpper);
+    }
+    if (curpsDuplicadosEnArchivo.length > 0) {
+      btnProcesarMasivo.disabled = false;
+      btnProcesarMasivo.textContent = 'Procesar Archivo';
+      return Swal.fire('CURPs Duplicados en el Archivo', `Los siguientes CURPs están repetidos en tu archivo y deben ser únicos:\n\n${[...new Set(curpsDuplicadosEnArchivo)].join('\n')}`, 'error');
+    }
+
+    // ── Validar CURPs que ya existen en la base de datos ─────────────────────
+    const todasCurps = cleanData.map(x => x.curp.toUpperCase());
+    const existentes = await checkCurpsExistentes(todasCurps);
+    if (existentes.length > 0) {
+      btnProcesarMasivo.disabled = false;
+      btnProcesarMasivo.textContent = 'Procesar Archivo';
+      const lista = existentes.map(e => `• ${e.curp} (${e.nombre_completo})`).join('\n');
+      return Swal.fire({
+        title: 'CURPs ya Registrados',
+        html: `Los siguientes alumnos <strong>ya existen</strong> en el sistema con ese CURP y no se pueden duplicar:<br><br><pre style="font-size:12px;text-align:left;background:#f8f8f8;padding:10px;border-radius:8px">${existentes.map(e => `• ${e.curp}\n  ${e.nombre_completo}`).join('\n')}</pre>`,
+        icon: 'warning',
+        confirmButtonColor: '#691C32'
+      });
     }
 
     try {

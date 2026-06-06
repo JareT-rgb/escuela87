@@ -1,0 +1,494 @@
+Prefectos:
+const btnCsv = document.getElementById('btn-export-csv');
+    const btnExcel = document.getElementById('btn-export-excel');
+    
+    document.getElementById('export-periodo').addEventListener('change', (e) => {
+      document.getElementById('export-custom-month').classList.toggle('hidden', e.target.value !== 'mes_especifico');
+      document.getElementById('export-custom-date').classList.toggle('hidden', e.target.value !== 'fecha_especifica');
+    });
+    
+    const getCustomVal = () => {
+      const p = document.getElementById('export-periodo').value;
+      if (p === 'mes_especifico') return document.getElementById('export-custom-month').value;
+      if (p === 'fecha_especifica') return document.getElementById('export-custom-date').value;
+      return null;
+    };
+    
+    const generatedatesForPeriod = (periodo, customVal) => {
+      let dates = [];
+      let now = new Date();
+      now.setHours(now.getHours() - 6);
+      if (periodo === 'semana') {
+        let day = now.getDay();
+        let startDiff = now.getDate() - day + (day === 0 ? -6 : 1);
+        let startDate = new Date(now.getFullYear(), now.getMonth(), startDiff);
+        for (let i = 0; i < 5; i++) {
+          let d = new Date(startDate);
+          d.setDate(startDate.getDate() + i);
+          dates.push(d.toISOString().split('T')[0]);
+        }
+      } else if (periodo === 'mes' || periodo === 'mes_especifico') {
+        let year = now.getFullYear();
+        let month = now.getMonth();
+        if (periodo === 'mes_especifico' && customVal) {
+          const [y, m] = customVal.split('-');
+          year = parseInt(y, 10);
+          month = parseInt(m, 10) - 1;
+        }
+        let daysInMonth = new Date(year, month + 1, 0).getDate();
+        for (let i = 1; i <= daysInMonth; i++) {
+          let d = new Date(year, month, i);
+          let dayOfWeek = d.getDay();
+          if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+            const mStr = String(month + 1).padStart(2, '0');
+            const dStr = String(i).padStart(2, '0');
+            dates.push(`${year}-${mStr}-${dStr}`);
+          }
+        }
+      } else if (periodo === 'fecha_especifica' && customVal) {
+        const [y, m, d] = customVal.split('-');
+        const dayOfWeek = new Date(y, parseInt(m, 10) - 1, d).getDay();
+        if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+          dates.push(customVal);
+        }
+      }
+      return dates;
+    };
+    
+    const doExport = async (format) => {
+       const btn = format === 'csv' ? btnCsv : btnExcel;
+       const originalText = btn.innerHTML;
+       btn.innerHTML = 'Generando...';
+       btn.disabled = true;
+       
+       try {
+         const grado = document.getElementById('export-grado').value;
+         const grupo = document.getElementById('export-grupo').value;
+         const periodo = document.getElementById('export-periodo').value;
+         const customVal = getCustomVal();
+         const data = await getExportAsistencias(grado, grupo, periodo, customVal);
+         
+         const dates = generatedatesForPeriod(periodo, customVal);
+         
+         let csvContent = 'NO.,NOMBRE Y APELLIDO,';
+         dates.forEach(d => csvContent += `${d.split('-')[2]},`);
+         csvContent += '\n';
+         
+         let htmlContent = '<meta charset="UTF-8"><table border="1"><tr><th>NO.</th><th>NOMBRE Y APELLIDO</th>';
+         dates.forEach(d => htmlContent += `<th>${d.split('-')[2]}</th>`);
+         htmlContent += '</tr>';
+         
+         data.forEach((a, index) => {
+            csvContent += `${index + 1},"${a.nombre}",`;
+            htmlContent += `<tr><td>${index + 1}</td><td>${a.nombre}</td>`;
+            
+            const statusMap = {};
+            if (a.asistencias) {
+              a.asistencias.forEach(as => {
+                 statusMap[as.date] = as.status;
+              });
+            }
+            
+            dates.forEach(d => {
+               const st = statusMap[d] ? statusMap[d].toLowerCase() : '';
+               let icon = '';
+               if (st === 'a tiempo') icon = '?';
+               else if (st === 'falta') icon = '?';
+               else if (st === 'retardo') icon = 'R';
+               else if (st === 'justificado') icon = 'J';
+               else icon = '-';
+               
+               csvContent += `${icon},`;
+               htmlContent += `<td>${icon}</td>`;
+            });
+            
+            csvContent += '\n';
+            htmlContent += '</tr>';
+         });
+         htmlContent += '</table>';
+         
+         const blob = format === 'csv' 
+           ? new Blob(["\uFEFF"+csvContent], { type: 'text/csv;charset=utf-8;' }) 
+           : new Blob([htmlContent], { type: 'application/vnd.ms-excel' });
+         
+         const url = URL.createObjectURL(blob);
+         const link = document.createElement("a");
+         link.href = url;
+         link.download = `Asistencias_${grado}Grado_${periodo}.${format === 'csv' ? 'csv' : 'xls'}`;
+         document.body.appendChild(link);
+         link.click();
+         document.body.removeChild(link);
+       } catch(e) {
+         console.error(e);
+         alert('Error al generar la exportación.');
+       }
+       
+       btn.innerHTML = originalText;
+       btn.disabled = false;
+    };
+    
+    if (btnCsv) btnCsv.addEventListener('click', () => doExport('csv'));
+    if (btnExcel) btnExcel.addEventListener('click', () => doExport('excel'));
+
+    const btnViewList = document.getElementById('btn-view-list');
+    const vistaContainer = document.getElementById('vista-asistencias');
+    if (btnViewList) {
+      btnViewList.addEventListener('click', async () => {
+         const originalText = btnViewList.innerHTML;
+         btnViewList.innerHTML = 'Cargando...';
+         btnViewList.disabled = true;
+         
+         try {
+           const grado = document.getElementById('export-grado').value;
+           const grupo = document.getElementById('export-grupo').value;
+           const periodo = document.getElementById('export-periodo').value;
+           const customVal = getCustomVal();
+           const data = await getExportAsistencias(grado, grupo, periodo, customVal);
+           
+           const dates = generatedatesForPeriod(periodo, customVal);
+           
+           if (data.length === 0 || dates.length === 0) {
+             vistaContainer.innerHTML = '<p class="text-center text-gray-500 font-bold p-4">No se encontraron asistencias en este periodo.</p>';
+           } else {
+             let htmlContent = `
+               <table class="w-full text-left text-sm text-gray-600 border-collapse border border-gray-300">
+                 <thead class="bg-gray-100 border-b border-gray-300">
+                   <tr>
+                     <th class="py-2 px-3 border border-gray-300 font-bold text-gray-700 w-10 text-center">NO.</th>
+                     <th class="py-2 px-3 border border-gray-300 font-bold text-gray-700 min-w-[200px]">NOMBRE Y APELLIDO</th>
+             `;
+             
+             dates.forEach(d => {
+                const dayNum = d.split('-')[2];
+                htmlContent += `<th class="py-2 px-2 border border-gray-300 font-bold text-gray-700 text-center w-8" title="${d}">${dayNum}</th>`;
+             });
+             
+             htmlContent += `
+                   </tr>
+                 </thead>
+                 <tbody class="bg-white">
+             `;
+             
+             data.forEach((a, index) => {
+                htmlContent += `
+                  <tr class="hover:bg-gray-50">
+                    <td class="py-2 px-3 border border-gray-300 text-center">${index + 1}</td>
+                    <td class="py-2 px-3 border border-gray-300 font-medium text-gray-800">${a.nombre}</td>
+                `;
+                
+                const statusMap = {};
+                if (a.asistencias) {
+                  a.asistencias.forEach(as => {
+                     statusMap[as.date] = as.status;
+                  });
+                }
+                
+                dates.forEach(d => {
+                   const st = statusMap[d] ? statusMap[d].toLowerCase() : '';
+                   let icon = '';
+                   if (st === 'a tiempo') icon = '<span class="text-green-600 font-bold text-base">?</span>';
+                   else if (st === 'falta') icon = '<span class="text-red-600 font-bold text-base">?</span>';
+                   else if (st === 'retardo') icon = '<span class="text-yellow-600 font-bold text-base">R</span>';
+                   else if (st === 'justificado') icon = '<span class="text-blue-600 font-bold text-base">J</span>';
+                   else icon = '<span class="text-gray-300">-</span>';
+                   
+                   htmlContent += `<td class="py-2 px-2 border border-gray-300 text-center">${icon}</td>`;
+                });
+                
+                htmlContent += `</tr>`;
+             });
+             
+             htmlContent += '</tbody></table>';
+             vistaContainer.innerHTML = htmlContent;
+           }
+           document.getElementById('vista-asistencias-container').classList.remove('hidden');
+         } catch(e) {
+           console.error(e);
+           alert('Error al generar la vista.');
+         }
+         
+         btnViewList.innerHTML = originalText;
+         btnViewList.disabled = false;
+      });
+    }
+  </script>
+</body>
+</html>
+
+
+Directivos:
+const btnCsv = document.getElementById('btn-export-csv');
+    const btnExcel = document.getElementById('btn-export-excel');
+    
+    document.getElementById('export-periodo').addEventListener('change', (e) => {
+      document.getElementById('export-custom-month').classList.toggle('hidden', e.target.value !== 'mes_especifico');
+      document.getElementById('export-custom-date').classList.toggle('hidden', e.target.value !== 'fecha_especifica');
+    });
+    
+    const getCustomVal = () => {
+      const p = document.getElementById('export-periodo').value;
+      if (p === 'mes_especifico') return document.getElementById('export-custom-month').value;
+      if (p === 'fecha_especifica') return document.getElementById('export-custom-date').value;
+      return null;
+    };
+    
+    const generatedatesForPeriod = (periodo, customVal) => {
+      let dates = [];
+      let now = new Date();
+      now.setHours(now.getHours() - 6);
+      if (periodo === 'semana') {
+        let day = now.getDay();
+        let startDiff = now.getDate() - day + (day === 0 ? -6 : 1);
+        let startDate = new Date(now.getFullYear(), now.getMonth(), startDiff);
+        for (let i = 0; i < 5; i++) {
+          let d = new Date(startDate);
+          d.setDate(startDate.getDate() + i);
+          dates.push(d.toISOString().split('T')[0]);
+        }
+      } else if (periodo === 'mes' || periodo === 'mes_especifico') {
+        let year = now.getFullYear();
+        let month = now.getMonth();
+        if (periodo === 'mes_especifico' && customVal) {
+          const [y, m] = customVal.split('-');
+          year = parseInt(y, 10);
+          month = parseInt(m, 10) - 1;
+        }
+        let daysInMonth = new Date(year, month + 1, 0).getDate();
+        for (let i = 1; i <= daysInMonth; i++) {
+          let d = new Date(year, month, i);
+          let dayOfWeek = d.getDay();
+          if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+            const mStr = String(month + 1).padStart(2, '0');
+            const dStr = String(i).padStart(2, '0');
+            dates.push(`${year}-${mStr}-${dStr}`);
+          }
+        }
+      } else if (periodo === 'fecha_especifica' && customVal) {
+        const [y, m, d] = customVal.split('-');
+        const dayOfWeek = new Date(y, parseInt(m, 10) - 1, d).getDay();
+        if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+          dates.push(customVal);
+        }
+      }
+      return dates;
+    };
+    
+    const doExport = async (format) => {
+       const btn = format === 'csv' ? btnCsv : btnExcel;
+       const originalText = btn.innerHTML;
+       btn.innerHTML = 'Generando...';
+       btn.disabled = true;
+       
+       try {
+         const grado = document.getElementById('export-grado').value;
+         const grupo = document.getElementById('export-grupo').value;
+         const periodo = document.getElementById('export-periodo').value;
+         const customVal = getCustomVal();
+         const data = await getExportAsistencias(grado, grupo, periodo, customVal);
+         
+         const dates = generatedatesForPeriod(periodo, customVal);
+         
+         let csvContent = 'NO.,NOMBRE Y APELLIDO,';
+         dates.forEach(d => csvContent += `${d.split('-')[2]},`);
+         csvContent += '\n';
+         
+         let htmlContent = '<meta charset="UTF-8"><table border="1"><tr><th>NO.</th><th>NOMBRE Y APELLIDO</th>';
+         dates.forEach(d => htmlContent += `<th>${d.split('-')[2]}</th>`);
+         htmlContent += '</tr>';
+         
+         data.forEach((a, index) => {
+            csvContent += `${index + 1},"${a.nombre}",`;
+            htmlContent += `<tr><td>${index + 1}</td><td>${a.nombre}</td>`;
+            
+            const statusMap = {};
+            if (a.asistencias) {
+              a.asistencias.forEach(as => {
+                 statusMap[as.date] = as.status;
+              });
+            }
+            
+            dates.forEach(d => {
+               const st = statusMap[d] ? statusMap[d].toLowerCase() : '';
+               let icon = '';
+               if (st === 'a tiempo') icon = '?';
+               else if (st === 'falta') icon = '?';
+               else if (st === 'retardo') icon = 'R';
+               else if (st === 'justificado') icon = 'J';
+               else icon = '-';
+               
+               csvContent += `${icon},`;
+               htmlContent += `<td>${icon}</td>`;
+            });
+            
+            csvContent += '\n';
+            htmlContent += '</tr>';
+         });
+         htmlContent += '</table>';
+         
+         const blob = format === 'csv' 
+           ? new Blob(["\uFEFF"+csvContent], { type: 'text/csv;charset=utf-8;' }) 
+           : new Blob([htmlContent], { type: 'application/vnd.ms-excel' });
+         
+         const url = URL.createObjectURL(blob);
+         const link = document.createElement("a");
+         link.href = url;
+         link.download = `Asistencias_${grado}Grado_${periodo}.${format === 'csv' ? 'csv' : 'xls'}`;
+         document.body.appendChild(link);
+         link.click();
+         document.body.removeChild(link);
+       } catch(e) {
+         console.error(e);
+         alert('Error al generar la exportación.');
+       }
+       
+       btn.innerHTML = originalText;
+       btn.disabled = false;
+    };
+    
+    if (btnCsv) btnCsv.addEventListener('click', () => doExport('csv'));
+    if (btnExcel) btnExcel.addEventListener('click', () => doExport('excel'));
+
+    const btnViewList = document.getElementById('btn-view-list');
+    const vistaContainer = document.getElementById('vista-asistencias');
+    if (btnViewList) {
+      btnViewList.addEventListener('click', async () => {
+         const originalText = btnViewList.innerHTML;
+         btnViewList.innerHTML = 'Cargando...';
+         btnViewList.disabled = true;
+         
+         try {
+           const grado = document.getElementById('export-grado').value;
+           const grupo = document.getElementById('export-grupo').value;
+           const periodo = document.getElementById('export-periodo').value;
+           const customVal = getCustomVal();
+           const data = await getExportAsistencias(grado, grupo, periodo, customVal);
+           
+           const dates = generatedatesForPeriod(periodo, customVal);
+           
+           if (data.length === 0 || dates.length === 0) {
+             vistaContainer.innerHTML = '<p class="text-center text-gray-500 font-bold p-4">No se encontraron asistencias en este periodo.</p>';
+           } else {
+             let htmlContent = `
+               <table class="w-full text-left text-sm text-gray-600 border-collapse border border-gray-300">
+                 <thead class="bg-gray-100 border-b border-gray-300">
+                   <tr>
+                     <th class="py-2 px-3 border border-gray-300 font-bold text-gray-700 w-10 text-center">NO.</th>
+                     <th class="py-2 px-3 border border-gray-300 font-bold text-gray-700 min-w-[200px]">NOMBRE Y APELLIDO</th>
+             `;
+             
+             dates.forEach(d => {
+                const dayNum = d.split('-')[2];
+                htmlContent += `<th class="py-2 px-2 border border-gray-300 font-bold text-gray-700 text-center w-8" title="${d}">${dayNum}</th>`;
+             });
+             
+             htmlContent += `
+                   </tr>
+                 </thead>
+                 <tbody class="bg-white">
+             `;
+             
+             data.forEach((a, index) => {
+                htmlContent += `
+                  <tr class="hover:bg-gray-50">
+                    <td class="py-2 px-3 border border-gray-300 text-center">${index + 1}</td>
+                    <td class="py-2 px-3 border border-gray-300 font-medium text-gray-800">${a.nombre}</td>
+                `;
+                
+                const statusMap = {};
+                if (a.asistencias) {
+                  a.asistencias.forEach(as => {
+                     statusMap[as.date] = as.status;
+                  });
+                }
+                
+                dates.forEach(d => {
+                   const st = statusMap[d] ? statusMap[d].toLowerCase() : '';
+                   let icon = '';
+                   if (st === 'a tiempo') icon = '<span class="text-green-600 font-bold text-base">?</span>';
+                   else if (st === 'falta') icon = '<span class="text-red-600 font-bold text-base">?</span>';
+                   else if (st === 'retardo') icon = '<span class="text-yellow-600 font-bold text-base">R</span>';
+                   else if (st === 'justificado') icon = '<span class="text-blue-600 font-bold text-base">J</span>';
+                   else icon = '<span class="text-gray-300">-</span>';
+                   
+                   htmlContent += `<td class="py-2 px-2 border border-gray-300 text-center">${icon}</td>`;
+                });
+                
+                htmlContent += `</tr>`;
+             });
+             
+             htmlContent += '</tbody></table>';
+             vistaContainer.innerHTML = htmlContent;
+           }
+           document.getElementById('vista-asistencias-container').classList.remove('hidden');
+         } catch(e) {
+           console.error(e);
+           alert('Error al generar la vista.');
+         }
+         
+         btnViewList.innerHTML = originalText;
+         btnViewList.disabled = false;
+      });
+    }
+
+    // === LÓGICA DE AVISOS ===
+    const annContainer = document.getElementById('announcements-container');
+    const loadAnnouncements = async () => {
+      annContainer.innerHTML = '<p class="text-gray-500 font-bold text-center">Cargando...</p>';
+      const ann = await getAnnouncements();
+      
+      const badge = document.getElementById('active-ann-badge');
+      if (badge) badge.textContent = ann.length + ' Activos';
+
+      if(ann.length === 0) {
+         annContainer.innerHTML = '<p class="text-gray-400 font-medium text-center py-6">Sin avisos activos.</p>';
+         return;
+      }
+      
+      annContainer.innerHTML = ann.map(a => `
+        <div class="glass-panel border-l-4 border-l-sepBurgundy rounded-r-xl p-5 shadow-sm hover:shadow-premium transition-shadow relative">
+           <div class="flex justify-between items-start mb-2">
+             <span class="text-[10px] font-black uppercase tracking-widest text-sepBurgundy bg-sepBurgundy/10 px-2.5 py-1 rounded-md">Administrativo</span>
+             <span class="text-[10px] text-gray-400 font-bold bg-gray-50 px-2 py-1 rounded border border-gray-100">${a.created_at ? new Date(a.created_at).toLocaleDateString('es-MX') : 'Hoy'}</span>
+           </div>
+           <h4 class="font-bold text-gray-800 text-base leading-tight">${a.title}</h4>
+           <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-end">
+              <button class="delete-ann-btn text-xs font-bold text-red-500 hover:text-red-700 uppercase tracking-widest hover:underline" data-id="${a.id}">Eliminar</button>
+           </div>
+        </div>
+      `).join('');
+      
+      // Bind delete events
+      annContainer.addEventListener('click', async (e) => {
+         const btn = e.target.closest('.delete-ann-btn');
+         if (!btn) return;
+         if(confirm('¿Deseas eliminar este aviso oficial permanentemente?')) {
+             await deleteAnnouncement(btn.dataset.id);
+             loadAnnouncements();
+         }
+      });
+    };
+    
+    // Bind publish event
+    document.getElementById('publish-announcement-btn').addEventListener('click', async () => {
+       const input = document.getElementById('new-announcement-input');
+       const val = input.value.trim();
+       if(!val) return alert('Ingresa un título.');
+       
+       document.getElementById('publish-announcement-btn').textContent = "PúblicaNDO...";
+       await createAnnouncement(val);
+       input.value = "";
+       document.getElementById('publish-announcement-btn').innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg> Públicar Aviso / Difusión`;
+       loadAnnouncements();
+    });
+
+    loadAnnouncements();
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+

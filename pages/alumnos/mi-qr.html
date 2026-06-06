@@ -34,7 +34,7 @@
           <span class="text-sepGreenDark font-black text-2xl"><svg class="w-8 h-8 md:w-10 md:h-10 inline-block group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></span>
         </div>
         <h1 class="text-xs font-bold text-center uppercase tracking-widest text-white/90">Portal del Alumno</h1>
-        <p class="text-[10px] text-sepGold mt-2 font-semibold bg-black/30 px-3 py-1 rounded-full uppercase tracking-wider">Secundaria Técnica No. 87</p>
+        <p class="text-[10px] text-sepGold mt-2 font-semibold bg-black/30 px-3 py-1 rounded-full uppercase tracking-wider">Secundaria NO. 87</p>
       </div>
       <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
         <a class="flex items-center space-x-3 p-3.5 rounded-xl text-white/70 hover:text-white hover:bg-white/10 hover:translate-x-1 transition-all duration-300 group" href="dashboard.html">
@@ -98,7 +98,7 @@
                 </div>
                 <div class="text-left">
                   <p class="text-xs font-bold uppercase tracking-widest text-white/60">Secretaría de Educación Pública</p>
-                  <p class="text-sm font-extrabold">Secundaria Técnica No. 87</p>
+                  <p class="text-sm font-extrabold">Secundaria NO. 87</p>
                 </div>
               </div>
               <h3 class="text-xs font-bold uppercase tracking-[0.3em] text-white/70 mt-3">CREDENCIAL DE ACCESO ESTUDIANTIL</h3>
@@ -135,7 +135,7 @@
                 <div class="pt-2 border-t border-gray-100">
                   <div class="flex items-center gap-2 text-green-600 bg-green-50 rounded-xl px-3 py-2">
                     <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                    <p class="text-xs font-bold">Credencial Activa — Ciclo 2025-2026</p>
+                    <p class="text-xs font-bold">Credencial Activa — Ciclo 2025-2028</p>
                   </div>
                 </div>
               </div>
@@ -183,7 +183,7 @@
 
       const nombre = session.nombre || 'Alumno';
       const matricula = session.matricula || '';
-      const codigoAcceso = session.codigo_acceso || session.id || matricula;
+      const codigoAcceso = session.matricula || session.codigo_acceso || session.id;
       const grupo = session.grupo || '';
 
       // Update sidebar

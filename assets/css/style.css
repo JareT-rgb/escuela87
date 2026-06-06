@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  font-size: 14px; /* Escala global al 87.5% para reducir el 'zoom' general */
+}
+
 .sidebar-transition { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
 /* Custom Scrollbar for a premium feel */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
